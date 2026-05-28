@@ -1,7 +1,8 @@
+import Topbar from "./components/ui/layout/Topbar"
 
 function App() {
   return (
-    <div>App</div>
+    <Topbar></Topbar>
   )
 }
 
