@@ -37,7 +37,7 @@ function p_r_dashboard({ dashboardData }: PRDashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f2f5] p-6 font-sans">
+    <div className="min-h-screen bg-[#f0f2f5] p-6 font-sans flex flex-col">
       {/* Top Header Info */}
       <div className="flex flex-wrap items-center justify-between bg-white px-6 py-3 rounded shadow-sm mb-6 text-sm font-medium text-gray-700 border border-gray-100">
         <div><span className="text-gray-500 mr-2 text-xs">TEAM:</span> {data.team}</div>
@@ -50,7 +50,7 @@ function p_r_dashboard({ dashboardData }: PRDashboardProps) {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-4 flex-1">
         
         {/* Row 1 & 2 - Left Large Cards */}
         <div className="col-span-1 row-span-2 bg-white rounded shadow-sm p-6 flex flex-col justify-center items-center border border-gray-100">
@@ -122,6 +122,27 @@ function p_r_dashboard({ dashboardData }: PRDashboardProps) {
         </div>
 
       </div> {/* <-- This safely closes the Grid container */}
+
+      {/* NEW: Bottom 1 to 10 Hours Rectangle Section */}
+      <div className="mt-4 bg-white rounded shadow-sm p-6 border border-gray-100">
+        <h2 className="text-gray-500 text-sm tracking-wide mb-4 uppercase">Hourly Status (1 - 10)</h2>
+        <div className="grid grid-cols-10 gap-3">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((hour) => (
+            <div 
+              key={hour} 
+              className="flex flex-col items-center justify-center py-4 bg-gray-50 border border-gray-200 rounded hover:bg-gray-100 transition-colors"
+            >
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase mb-1">
+                Hour
+              </span>
+              <span className="text-2xl font-bold text-gray-700">
+                {hour}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div> /* <-- This safely closes the Main Wrapper */
   );
 }
