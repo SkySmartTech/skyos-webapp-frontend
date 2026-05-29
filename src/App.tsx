@@ -1,80 +1,72 @@
 import { useState } from 'react';
-import PRDashboard, { type DashboardData } from './components/PRODUCTION_TRACKING_SYSTEM_COMPONENTS/p_r_dashboard';
-import PRSetting from './components/PRODUCTION_TRACKING_SYSTEM_COMPONENTS/p_r_setting';
-import Topbar from './components/ui/layout/Topbar';
-import Sidebar from './components/ui/layout/Sidebar';
 import { ChevronDown } from 'lucide-react';
+import Topbar from './components/ui/layout/Topbar';
+import ProductionTrackingPage from './pages/PRODUCTION_TRACKING_SYSTEM_PAGES/production_tracking_page';
+
+type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
 
 function App() {
-  const [activeView, setActiveView] = useState<'dashboard' | 'settings'>('dashboard');
-  const [productionActive, setProductionActive] = useState(false);
-  const [showTopbar, setShowTopbar] = useState(true);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [activeModule, setActiveModule] = useState<ActiveModule>('home');
+  const [topbarVisible, setTopbarVisible] = useState(true);
 
-  const handleProductionTrackingClick = () => {
-    setProductionActive(true);
-    setShowSidebar(true);
-    setShowTopbar(false);
-    setActiveView('dashboard');
-  };
-
-  const handleDataUpload = (data: DashboardData) => {
-    setDashboardData(data);
-    setActiveView('dashboard');
+  const handleModuleClick = (module: ActiveModule) => {
+    setActiveModule(module);
+    setTopbarVisible(false);
   };
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-[#f0f2f5]">
 
-      {/* Topbar — slides in/out vertically */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden flex-shrink-0 ${showTopbar ? 'max-h-[200px]' : 'max-h-0'}`}>
-        <Topbar
-          onProductionTrackingClick={handleProductionTrackingClick}
-          productionActive={productionActive}
-          showSidebar={showSidebar}
-          onToggleSidebar={() => setShowSidebar(prev => !prev)}
-          onCloseTopbar={() => setShowTopbar(false)}
-        />
-      </div>
-
-      {/* Thin reveal strip — only visible when topbar is hidden */}
-      {!showTopbar && (
-        <button
-          onClick={() => setShowTopbar(true)}
-          className="w-full flex items-center justify-center gap-1 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300 text-xs transition-all duration-200 border-b border-zinc-800 flex-shrink-0"
-        >
-          <ChevronDown size={14} />
-          <span>Show navigation</span>
-        </button>
+      {/* Topbar — collapsible */}
+      {topbarVisible ? (
+        <div className="shrink-0 z-50 relative shadow-sm">
+          <Topbar
+            onProductionTrackingClick={() => handleModuleClick('production')}
+            onDcscClick={() => handleModuleClick('dcsc')}
+            onWipClick={() => handleModuleClick('wip')}
+            onCustomClick={() => handleModuleClick('custom')}
+            productionActive={activeModule === 'production'}
+            showSidebar={true}
+            onToggleSidebar={() => {}}
+            onCloseTopbar={() => setTopbarVisible(false)}
+          />
+        </div>
+      ) : (
+        /* Thin strip to reveal the topbar again */
+        <div className="shrink-0 z-50 bg-[#0f0f0f] border-b border-zinc-800">
+          <button
+            onClick={() => setTopbarVisible(true)}
+            className="flex items-center gap-2 px-5 py-1.5 text-zinc-400 hover:text-white text-xs transition-colors hover:bg-zinc-800 w-full"
+          >
+            <ChevronDown size={14} />
+            Show navigation
+          </button>
+        </div>
       )}
 
+      {/* Main App Canvas */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar wrapper — width animates in/out */}
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${
-            productionActive && showSidebar ? 'w-[280px]' : 'w-0'
-          }`}
-        >
-          {productionActive && (
-            <Sidebar activeView={activeView} setActiveView={setActiveView} />
-          )}
-        </div>
-
-        <main className="flex-1 overflow-y-auto">
-          {productionActive ? (
-            activeView === 'dashboard' ? (
-              <PRDashboard dashboardData={dashboardData} />
-            ) : (
-              <PRSetting onDataUpload={handleDataUpload} />
-            )
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 text-lg">
-              Select a module from the top navigation
-            </div>
-          )}
-        </main>
+        {activeModule === 'production' ? (
+          <ProductionTrackingPage />
+        ) : activeModule === 'dcsc' ? (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            DCSC1515A — Coming Soon
+          </div>
+        ) : activeModule === 'wip' ? (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            WIP — Coming Soon
+          </div>
+        ) : activeModule === 'custom' ? (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            Custom System — Coming Soon
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            Select a module from the top navigation
+          </div>
+        )}
       </div>
+
     </div>
   );
 }

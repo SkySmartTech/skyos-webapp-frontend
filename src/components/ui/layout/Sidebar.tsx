@@ -8,12 +8,14 @@ import {
   HelpCircle,
   LogOut,
   ChevronDown,
-  Settings // Added Settings icon
+  Settings,
+  Activity // Added Activity icon for the Production Update button
 } from "lucide-react";
 
+// 1. Added 'update' to the allowed types
 interface SidebarProps {
-  setActiveView: (view: 'dashboard' | 'settings') => void;
-  activeView: 'dashboard' | 'settings';
+  setActiveView: (view: 'dashboard' | 'settings' | 'update') => void;
+  activeView: 'dashboard' | 'settings' | 'update';
 }
 
 const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
@@ -52,7 +54,18 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
       <div className="mt-12">
         <p className="text-xs font-bold tracking-widest text-gray-400 mb-5">CONFIGURATION</p>
 
-        {/* Settings / Plan Upload Link */}
+        {/* 2. Production Update Link */}
+        <div 
+          onClick={() => setActiveView('update')}
+          className={`flex items-center justify-between mb-2 cursor-pointer p-2 rounded-lg transition-colors ${activeView === 'update' ? 'bg-blue-50' : 'hover:bg-gray-100'}`}
+        >
+           <div className={`flex items-center gap-3 ${activeView === 'update' ? 'text-blue-500' : 'text-gray-600'}`}>
+            <Activity size={20} />
+            <span className="text-[18px] font-medium">Production update</span>
+          </div>
+        </div>
+
+        {/* 3. Plan Settings Link */}
         <div 
           onClick={() => setActiveView('settings')}
           className={`flex items-center justify-between mb-6 cursor-pointer p-2 rounded-lg transition-colors ${activeView === 'settings' ? 'bg-blue-50' : 'hover:bg-gray-100'}`}
