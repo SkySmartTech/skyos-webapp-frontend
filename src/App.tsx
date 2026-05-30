@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import Topbar from './components/ui/layout/Topbar';
+import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/PRODUCTION_TRACKING_SYSTEM_PAGES/production_tracking_page';
 
 type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
@@ -21,6 +22,7 @@ function App() {
       {topbarVisible ? (
         <div className="shrink-0 z-50 relative shadow-sm">
           <Topbar
+            onDashboardClick={() => setActiveModule('home')}
             onProductionTrackingClick={() => handleModuleClick('production')}
             onDcscClick={() => handleModuleClick('dcsc')}
             onWipClick={() => handleModuleClick('wip')}
@@ -61,9 +63,7 @@ function App() {
             Custom System — Coming Soon
           </div>
         ) : (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
-            Select a module from the top navigation
-          </div>
+          <SkyOs />
         )}
       </div>
 

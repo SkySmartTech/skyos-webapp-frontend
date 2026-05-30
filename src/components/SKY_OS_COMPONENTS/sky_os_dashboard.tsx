@@ -12,7 +12,7 @@ function SkyOsDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950 p-8 font-sans text-gray-100">
+    <div className="bg-gray-950 p-8 font-sans text-gray-100">
       
       {/* Dashboard Header */}
       <div className="mb-10">
