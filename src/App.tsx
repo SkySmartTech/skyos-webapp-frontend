@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Sun } from 'lucide-react';
 import Topbar from './components/ui/layout/Topbar';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/PRODUCTION_TRACKING_SYSTEM_PAGES/production_tracking_page';
@@ -16,9 +16,8 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#f0f2f5]">
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
 
-      {/* Topbar — collapsible */}
       {topbarVisible ? (
         <div className="shrink-0 z-50 relative shadow-sm">
           <Topbar
@@ -34,32 +33,31 @@ function App() {
           />
         </div>
       ) : (
-        /* Thin strip to reveal the topbar again */
-        <div className="shrink-0 z-50 bg-[#0f0f0f] border-b border-zinc-800">
+        <div className="shrink-0 z-50 bg-gray-900 dark:bg-gray-950 border-b border-gray-700 dark:border-gray-800">
           <button
             onClick={() => setTopbarVisible(true)}
-            className="flex items-center gap-2 px-5 py-1.5 text-zinc-400 hover:text-white text-xs transition-colors hover:bg-zinc-800 w-full"
+            className="flex items-center gap-2 px-5 py-1.5 text-gray-400 hover:text-white text-xs transition-colors hover:bg-gray-800 w-full"
           >
             <ChevronDown size={14} />
+            <Sun size={12} />
             Show navigation
           </button>
         </div>
       )}
 
-      {/* Main App Canvas */}
       <div className="flex flex-1 overflow-hidden">
         {activeModule === 'production' ? (
           <ProductionTrackingPage />
         ) : activeModule === 'dcsc' ? (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+          <div className="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-600 text-lg">
             DCSC1515A — Coming Soon
           </div>
         ) : activeModule === 'wip' ? (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+          <div className="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-600 text-lg">
             WIP — Coming Soon
           </div>
         ) : activeModule === 'custom' ? (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+          <div className="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-600 text-lg">
             Custom System — Coming Soon
           </div>
         ) : (
