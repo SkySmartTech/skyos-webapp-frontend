@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import type { DashboardData } from '../../components/PRODUCTION_TRACKING_SYSTEM_COMPONENTS/p_r_dashboard';
-import PRDashboard from '../../components/PRODUCTION_TRACKING_SYSTEM_COMPONENTS/p_r_dashboard';
-import PRSetting from '../../components/PRODUCTION_TRACKING_SYSTEM_COMPONENTS/p_r_setting';
-import PRUpdate from '../../components/PRODUCTION_TRACKING_SYSTEM_COMPONENTS/p_r_update';
-import Sidebar from '../../components/ui/layout/Sidebar';
+import type { DashboardData } from '../../components/SPM-1693/p_r_dashboard';
+import PRDashboard from '../../components/SPM-1693/p_r_dashboard';
+import PRSetting from '../../components/SPM-1693/p_r_setting';
+import PRUpdate from '../../components/SPM-1693/p_r_update';
+import Sidebar from '../../components/COMMON/Sidebar';
 import { useTheme } from '../../context/ThemeContext';
 
 function ProductionTrackingPage() {

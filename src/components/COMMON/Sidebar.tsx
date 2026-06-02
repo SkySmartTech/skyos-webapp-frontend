@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, BarChart3, ChevronDown, Settings, Activity, Users, LogOut, User,
 } from "lucide-react";
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 
 interface SidebarProps {
   setActiveView: (view: 'dashboard' | 'settings' | 'update') => void;

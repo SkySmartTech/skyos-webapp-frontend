@@ -1,6 +1,6 @@
-import SkyOsLanding from '../../components/SKY_OS_COMPONENTS/sky_os_landing';
-import SkyOsDashboardChart from '../../components/SKY_OS_COMPONENTS/sky_os_dashboard_chart';
-import AiSuggestion from '../../components/SKY_OS_COMPONENTS/ai_suggestion';
+import SkyOsLanding from '../../components/SKY_OS/sky_os_landing';
+import SkyOsDashboardChart from '../../components/SKY_OS/sky_os_dashboard_chart';
+import AiSuggestion from '../../components/SKY_OS/ai_suggestion';
 import { useTheme } from '../../context/ThemeContext';
 
 function SkyOs() {

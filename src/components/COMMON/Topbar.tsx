@@ -2,8 +2,8 @@ import {
   Search, Bell, User, LayoutDashboard, BarChart3, Factory,
   Cpu, ChevronDown, ChevronUp, PanelLeftOpen, PanelLeftClose, Sun, Moon,
 } from "lucide-react";
-import { useTheme } from '../../../context/ThemeContext';
-import type { ActiveModule } from '../../../App';
+import { useTheme } from '../../context/ThemeContext';
+import type { ActiveModule } from '../../App';
 
 interface TopbarProps {
   activeModule: ActiveModule;
