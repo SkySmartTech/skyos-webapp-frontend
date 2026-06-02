@@ -9,6 +9,7 @@ export interface User {
   // editable profile fields
   fullName?:   string;
   email?:      string;
+  phone?:      string;
   address?:    string;
   avatar?:     string; // base64 data-URL
 }
@@ -18,7 +19,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login:         (employeeId: string, role: UserRole, name: string) => void;
   logout:        () => void;
-  updateProfile: (data: Partial<Pick<User, 'fullName' | 'email' | 'address' | 'avatar'>>) => void;
+  updateProfile: (data: Partial<Pick<User, 'fullName' | 'email' | 'phone' | 'address' | 'avatar'>>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,7 +33,7 @@ export default function SkyAuth({ children }: { children: ReactNode }) {
 
   const logout = () => setUser(null);
 
-  const updateProfile = (data: Partial<Pick<User, 'fullName' | 'email' | 'address' | 'avatar'>>) => {
+  const updateProfile = (data: Partial<Pick<User, 'fullName' | 'email' | 'phone' | 'address' | 'avatar'>>) => {
     setUser(prev => prev ? { ...prev, ...data } : prev);
   };
 

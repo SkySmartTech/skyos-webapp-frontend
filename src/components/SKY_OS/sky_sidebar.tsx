@@ -32,7 +32,7 @@ export default function SkySidebar({ activeView, setActiveView }: SkySidebarProp
   ) => (
     <div
       onClick={() => setActiveView(view)}
-      className={`flex items-center justify-between mb-1 cursor-pointer px-3 py-2.5 rounded-xl transition-all duration-200 ${
+      className={`flex items-center justify-between mb-2 cursor-pointer px-3 py-3 rounded-xl transition-all duration-200 ${
         activeView === view ? active : hover
       }`}
     >
@@ -50,7 +50,7 @@ export default function SkySidebar({ activeView, setActiveView }: SkySidebarProp
 
   // ── Static (non-navigating) item ───────────────────────────────────────────
   const staticItem = (Icon: React.ElementType, label_: string, right?: React.ReactNode) => (
-    <div className={`flex items-center justify-between cursor-default px-3 py-2.5 rounded-xl mb-1 transition-all duration-200 ${hover}`}>
+    <div className={`flex items-center justify-between cursor-default px-3 py-3 rounded-xl mb-2 transition-all duration-200 ${hover}`}>
       <div className="flex items-center gap-3">
         <Icon size={19} />
         <span className="text-base font-medium">{label_}</span>
@@ -64,18 +64,13 @@ export default function SkySidebar({ activeView, setActiveView }: SkySidebarProp
 
       {/* ── OVERVIEW ─────────────────────────────────────────────────────── */}
       <div>
-        <p className={`text-xs font-bold tracking-widest mb-5 uppercase ${label}`}>Overview</p>
-
+        <p className={`text-xs font-bold tracking-widest mb-6 uppercase ${label}`}>Overview</p>
         {navItem('dashboard', LayoutDashboard, 'Dashboard', 6)}
-        {staticItem(Activity, 'Live Monitor', <ChevronDown size={15} />)}
       </div>
 
-      {/* ── DIVIDER ──────────────────────────────────────────────────────── */}
-      <div className={`border-t my-6 ${divider}`} />
-
-      {/* ── MODULES ──────────────────────────────────────────────────────── */}
+      <div className={`border-t my-7 ${divider}`} />
       <div>
-        <p className={`text-xs font-bold tracking-widest mb-5 uppercase ${label}`}>Modules</p>
+        <p className={`text-xs font-bold tracking-widest mb-6 uppercase ${label}`}>Modules</p>
 
         {navItem('analytics', BarChart3, 'Analytics & Charts')}
         {navItem('ai', Brain, 'AI Insights')}
@@ -85,11 +80,11 @@ export default function SkySidebar({ activeView, setActiveView }: SkySidebarProp
       </div>
 
       {/* ── DIVIDER ──────────────────────────────────────────────────────── */}
-      <div className={`border-t my-6 ${divider}`} />
+      <div className={`border-t my-7 ${divider}`} />
 
       {/* ── CONFIGURATION ────────────────────────────────────────────────── */}
       <div>
-        <p className={`text-xs font-bold tracking-widest mb-5 uppercase ${label}`}>Configuration</p>
+        <p className={`text-xs font-bold tracking-widest mb-6 uppercase ${label}`}>Configuration</p>
 
         {staticItem(Settings, 'System Settings', <ChevronDown size={15} />)}
         {staticItem(Shield, 'Security & Access')}
