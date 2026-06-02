@@ -61,11 +61,7 @@ export default function Topbar({
               Sky<span className="text-orange-500">OS</span>
             </h1>
             <p className={`text-xs tracking-wider uppercase ${dark ? 'text-zinc-500' : 'text-gray-400'}`}>
-<<<<<<< HEAD
-             
-=======
               Smart Factory Operating System
->>>>>>> a1c7465d962b044139609e6d82937d60e43bdea7
             </p>
           </div>
         </div>
