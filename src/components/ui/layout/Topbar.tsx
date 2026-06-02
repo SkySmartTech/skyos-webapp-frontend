@@ -3,8 +3,10 @@ import {
   Cpu, ChevronDown, ChevronUp, PanelLeftOpen, PanelLeftClose, Sun, Moon,
 } from "lucide-react";
 import { useTheme } from '../../../context/ThemeContext';
+import type { ActiveModule } from '../../../App';
 
 interface TopbarProps {
+  activeModule: ActiveModule;
   onDashboardClick: () => void;
   onProductionTrackingClick: () => void;
   onDcscClick: () => void;
@@ -17,11 +19,26 @@ interface TopbarProps {
 }
 
 export default function Topbar({
+  activeModule,
   onDashboardClick, onProductionTrackingClick, onDcscClick, onWipClick, onCustomClick,
   productionActive, showSidebar, onToggleSidebar, onCloseTopbar,
 }: TopbarProps) {
   const { theme, toggleTheme } = useTheme();
   const dark = theme === 'dark';
+
+  // Same base style for every nav button — only active one gets orange
+  const navBtn = (module: ActiveModule | null) => {
+    const isActive = module !== null && activeModule === module;
+    const base = 'flex items-center gap-2 px-6 py-4 text-sm font-semibold border-r transition-all duration-200 ';
+    if (isActive) {
+      return base + (dark
+        ? 'text-orange-400 bg-orange-500/10 border-zinc-800'
+        : 'text-orange-600 bg-orange-50 border-gray-200');
+    }
+    return base + (dark
+      ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-white'
+      : 'text-gray-600 border-gray-200 hover:bg-gray-100 hover:text-gray-900');
+  };
 
   return (
     <div className={`w-full z-10 border-b shadow-2xl transition-colors duration-300 ${
@@ -125,70 +142,37 @@ export default function Topbar({
           </button>
         )}
 
-        {/* Dashboard */}
-        <button
-          onClick={onDashboardClick}
-          className={`group flex items-center gap-2 px-6 py-4 font-semibold border-r text-sm transition-all duration-200 ${
-            dark ? 'bg-orange-500/20 text-orange-400 border-zinc-800 hover:bg-orange-500/30' : 'bg-orange-500 text-white border-gray-200 hover:bg-orange-600'
-          }`}
-        >
-          <LayoutDashboard size={17} className="group-hover:rotate-6 transition-transform" />
+        <button onClick={onDashboardClick} className={navBtn('home')}>
+          <LayoutDashboard size={17} />
           Dashboard
         </button>
 
-        {/* Analysis */}
-        <button className={`group flex items-center gap-2 px-6 py-4 font-semibold border-r text-sm transition-all duration-200 ${
-          dark ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-white' : 'text-gray-600 border-gray-200 hover:bg-gray-200 hover:text-gray-900'
-        }`}>
-          <BarChart3 size={17} className="group-hover:scale-110 transition-transform" />
+        <button className={navBtn(null)}>
+          <BarChart3 size={17} />
           Analysis
         </button>
 
-        {/* Production Tracking */}
-        <button
-          onClick={onProductionTrackingClick}
-          className={`group flex items-center gap-2 px-6 py-4 font-semibold border-r text-sm transition-all duration-200 ${
-            dark ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-orange-400' : 'text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600'
-          }`}
-        >
-          <Factory size={17} className="group-hover:rotate-12 transition-transform" />
+        <button onClick={onProductionTrackingClick} className={navBtn('production')}>
+          <Factory size={17} />
           Production Tracking
         </button>
 
-        {/* WIP */}
-        <button
-          onClick={onWipClick}
-          className={`group flex items-center gap-2 px-6 py-4 font-semibold border-r text-sm transition-all duration-200 ${
-            dark ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-orange-400' : 'text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600'
-          }`}
-        >
-          <Cpu size={17} className="group-hover:rotate-180 transition-transform duration-500" />
+        <button onClick={onWipClick} className={navBtn('wip')}>
+          <Cpu size={17} />
           WIP
         </button>
 
-        {/* DCSC1515A */}
-        <button
-          onClick={onDcscClick}
-          className={`group flex items-center gap-2 px-6 py-4 font-semibold border-r text-sm transition-all duration-200 ${
-            dark ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-orange-400' : 'text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600'
-          }`}
-        >
-          <Cpu size={17} className="group-hover:rotate-180 transition-transform duration-500" />
+        <button onClick={onDcscClick} className={navBtn('dcsc')}>
+          <Cpu size={17} />
           DCSC1515A
         </button>
 
-        {/* Custom */}
-        <button
-          onClick={onCustomClick}
-          className={`group flex items-center gap-2 px-6 py-4 font-semibold border-r text-sm transition-all duration-200 ${
-            dark ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-orange-400' : 'text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600'
-          }`}
-        >
-          <Cpu size={17} className="group-hover:rotate-180 transition-transform duration-500" />
+        <button onClick={onCustomClick} className={navBtn('custom')}>
+          <Cpu size={17} />
           Custom System
         </button>
 
-        {/* Hide */}
+        {/* Hide — manually only */}
         <button
           onClick={onCloseTopbar}
           className={`ml-auto flex items-center gap-2 px-4 py-4 text-xs border-l transition-all duration-200 ${

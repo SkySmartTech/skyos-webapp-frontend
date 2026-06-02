@@ -1,19 +1,14 @@
 import { useState } from 'react';
-import { ChevronDown, Sun } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import Topbar from './components/ui/layout/Topbar';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/PRODUCTION_TRACKING_SYSTEM_PAGES/production_tracking_page';
 
-type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
+export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
 
 function App() {
   const [activeModule, setActiveModule] = useState<ActiveModule>('home');
   const [topbarVisible, setTopbarVisible] = useState(true);
-
-  const handleModuleClick = (module: ActiveModule) => {
-    setActiveModule(module);
-    setTopbarVisible(false);
-  };
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
@@ -21,11 +16,12 @@ function App() {
       {topbarVisible ? (
         <div className="shrink-0 z-50 relative shadow-sm">
           <Topbar
+            activeModule={activeModule}
             onDashboardClick={() => setActiveModule('home')}
-            onProductionTrackingClick={() => handleModuleClick('production')}
-            onDcscClick={() => handleModuleClick('dcsc')}
-            onWipClick={() => handleModuleClick('wip')}
-            onCustomClick={() => handleModuleClick('custom')}
+            onProductionTrackingClick={() => setActiveModule('production')}
+            onDcscClick={() => setActiveModule('dcsc')}
+            onWipClick={() => setActiveModule('wip')}
+            onCustomClick={() => setActiveModule('custom')}
             productionActive={activeModule === 'production'}
             showSidebar={true}
             onToggleSidebar={() => {}}
@@ -33,13 +29,12 @@ function App() {
           />
         </div>
       ) : (
-        <div className="shrink-0 z-50 bg-gray-900 dark:bg-gray-950 border-b border-gray-700 dark:border-gray-800">
+        <div className="shrink-0 z-50 bg-gray-900 border-b border-gray-800">
           <button
             onClick={() => setTopbarVisible(true)}
             className="flex items-center gap-2 px-5 py-1.5 text-gray-400 hover:text-white text-xs transition-colors hover:bg-gray-800 w-full"
           >
             <ChevronDown size={14} />
-            <Sun size={12} />
             Show navigation
           </button>
         </div>
@@ -49,15 +44,15 @@ function App() {
         {activeModule === 'production' ? (
           <ProductionTrackingPage />
         ) : activeModule === 'dcsc' ? (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-600 text-lg">
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
             DCSC1515A — Coming Soon
           </div>
         ) : activeModule === 'wip' ? (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-600 text-lg">
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
             WIP — Coming Soon
           </div>
         ) : activeModule === 'custom' ? (
-          <div className="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-600 text-lg">
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
             Custom System — Coming Soon
           </div>
         ) : (
