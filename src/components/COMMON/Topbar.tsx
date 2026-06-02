@@ -3,6 +3,7 @@ import {
   Cpu, ChevronDown, ChevronUp, PanelLeftOpen, PanelLeftClose, Sun, Moon,
 } from "lucide-react";
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../SKY_OS/sky_auth';
 import type { ActiveModule } from '../../App';
 
 interface TopbarProps {
@@ -16,17 +17,22 @@ interface TopbarProps {
   showSidebar: boolean;
   onToggleSidebar: () => void;
   onCloseTopbar: () => void;
+  onProfileClick: () => void;
 }
 
 export default function Topbar({
   activeModule,
   onDashboardClick, onProductionTrackingClick, onDcscClick, onWipClick, onCustomClick,
   productionActive, showSidebar, onToggleSidebar, onCloseTopbar,
+  onProfileClick,
 }: TopbarProps) {
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const dark = theme === 'dark';
 
-  // Same base style for every nav button — only active one gets orange
+  const displayName = user?.fullName ?? user?.name ?? 'Admin';
+  const displayRole = user?.role ?? 'Super User';
+
   const navBtn = (module: ActiveModule | null) => {
     const isActive = module !== null && activeModule === module;
     const base = 'flex items-center gap-2 px-6 py-4 text-sm font-semibold border-r transition-all duration-200 ';
@@ -43,7 +49,7 @@ export default function Topbar({
   return (
     <div className={`w-full z-10 border-b shadow-2xl transition-colors duration-300 ${
       dark
-        ? 'bg-gradient-to-b from-[#050505] to-[#0f0f0f] text-white border-zinc-800'
+        ? 'bg-linear-to-b from-[#050505] to-[#0f0f0f] text-white border-zinc-800'
         : 'bg-white text-gray-900 border-gray-200'
     }`}>
 
@@ -53,7 +59,7 @@ export default function Topbar({
         {/* LOGO + BRAND */}
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg shadow-orange-500/30 border border-orange-400/20" />
+            <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg shadow-orange-500/30 border border-orange-400/20" />
             <div className="absolute inset-0 rounded-2xl bg-orange-500 blur-xl opacity-20 pointer-events-none" />
           </div>
           <div>
@@ -66,24 +72,7 @@ export default function Topbar({
           </div>
         </div>
 
-        {/* SEARCH */}
-        <div className={`hidden lg:flex items-center w-[420px] border rounded-2xl px-4 py-3 backdrop-blur-md shadow-inner transition-colors duration-300 ${
-          dark
-            ? 'bg-zinc-900/80 border-zinc-700 focus-within:border-orange-500'
-            : 'bg-gray-100 border-gray-300 focus-within:border-orange-400'
-        }`}>
-          <Search size={18} className={dark ? 'text-zinc-500' : 'text-gray-400'} />
-          <input
-            type="text"
-            placeholder="Search modules, users, systems..."
-            className="bg-transparent w-full px-3 text-sm outline-none placeholder:text-gray-400"
-          />
-          <kbd className={`text-xs px-2 py-1 rounded-lg border ${
-            dark ? 'bg-zinc-800 text-zinc-400 border-zinc-700' : 'bg-gray-200 text-gray-500 border-gray-300'
-          }`}>
-            Ctrl K
-          </kbd>
-        </div>
+       
 
         {/* RIGHT ACTIONS */}
         <div className="flex items-center gap-3">
@@ -99,7 +88,7 @@ export default function Topbar({
             }`}
           >
             {dark ? <Sun size={17} /> : <Moon size={17} />}
-            <span className="hidden md:inline text-xs">{dark ? 'Light' : 'Dark'}</span>
+           
           </button>
 
           {/* BELL */}
@@ -110,16 +99,33 @@ export default function Topbar({
             <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center border border-black">3</span>
           </button>
 
-          {/* USER */}
-          <button className={`flex items-center gap-3 border rounded-2xl px-4 py-2 transition-all duration-300 shadow ${
-            dark ? 'bg-zinc-900 border-zinc-800 hover:border-orange-500/40 hover:bg-zinc-800' : 'bg-gray-100 border-gray-200 hover:bg-gray-200'
-          }`}>
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-md">
-              <User size={16} className="text-white" />
+          {/* USER — click opens profile page */}
+          <button
+            onClick={onProfileClick}
+            className={`flex items-center gap-3 border rounded-2xl px-4 py-2 transition-all duration-300 shadow ${
+              dark
+                ? 'bg-zinc-900 border-zinc-800 hover:border-orange-500/40 hover:bg-zinc-800'
+                : 'bg-gray-100 border-gray-200 hover:bg-gray-200'
+            }`}
+          >
+            {/* Avatar: show uploaded image or fallback icon */}
+            <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-md">
+              {user?.avatar ? (
+                <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center">
+                  <User size={16} className="text-white" />
+                </div>
+              )}
             </div>
+
             <div className="hidden md:block text-left">
-              <p className={`text-sm font-semibold ${dark ? 'text-white' : 'text-gray-900'}`}>Admin</p>
-              <p className={`text-xs ${dark ? 'text-zinc-400' : 'text-gray-500'}`}>Super User</p>
+              <p className={`text-sm font-semibold ${dark ? 'text-white' : 'text-gray-900'}`}>
+                {displayName}
+              </p>
+              <p className={`text-xs ${dark ? 'text-zinc-400' : 'text-gray-500'}`}>
+                {displayRole}
+              </p>
             </div>
             <ChevronDown size={15} className={dark ? 'text-zinc-500' : 'text-gray-400'} />
           </button>
@@ -172,7 +178,6 @@ export default function Topbar({
           Custom System
         </button>
 
-        {/* Hide — manually only */}
         <button
           onClick={onCloseTopbar}
           className={`ml-auto flex items-center gap-2 px-4 py-4 text-xs border-l transition-all duration-200 ${
