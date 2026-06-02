@@ -3,13 +3,36 @@ import { ChevronDown } from 'lucide-react';
 import Topbar from './components/COMMON/Topbar';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/SPM-1693/production_tracking_page';
+import SkyAuth, { useAuth } from './components/SKY_OS/sky_auth';
+import SkyBackground from './components/SKY_OS/SkyBackground';
+import SkySplash from './components/SKY_OS/sky_splash';
+import SkyLogin from './components/SKY_OS/sky_login';
 
 export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
 
-function App() {
+function AppContent() {
+  const { isAuthenticated } = useAuth();
+  const [splashDone, setSplashDone] = useState(false);
   const [activeModule, setActiveModule] = useState<ActiveModule>('home');
   const [topbarVisible, setTopbarVisible] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
 
+  // ── Intro flow ──────────────────────────────────────────────────────────────
+  // SkyBackground stays mounted the entire time so the cloud animation is
+  // continuous through the splash → login transition.
+  if (!isAuthenticated) {
+    return (
+      <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#050505' }}>
+        <SkyBackground />
+        {!splashDone
+          ? <SkySplash onComplete={() => setSplashDone(true)} />
+          : <SkyLogin glass />
+        }
+      </div>
+    );
+  }
+
+  // ── Main app ────────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
 
@@ -23,8 +46,8 @@ function App() {
             onWipClick={() => setActiveModule('wip')}
             onCustomClick={() => setActiveModule('custom')}
             productionActive={activeModule === 'production'}
-            showSidebar={true}
-            onToggleSidebar={() => {}}
+            showSidebar={showSidebar}
+            onToggleSidebar={() => setShowSidebar(prev => !prev)}
             onCloseTopbar={() => setTopbarVisible(false)}
           />
         </div>
@@ -64,4 +87,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <SkyAuth>
+      <AppContent />
+    </SkyAuth>
+  );
+}
