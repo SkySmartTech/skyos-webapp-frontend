@@ -172,6 +172,11 @@ export default function Topbar({
           Custom System
         </button>
 
+         <button onClick={onCustomClick} className={navBtn('custom')}>
+          <Cpu size={17} />
+         PMS-1682(solar)
+        </button>
+
         {/* Hide — manually only */}
         <button
           onClick={onCloseTopbar}

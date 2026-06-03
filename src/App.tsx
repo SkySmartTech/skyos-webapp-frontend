@@ -5,6 +5,9 @@ import Topbar from './components/COMMON/Topbar';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/SPM-1693/production_tracking_page';
 import UserProfile from './pages/PMS-1682(Solar)/userprofile';
+import SolarPage from './pages/PMS-1682(Solar)/solarpage';
+import MFMPage from './pages/PMS-1682(Solar)/mfm-page';
+import MFIPage from './pages/PMS-1682(Solar)/mfi-page';
 
 export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom' | 'userprofile';
 
@@ -68,6 +71,9 @@ function AppContent() {
           <Route path="/wip" element={<div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">WIP — Coming Soon</div>} />
           <Route path="/custom" element={<div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">Custom System — Coming Soon</div>} />
           <Route path="/userprofile" element={<UserProfile />} />
+          <Route path="/solar/dashboard" element={<SolarPage />} />
+          <Route path="/solar/mfm" element={<MFMPage />} />
+          <Route path="/solar/mfi" element={<MFIPage />} />
         </Routes>
       </div>
 
