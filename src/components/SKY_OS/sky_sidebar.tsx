@@ -1,10 +1,10 @@
 import {
-  LayoutDashboard, BarChart3, Cpu, Activity, Zap, Factory,
+  LayoutDashboard, BarChart3, Cpu, Zap, Factory,
   ChevronDown, Settings, Brain, Shield,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
-export type SkyView = 'dashboard' | 'analytics' | 'ai';
+export type SkyView = 'dashboard' | 'analytics' | 'ai' | 'security' | 'settings';
 
 interface SkySidebarProps {
   activeView: SkyView;
@@ -66,6 +66,7 @@ export default function SkySidebar({ activeView, setActiveView }: SkySidebarProp
       <div>
         <p className={`text-xs font-bold tracking-widest mb-6 uppercase ${label}`}>Overview</p>
         {navItem('dashboard', LayoutDashboard, 'Dashboard', 6)}
+        {navItem('security',  Shield,          'User Management')}
       </div>
 
       <div className={`border-t my-7 ${divider}`} />
@@ -86,8 +87,8 @@ export default function SkySidebar({ activeView, setActiveView }: SkySidebarProp
       <div>
         <p className={`text-xs font-bold tracking-widest mb-6 uppercase ${label}`}>Configuration</p>
 
-        {staticItem(Settings, 'System Settings', <ChevronDown size={15} />)}
-        {staticItem(Shield, 'Security & Access')}
+        {navItem('settings', Settings, 'System Settings')}
+
       </div>
 
       {/* ── VERSION FOOTER ───────────────────────────────────────────────── */}
