@@ -330,7 +330,7 @@ export default function SkyAccessSecurity() {
     <div className={`w-full h-full flex flex-col overflow-hidden relative ${bg}`}>
 
       {/* ── Page header ─────────────────────────────────────────────────────── */}
-      <div className={`shrink-0 flex items-center justify-between px-6 py-3 border-b ${hdr}`}>
+      <div className={`shrink-0 flex flex-wrap items-center justify-between gap-2 px-4 md:px-6 py-3 border-b ${hdr}`}>
         <div className="flex items-center gap-2">
           <Shield size={17} className="text-orange-500"/>
           <h1 className={`text-base font-bold ${textPri}`}>Access &amp; Security</h1>
@@ -348,7 +348,7 @@ export default function SkyAccessSecurity() {
       </div>
 
       {/* ── Tab bar ─────────────────────────────────────────────────────────── */}
-      <div className={`shrink-0 flex items-center gap-1 px-4 border-b ${hdr}`}>
+      <div className={`shrink-0 flex items-center gap-1 px-2 md:px-4 border-b overflow-x-auto ${hdr}`}>
         <TabBtn id="users"       icon={<Users       size={14}/>} label="Users"              activeTab={tab} onTabChange={setTab} textSec={textSec}/>
         <TabBtn id="permissions" icon={<Shield      size={14}/>} label="Permissions Matrix" activeTab={tab} onTabChange={setTab} textSec={textSec}/>
         <TabBtn id="audit"       icon={<ClipboardList size={14}/>} label="Audit Log"         activeTab={tab} onTabChange={setTab} textSec={textSec}/>
@@ -359,8 +359,8 @@ export default function SkyAccessSecurity() {
         <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
 
           {/* Toolbar */}
-          <div className={`shrink-0 flex items-center gap-3 px-5 py-3 border-b ${hdr}`}>
-            <div className={`flex items-center gap-2 flex-1 max-w-sm border rounded-xl px-3 py-2 ${inp}`}>
+          <div className={`shrink-0 flex flex-wrap items-center gap-2 md:gap-3 px-3 md:px-5 py-3 border-b ${hdr}`}>
+            <div className={`flex items-center gap-2 flex-1 min-w-0 max-w-sm border rounded-xl px-3 py-2 ${inp}`}>
               <Search size={14} className={textMut}/>
               <input
                 type="text" placeholder="Search users…" value={search}
@@ -379,13 +379,13 @@ export default function SkyAccessSecurity() {
             )}
           </div>
 
-          {/* Table */}
+          {/* Table — horizontally scrollable on mobile */}
           <div className="flex-1 min-h-0 overflow-auto">
             <table className="w-full text-sm border-collapse">
               <thead className={`${dark?'bg-gray-900/80':'bg-gray-50'} sticky top-0 z-10`}>
                 <tr>
                   {['User','Employee ID','Email','Role','Status','Last Login','Actions'].map(h => (
-                    <th key={h} className={`px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider border-b ${divider} ${textMut}`}>{h}</th>
+                    <th key={h} className={`px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider whitespace-nowrap border-b ${divider} ${textMut}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -547,14 +547,14 @@ export default function SkyAccessSecurity() {
                 error:   <X            size={13}/>,
               };
               return (
-                <div key={i} className={`flex items-center gap-4 px-4 py-3 ${i<AUDIT_EVENTS.length-1?`border-b ${divider}`:''} ${rowHov} transition-colors`}>
+                <div key={i} className={`flex items-center gap-2 md:gap-4 px-3 md:px-4 py-3 ${i<AUDIT_EVENTS.length-1?`border-b ${divider}`:''} ${rowHov} transition-colors`}>
                   <span className={`shrink-0 font-mono text-[11px] ${textMut}`}>{ev.time}</span>
                   <span className={`shrink-0 ${colors[ev.type as keyof typeof colors]}`}>
                     {icons[ev.type as keyof typeof icons]}
                   </span>
-                  <span className={`text-xs font-semibold shrink-0 ${textPri}`}>{ev.user}</span>
-                  <span className={`text-xs ${textSec}`}>{ev.action}</span>
-                  <span className={`ml-auto shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold capitalize ${
+                  <span className={`text-xs font-semibold shrink-0 hidden sm:block ${textPri}`}>{ev.user}</span>
+                  <span className={`text-xs min-w-0 flex-1 truncate ${textSec}`} title={ev.action}>{ev.action}</span>
+                  <span className={`ml-auto shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold capitalize hidden xs:block ${
                     ev.type==='success' ? 'bg-green-500/10  text-green-500'  :
                     ev.type==='warning' ? 'bg-yellow-500/10 text-yellow-500' :
                     ev.type==='error'   ? 'bg-red-500/10    text-red-400'    :
@@ -571,7 +571,7 @@ export default function SkyAccessSecurity() {
       {(slideUser || showAdd) && (
         <>
           <div className="absolute inset-0 bg-black/40 z-30" onClick={closePanel}/>
-          <div className={`absolute right-0 top-0 h-full w-80 z-40 shadow-2xl flex flex-col overflow-hidden ${
+          <div className={`absolute right-0 top-0 h-full w-full max-w-xs sm:w-80 z-40 shadow-2xl flex flex-col overflow-hidden ${
             dark ? 'bg-gray-900 border-l border-gray-800' : 'bg-white border-l border-gray-200'
           }`}>
             {/* Header */}

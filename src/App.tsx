@@ -10,14 +10,24 @@ import SkySplash from './components/SKY_OS/sky_splash';
 import SkyLogin from './components/SKY_OS/sky_login';
 
 export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
+export type ProductionView = 'dashboard' | 'settings' | 'update';
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
-  const [splashDone,   setSplashDone]   = useState(false);
-  const [activeModule, setActiveModule] = useState<ActiveModule>('home');
-  const [topbarVisible, setTopbarVisible] = useState(true);
-  const [showSidebar,  setShowSidebar]  = useState(true);
-  const [showProfile,  setShowProfile]  = useState(false);
+  const [splashDone,      setSplashDone]      = useState(false);
+  const [activeModule,    setActiveModule]    = useState<ActiveModule>('home');
+  const [productionView,  setProductionView]  = useState<ProductionView>('dashboard');
+  const [topbarVisible,   setTopbarVisible]   = useState(true);
+  const [showSidebar,     setShowSidebar]     = useState(true);
+  const [showProfile,     setShowProfile]     = useState(false);
+
+  const handleModuleNavigate = (module: ActiveModule, view?: string) => {
+    if (module === 'production' && (view === 'dashboard' || view === 'settings' || view === 'update')) {
+      setProductionView(view);
+    }
+    setActiveModule(module);
+    setShowProfile(false);
+  };
 
   // ── Intro (splash → login) with shared Three.js background ─────────────────
   if (!isAuthenticated) {
@@ -72,21 +82,21 @@ function AppContent() {
         {showProfile ? (
           <Profile onBack={() => setShowProfile(false)} />
         ) : activeModule === 'production' ? (
-          <ProductionTrackingPage />
+          <ProductionTrackingPage initialView={productionView} />
         ) : activeModule === 'dcsc' ? (
           <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
-            DCSC1515A — Coming Soon
+            DSCS1515A — Coming Soon
           </div>
         ) : activeModule === 'wip' ? (
           <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
-            WIP — Coming Soon
+            BSM-1740 — Coming Soon
           </div>
         ) : activeModule === 'custom' ? (
           <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
-            Custom System — Coming Soon
+            PMS-1682 — Coming Soon
           </div>
         ) : (
-          <SkyOs />
+          <SkyOs onNavigateModule={handleModuleNavigate} />
         )}
 
       </div>
