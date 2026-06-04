@@ -38,10 +38,10 @@ export default function Topbar({
 
   const navBtn = (module: ActiveModule | null) => {
     const isActive = module !== null && activeModule === module;
-    const base = 'flex items-center gap-2 px-4 py-3 md:px-6 md:py-4 text-sm font-semibold border-r shrink-0 transition-all duration-200 ';
+    const base = 'flex items-center gap-2 px-4 py-3 md:px-6 md:py-4 text-sm font-semibold border-r border-white/15 shrink-0 transition-all duration-200 ';
     return base + (isActive
-      ? dark ? 'text-orange-400 bg-orange-500/10 border-zinc-800' : 'text-orange-600 bg-orange-50 border-gray-200'
-      : dark ? 'text-gray-400 border-zinc-800 hover:bg-zinc-800 hover:text-white' : 'text-gray-600 border-gray-200 hover:bg-gray-100 hover:text-gray-900'
+      ? 'bg-orange-500 text-white border-orange-400/40 shadow-md shadow-orange-500/30'
+      : 'text-white/75 hover:bg-orange-500 hover:text-white hover:border-orange-400/40'
     );
   };
 
@@ -52,8 +52,8 @@ export default function Topbar({
         onClick={() => { onClick(); setMobileNavOpen(false); }}
         className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold transition-all rounded-lg ${
           isActive
-            ? dark ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-600'
-            : dark ? 'text-gray-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-600 hover:bg-gray-100'
+            ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
+            : 'text-white/75 hover:bg-orange-500 hover:text-white'
         }`}
       >
         <Icon size={16} /> {label}
@@ -145,15 +145,11 @@ export default function Topbar({
       </header>
 
       {/* ── DESKTOP NAV BAR ── */}
-      <nav className={`hidden md:flex items-center border-t overflow-x-auto transition-colors duration-300 ${
-        dark ? 'border-zinc-800 bg-[#111111]' : 'border-gray-200 bg-gray-50'
-      }`}>
+      <nav className="hidden md:flex items-center border-t border-indigo-500/30 overflow-x-auto bg-linear-to-r from-blue-700 via-indigo-700 to-violet-700 shadow-lg shadow-indigo-500/20">
         {productionActive && (
           <button
             onClick={onToggleSidebar}
-            className={`flex items-center justify-center w-12 h-full border-r shrink-0 transition-all ${
-              dark ? 'border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-white' : 'border-gray-200 hover:bg-gray-200 text-gray-500 hover:text-gray-900'
-            }`}
+            className="flex items-center justify-center w-12 h-full border-r border-white/15 shrink-0 transition-all text-white/75 hover:bg-orange-500 hover:text-white"
           >
             {showSidebar ? <PanelLeftClose size={19} /> : <PanelLeftOpen size={19} />}
           </button>
@@ -166,9 +162,7 @@ export default function Topbar({
         <button onClick={onCustomClick}                className={navBtn('custom')}>     <Zap size={16} />              PMS-1682  </button>
         <button
           onClick={onCloseTopbar}
-          className={`ml-auto flex items-center gap-2 px-4 py-4 text-xs border-l shrink-0 transition-all duration-200 ${
-            dark ? 'text-zinc-500 hover:text-white hover:bg-zinc-800 border-zinc-800' : 'text-gray-400 hover:text-gray-900 hover:bg-gray-200 border-gray-200'
-          }`}
+          className="ml-auto flex items-center gap-2 px-4 py-4 text-xs border-l border-white/15 shrink-0 transition-all duration-200 text-white/60 hover:text-white hover:bg-orange-500"
         >
           <ChevronUp size={15} /> Hide
         </button>
@@ -176,9 +170,7 @@ export default function Topbar({
 
       {/* ── MOBILE NAV DRAWER ── */}
       {mobileNavOpen && (
-        <div className={`md:hidden border-t p-3 space-y-1 transition-colors duration-300 ${
-          dark ? 'border-zinc-800 bg-[#111111]' : 'border-gray-200 bg-gray-50'
-        }`}>
+        <div className="md:hidden border-t border-indigo-500/30 p-3 space-y-1 bg-linear-to-b from-blue-700 via-indigo-700 to-violet-700">
           {mobileNavItem('Dashboard',  LayoutDashboard, onDashboardClick,          'home')}
           {mobileNavItem('Analysis',   BarChart3,       () => {},                  null)}
           {mobileNavItem('SPM-1693',   Factory,         onProductionTrackingClick, 'production')}
@@ -188,9 +180,7 @@ export default function Topbar({
           {productionActive && (
             <button
               onClick={() => { onToggleSidebar(); setMobileNavOpen(false); }}
-              className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all ${
-                dark ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-500 hover:bg-gray-100'
-              }`}
+              className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all text-white/75 hover:bg-orange-500 hover:text-white"
             >
               {showSidebar ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
               {showSidebar ? 'Hide Sidebar' : 'Show Sidebar'}
@@ -198,9 +188,7 @@ export default function Topbar({
           )}
           <button
             onClick={() => { onCloseTopbar(); setMobileNavOpen(false); }}
-            className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all ${
-              dark ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-500 hover:bg-gray-100'
-            }`}
+            className="flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all text-white/75 hover:bg-orange-500 hover:text-white"
           >
             <ChevronUp size={16} /> Hide Topbar
           </button>
