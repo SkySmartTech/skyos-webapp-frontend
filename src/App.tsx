@@ -64,10 +64,10 @@ function AppContent() {
           />
         </div>
       ) : (
-        <div className="shrink-0 z-50 bg-gray-900 border-b border-gray-800">
+        <div className="shrink-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
           <button
             onClick={() => setTopbarVisible(true)}
-            className="flex items-center gap-2 px-5 py-1.5 text-gray-400 hover:text-white text-xs transition-colors hover:bg-gray-800 w-full"
+            className="flex items-center gap-2 px-5 py-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xs transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 w-full"
           >
             <ChevronDown size={14} />
             Show navigation

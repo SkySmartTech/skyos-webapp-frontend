@@ -108,7 +108,7 @@ function SkyOsLanding() {
   const KPI    = dark ? KPI_DARK    : KPI_LIGHT;
 
   return (
-    <div className={`font-sans p-4 md:p-8 transition-colors duration-300 ${bg}`}>
+    <div className={`font-sans p-4 pb-24 md:p-8 md:pb-8 transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
       <div className={`relative mb-6 md:mb-10 rounded-2xl overflow-hidden border p-5 md:p-8 shadow-xl transition-colors duration-300 ${heroCard}`}>
@@ -167,10 +167,10 @@ function SkyOsLanding() {
       </div>
 
       {/* ── SYSTEMS + ACTIVITY ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
 
         {/* Systems */}
-        <div className="xl:col-span-2">
+        <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className={`text-base font-bold tracking-wide ${textPri}`}>Active Systems</h2>
             <span className={`text-xs border px-3 py-1 rounded-full ${badge}`}>
@@ -220,7 +220,7 @@ function SkyOsLanding() {
         </div>
 
         {/* Activity */}
-        <div className="xl:col-span-1 flex flex-col gap-4">
+        <div className="lg:col-span-1 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className={`text-base font-bold tracking-wide ${textPri}`}>Live Activity</h2>
             <span className="text-[10px] tracking-widest text-green-500 uppercase font-bold bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">

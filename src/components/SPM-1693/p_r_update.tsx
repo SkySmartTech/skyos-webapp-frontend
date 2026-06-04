@@ -35,7 +35,7 @@ function p_r_update({ onDataUpdate }: PRUpdateProps) {
   ];
 
   return (
-    <div className={`min-h-screen p-3 md:p-6 font-sans transition-colors duration-300 ${bg}`}>
+    <div className={`min-h-screen p-3 pb-24 md:p-6 font-sans transition-colors duration-300 ${bg}`}>
       <div className={`border rounded-xl shadow-sm p-4 md:p-8 transition-colors duration-300 ${card}`}>
 
         {/* Header Info */}

@@ -29,33 +29,33 @@ const SIDEBAR_MODULES: ModuleDef[] = [
   {
     key: 'spm1693', label: 'SPM-1693', Icon: Factory, module: 'production',
     links: [
-      { label: 'Dashboard', Icon: LayoutDashboard, view: 'dashboard' },
-      { label: 'Production Update', Icon: Activity, view: 'update' },
-      { label: 'Plan Settings', Icon: Settings, view: 'settings' },
+      { label: 'Dashboard',         Icon: LayoutDashboard, view: 'dashboard' },
+      { label: 'Production Update', Icon: Activity,        view: 'update'    },
+      { label: 'Plan Settings',     Icon: Settings,        view: 'settings'  },
     ],
   },
   {
     key: 'dscs1515a', label: 'DSCS1515A', Icon: Cpu, module: 'dcsc',
     links: [
-      { label: 'Dashboard', Icon: LayoutDashboard, view: 'dashboard' },
-      { label: 'Andon Alerts', Icon: Bell, view: 'alerts' },
-      { label: 'Analytics', Icon: LineChart, view: 'analytics' },
+      { label: 'Dashboard',    Icon: LayoutDashboard, view: 'dashboard' },
+      { label: 'Andon Alerts', Icon: Bell,            view: 'alerts'    },
+      { label: 'Analytics',    Icon: LineChart,       view: 'analytics' },
     ],
   },
   {
     key: 'pms1682', label: 'PMS-1682', Icon: Zap, module: 'custom',
     links: [
-      { label: 'Dashboard', Icon: LayoutDashboard, view: 'dashboard' },
-      { label: 'Grid Monitoring', Icon: LineChart, view: 'grid' },
-      { label: 'Energy Reports', Icon: BarChart3, view: 'reports' },
+      { label: 'Dashboard',       Icon: LayoutDashboard, view: 'dashboard' },
+      { label: 'Grid Monitoring', Icon: LineChart,       view: 'grid'      },
+      { label: 'Energy Reports',  Icon: BarChart3,       view: 'reports'   },
     ],
   },
   {
     key: 'bsm1740', label: 'BSM-1740', Icon: Layers, module: 'wip',
     links: [
-      { label: 'Dashboard', Icon: LayoutDashboard, view: 'dashboard' },
-      { label: 'WIP Tracking', Icon: Database, view: 'wip' },
-      { label: 'Batch Management', Icon: Activity, view: 'batch' },
+      { label: 'Dashboard',        Icon: LayoutDashboard, view: 'dashboard' },
+      { label: 'WIP Tracking',     Icon: Database,        view: 'wip'       },
+      { label: 'Batch Management', Icon: Activity,        view: 'batch'     },
     ],
   },
 ];
@@ -65,13 +65,13 @@ export default function SkySidebar({ activeView, setActiveView, onNavigateModule
   const dark = theme === 'dark';
   const [openModules, setOpenModules] = useState<Set<string>>(new Set());
 
-  const base = dark ? 'bg-gray-900 border-gray-800 text-gray-400' : 'bg-white border-gray-200 text-gray-600';
-  const lbl = dark ? 'text-gray-600' : 'text-gray-400';
-  const active = dark ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-600';
-  const hover = dark ? 'hover:bg-gray-800 hover:text-white' : 'hover:bg-gray-100 hover:text-gray-900';
-  const divider = dark ? 'border-gray-800' : 'border-gray-200';
-  const textMut = dark ? 'text-gray-500' : 'text-gray-400';
-  const subLine = dark ? 'border-gray-700' : 'border-gray-200';
+  const base    = dark ? 'bg-gray-900 border-gray-800 text-gray-400'  : 'bg-white border-gray-200 text-gray-600';
+  const lbl     = dark ? 'text-gray-600'                               : 'text-gray-400';
+  const active  = dark ? 'bg-orange-500/10 text-orange-400'           : 'bg-orange-50 text-orange-600';
+  const hover   = dark ? 'hover:bg-gray-800 hover:text-white'         : 'hover:bg-gray-100 hover:text-gray-900';
+  const divider = dark ? 'border-gray-800'                             : 'border-gray-200';
+  const textMut = dark ? 'text-gray-500'                               : 'text-gray-400';
+  const subLine = dark ? 'border-gray-700'                             : 'border-gray-200';
   const subLink = dark ? 'text-zinc-400 hover:bg-gray-800 hover:text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900';
 
   const toggleModule = (key: string) =>
@@ -84,8 +84,9 @@ export default function SkySidebar({ activeView, setActiveView, onNavigateModule
   const navItem = (view: SkyView, Icon: React.ElementType, label_: string, badge?: string | number) => (
     <div
       onClick={() => { setActiveView(view); onClose(); }}
-      className={`flex items-center justify-between mb-1 cursor-pointer px-3 py-2 rounded-xl transition-all duration-200 ${activeView === view ? active : hover
-        }`}
+      className={`flex items-center justify-between mb-1 cursor-pointer px-3 py-2 rounded-xl transition-all duration-200 ${
+        activeView === view ? active : hover
+      }`}
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <Icon size={17} className="shrink-0" />
@@ -129,7 +130,7 @@ export default function SkySidebar({ activeView, setActiveView, onNavigateModule
         <div className="mb-2">
           <p className={`text-xs font-bold tracking-widest mb-3 uppercase px-1 ${lbl}`}>Overview</p>
           {navItem('dashboard', LayoutDashboard, 'Dashboard', 6)}
-          {navItem('security', Shield, 'User Management')}
+          {navItem('security',  Shield,          'User Management')}
         </div>
 
         <div className={`border-t my-3 ${divider}`} />
@@ -138,85 +139,86 @@ export default function SkySidebar({ activeView, setActiveView, onNavigateModule
         <div className="mb-2">
           <p className={`text-xs font-bold tracking-widest mb-3 uppercase px-1 ${lbl}`}>Analytics</p>
           {navItem('analytics', BarChart3, 'Analytics & Charts')}
-          {navItem('ai', Brain, 'AI Insights')}
+          {navItem('ai',        Brain,     'AI Insights')}
         </div>
 
         <div className={`border-t my-3 ${divider}`} />
 
-        {/* MODULES */}
-        <div>
-          <p className={`text-xs font-bold tracking-widest mb-3 uppercase px-1 ${lbl}`}>
-            Modules
-          </p>
+    {/* MODULES */}
+<div>
+  <p className={`text-xs font-bold tracking-widest mb-3 uppercase px-1 ${lbl}`}>
+    Modules
+  </p>
 
-          {SIDEBAR_MODULES.map(mod => {
-            const isExpanded = openModules.has(mod.key);
+  {SIDEBAR_MODULES.map(mod => {
+    const isExpanded = openModules.has(mod.key);
 
-            return (
-              <div key={mod.key} className="mb-1">
-                <div
-                  onClick={() => toggleModule(mod.key)}
-                  className={`flex items-center justify-between cursor-pointer px-3 py-2 rounded-xl transition-all duration-200 ${isExpanded
-                      ? dark
-                        ? 'bg-orange-500/10 text-orange-400'
-                        : 'bg-orange-50 text-orange-600'
-                      : hover
-                    }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <mod.Icon size={17} className="shrink-0" />
-                    <span className="text-sm font-medium truncate">{mod.label}</span>
-                  </div>
+    return (
+      <div key={mod.key} className="mb-1">
+        <div
+          onClick={() => toggleModule(mod.key)}
+          className={`flex items-center justify-between cursor-pointer px-3 py-2 rounded-xl transition-all duration-200 ${
+            isExpanded
+              ? dark
+                ? 'bg-orange-500/10 text-orange-400'
+                : 'bg-orange-50 text-orange-600'
+              : hover
+          }`}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <mod.Icon size={17} className="shrink-0" />
+            <span className="text-sm font-medium truncate">{mod.label}</span>
+          </div>
 
-                  {isExpanded ? (
-                    <ChevronDown size={15} />
-                  ) : (
-                    <ChevronRight size={15} />
-                  )}
-                </div>
+          {isExpanded ? (
+            <ChevronDown size={15} />
+          ) : (
+            <ChevronRight size={15} />
+          )}
+        </div>
 
-                {isExpanded && (
-                  <div className={`ml-5 mt-1 mb-1 border-l pl-3 ${subLine}`}>
-                    {mod.links.map(link => (
-                      <div
-                        key={link.view}
-                        onClick={() => {
-                          onNavigateModule(mod.module, link.view);
-                          onClose();
-                        }}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-150 mb-1 text-sm font-medium ${subLink}`}
-                      >
-                        <link.Icon size={14} />
-                        <span>{link.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+        {isExpanded && (
+          <div className={`ml-5 mt-1 mb-1 border-l pl-3 ${subLine}`}>
+            {mod.links.map(link => (
+              <div
+                key={link.view}
+                onClick={() => {
+                  onNavigateModule(mod.module, link.view);
+                  onClose();
+                }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-150 mb-1 text-sm font-medium ${subLink}`}
+              >
+                <link.Icon size={14} />
+                <span>{link.label}</span>
               </div>
-            );
-          })}
-        </div>
-
-        {/* CONFIGURATION */}
-        <div>
-          <div className={`border-t my-3 ${divider}`} />
-
-          <p className={`text-xs font-bold tracking-widest mb-3 uppercase px-1 ${lbl}`}>
-            Configuration
-          </p>
-
-          {navItem('settings', Settings, 'System Settings')}
-        </div>
-
-        {/* FOOTER */}
-        <div className={`mt-4 pt-4 border-t ${divider}`}>
-          <p className={`text-[11px] text-center ${textMut}`}>SkyOS v2.0</p>
-          <p className={`text-[10px] text-center mt-0.5 ${textMut}`}>
-            Sky Technology (Pvt) Ltd
-          </p>
-        </div>
-
+            ))}
+          </div>
+        )}
       </div>
-    </>
-  );
+    );
+  })}
+</div>
+
+{/* CONFIGURATION */}
+<div>
+  <div className={`border-t my-3 ${divider}`} />
+
+  <p className={`text-xs font-bold tracking-widest mb-3 uppercase px-1 ${lbl}`}>
+    Configuration
+  </p>
+
+  {navItem('settings', Settings, 'System Settings')}
+</div>
+
+{/* FOOTER */}
+<div className={`mt-4 pt-4 border-t ${divider}`}>
+  <p className={`text-[11px] text-center ${textMut}`}>SkyOS v2.0</p>
+  <p className={`text-[10px] text-center mt-0.5 ${textMut}`}>
+    Sky Technology (Pvt) Ltd
+  </p>
+</div>
+  
+    </div>
+  </>
+);
 }

@@ -357,9 +357,41 @@ export default function Profile({ onBack }: ProfileProps) {
             </div>
 
           </div>
-        </div>
 
+          {/* Mobile-only: logout + notification toggles */}
+          <div className={`md:hidden rounded-xl border p-4 ${card}`}>
+            <div className="flex flex-wrap gap-3 mb-4">
+              {([
+                { k: 'system'  as const, label: 'System Alerts' },
+                { k: 'alerts'  as const, label: 'Production Alerts' },
+                { k: 'reports' as const, label: 'Daily Reports' },
+              ] as const).map(n => (
+                <div key={n.k} className={`flex items-center justify-between flex-1 min-w-35 px-3 py-2 rounded-lg border ${dark ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <span className={`text-xs ${textSec}`}>{n.label}</span>
+                  <button
+                    onClick={() => setNotifs(p => ({ ...p, [n.k]: !p[n.k] }))}
+                    className={`relative w-9 h-5 rounded-full transition-colors duration-200 ml-2 shrink-0 ${
+                      notifs[n.k] ? 'bg-orange-500' : dark ? 'bg-zinc-700' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-200 ${
+                      notifs[n.k] ? 'left-4' : 'left-0.5'
+                    }`}/>
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={logout}
+              className="flex items-center justify-center gap-2 w-full px-3 py-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-sm font-semibold border border-red-500/25 transition-all"
+            >
+              <LogOut size={14}/> Sign Out
+            </button>
+          </div>
+
+        </div>
       </div>
+
     </div>
   );
 }

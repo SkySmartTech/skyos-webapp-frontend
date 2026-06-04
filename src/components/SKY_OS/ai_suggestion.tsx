@@ -231,7 +231,7 @@ function AiSuggestion() {
   const scoreColor = overallScore >= 85 ? 'text-green-500' : overallScore >= 65 ? 'text-yellow-500' : 'text-red-500';
 
   return (
-    <div className={`font-sans p-4 md:p-8 transition-colors duration-300 ${bg}`}>
+    <div className={`font-sans p-4 pb-24 md:p-8 md:pb-8 transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
       <div className={`relative rounded-2xl border p-5 md:p-8 mb-5 md:mb-8 shadow-xl overflow-hidden transition-colors duration-300 ${heroCard}`}>
