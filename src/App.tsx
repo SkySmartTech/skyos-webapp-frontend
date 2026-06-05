@@ -6,8 +6,11 @@ import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/SPM-1693/production_tracking_page';
 import UserProfile from './pages/PMS-1682(Solar)/userprofile';
 import SolarPage from './pages/PMS-1682(Solar)/solarpage';
-import MFMPage from './pages/PMS-1682(Solar)/mfm-page';
-import MFIPage from './pages/PMS-1682(Solar)/mfi-page';
+import MFMPage from './pages/PMS-1682(Solar)/dashboard-mfm';
+import MFIPage from './pages/PMS-1682(Solar)/dashboard-mfi';
+import DetailsReport from './pages/PMS-1682(Solar)/reports/details-report';
+import DetailsReportIntimo from './pages/PMS-1682(Solar)/reports/details-report-intimo';
+import ThermalConsumptionReport from './pages/PMS-1682(Solar)/reports/thermal-consuption';
 
 export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom' | 'userprofile';
 
@@ -63,7 +66,7 @@ function AppContent() {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="overflow-hidden">
         <Routes>
           <Route path="/" element={<SkyOs />} />
           <Route path="/production" element={<ProductionTrackingPage />} />
@@ -74,6 +77,9 @@ function AppContent() {
           <Route path="/solar/dashboard" element={<SolarPage />} />
           <Route path="/solar/mfm" element={<MFMPage />} />
           <Route path="/solar/mfi" element={<MFIPage />} />
+          <Route path="/solar/reports/details" element={<DetailsReport />} />
+          <Route path="/solar/reports/intimo" element={<DetailsReportIntimo />} />
+          <Route path="/solar/reports/thermal" element={<ThermalConsumptionReport />} />
         </Routes>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Sidebar from "../../components/PMS-1682(Solar)/sidebar";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
@@ -58,88 +59,98 @@ export default function HVACMFIDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#12141f] p-4 font-sans flex flex-col gap-3">
-      {/* Title */}
-      <h1 className="text-center text-[#f5a623] text-2xl font-bold">
-        HVAC Performance Monitoring System of MFI
-      </h1>
+    <div className="min-h-screen bg-[#12141f] font-sans flex">
 
-      {/* Top Row */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 1.2fr 0.9fr" }}>
+      {/* ── Sidebar ── */}
+      <Sidebar />
 
-        {/* Gauge Panel */}
-        <div className="bg-[#1c1f2e] rounded-xl p-5 flex flex-col items-center justify-center">
-          <p className="text-white text-sm font-bold mb-2">MFI kW</p>
-          <Gauge value={664} />
-          <p className="text-white text-3xl font-black -mt-3">664</p>
-          <div className="flex justify-between w-[180px] text-xs text-[#888] mt-2">
-            <span>Low</span><span>High</span>
+      {/* ── Main Content ── */}
+      <div className="flex-1 p-4 flex flex-col gap-3 overflow-auto">
+
+        {/* Title */}
+        <h1 className="text-center text-[#f5a623] text-2xl font-bold">
+          HVAC Performance Monitoring System of MFI
+        </h1>
+
+        {/* Top Row */}
+        <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 1.2fr 0.9fr" }}>
+
+          {/* Gauge Panel */}
+          <div className="bg-[#1c1f2e] rounded-xl p-5 flex flex-col items-center justify-center">
+            <p className="text-white text-sm font-bold mb-2">MFI kW</p>
+            <Gauge value={664} />
+            <p className="text-white text-3xl font-black -mt-3">664</p>
+            <div className="flex justify-between w-[180px] text-xs text-[#888] mt-2">
+              <span>Low</span><span>High</span>
+            </div>
           </div>
-        </div>
 
-        {/* Real Time Data */}
-        <div className="bg-[#1c1f2e] rounded-xl p-5">
-          <h3 className="text-center text-[#e0e0e0] text-sm font-semibold border-b border-[#2e3248] pb-3 mb-3">
-            MFI Real Time Data
-          </h3>
-          <table className="w-full">
-            <tbody>
-              {[
-                ["Thermal energy",    ": 664.0 KW"],
-                ["CH Water Flow",     ": 147.0 m3/h"],
-                ["CH Water Sup Temp", ": 7.1 °C"],
-                ["CH Water Ret Temp", ": 11.0 °C"],
-              ].map(([l, v]) => (
-                <tr key={l} className="border-b border-[#2a2d40] last:border-0">
-                  <td className="py-3 font-bold text-[#e0e0e0] text-sm">{l}</td>
-                  <td className="py-3 text-[#e0e0e0] text-sm">{v}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Total kW */}
-        <div className="bg-[#1c1f2e] rounded-xl p-5 flex flex-col items-center justify-center gap-2">
-          <p className="text-white text-2xl font-bold">Total kW</p>
-          <p className="text-white text-6xl font-black leading-none">1659</p>
-          <div className="mt-3 text-center">
-            <p className="text-[#f5a623] text-xs font-semibold">Last Updated Time MFI</p>
-            <p className="text-[#f5a623] text-xs">{fmtDate(now)}</p>
+          {/* Real Time Data */}
+          <div className="bg-[#1c1f2e] rounded-xl p-5">
+            <h3 className="text-center text-[#e0e0e0] text-sm font-semibold border-b border-[#2e3248] pb-3 mb-3">
+              MFI Real Time Data
+            </h3>
+            <table className="w-full">
+              <tbody>
+                {[
+                  ["Thermal energy",    ": 664.0 KW"],
+                  ["CH Water Flow",     ": 147.0 m3/h"],
+                  ["CH Water Sup Temp", ": 7.1 °C"],
+                  ["CH Water Ret Temp", ": 11.0 °C"],
+                ].map(([l, v]) => (
+                  <tr key={l} className="border-b border-[#2a2d40] last:border-0">
+                    <td className="py-3 font-bold text-[#e0e0e0] text-sm">{l}</td>
+                    <td className="py-3 text-[#e0e0e0] text-sm">{v}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-      </div>
 
-      {/* Chart */}
-      <div className="bg-[#1c1f2e] rounded-xl p-5 flex-1">
-        <p className="text-[#e0e0e0] text-sm font-semibold text-center mb-4">
-          MFM &amp; MFI Cooling Load
-        </p>
-        <ResponsiveContainer width="100%" height={320}>
-          <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#222538" />
-            <XAxis
-              dataKey="date"
-              tick={{ fill: "#888", fontSize: 12 }}
-              axisLine={{ stroke: "#333" }}
-            />
-            <YAxis
-              tick={{ fill: "#888", fontSize: 12 }}
-              axisLine={{ stroke: "#333" }}
-              domain={[-200, 1100]}
-              ticks={[-200, 0, 200, 400, 600, 800, 1000]}
-            />
-            <Tooltip
-              contentStyle={{ background: "#1c1f2e", border: "1px solid #2e3248", borderRadius: 8 }}
-              labelStyle={{ color: "#e5e7eb" }}
-            />
-            <Legend
-              formatter={(v) => <span style={{ color: "#aaa", fontSize: 12 }}>{v}</span>}
-            />
-            <Line type="monotone" dataKey="MFM" stroke="#14b8a6" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="MFI" stroke="#f59e0b" strokeWidth={2.5} dot={false} />
-          </LineChart>
-        </ResponsiveContainer>
+          {/* Total kW */}
+          <div className="bg-[#1c1f2e] rounded-xl p-5 flex flex-col items-center justify-center gap-2">
+            <p className="text-white text-2xl font-bold">Total kW</p>
+            <p className="text-white text-6xl font-black leading-none">1659</p>
+            <div className="mt-3 text-center">
+              <p className="text-[#f5a623] text-xs font-semibold">Last Updated Time MFI</p>
+              <p className="text-[#f5a623] text-xs">{fmtDate(now)}</p>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Chart */}
+        <div className="bg-[#1c1f2e] rounded-xl p-5 flex-1">
+          <p className="text-[#e0e0e0] text-sm font-semibold text-center mb-4">
+            MFM &amp; MFI Cooling Load
+          </p>
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#222538" />
+              <XAxis
+                dataKey="date"
+                tick={{ fill: "#888", fontSize: 12 }}
+                axisLine={{ stroke: "#333" }}
+              />
+              <YAxis
+                tick={{ fill: "#888", fontSize: 12 }}
+                axisLine={{ stroke: "#333" }}
+                domain={[-200, 1100]}
+                ticks={[-200, 0, 200, 400, 600, 800, 1000]}
+              />
+              <Tooltip
+                contentStyle={{ background: "#1c1f2e", border: "1px solid #2e3248", borderRadius: 8 }}
+                labelStyle={{ color: "#e5e7eb" }}
+              />
+              <Legend
+                formatter={(v) => <span style={{ color: "#aaa", fontSize: 12 }}>{v}</span>}
+              />
+              <Line type="monotone" dataKey="MFM" stroke="#14b8a6" strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="MFI" stroke="#f59e0b" strokeWidth={2.5} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
       </div>
     </div>
   );

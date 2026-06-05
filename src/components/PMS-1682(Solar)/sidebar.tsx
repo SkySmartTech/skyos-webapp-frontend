@@ -122,19 +122,20 @@ export default function Sidebar() {
             {reportsOpen && (
               <div className="mt-2 ml-2 space-y-1">
                 {[
-                  "Details Reports",
-                  "Details Reports COP",
-                  "Details Reports Intimo",
-                  "Thermal Consumption",
-                  "Thermal Consumption & CE",
-                  "Details Reports Energy",
+                  { label: "Details Reports", path: "/solar/reports/details" },
+                  { label: "Details Reports COP", path: "/solar/reports/cop" },
+                  { label: "Details Reports Intimo", path: "/solar/reports/intimo" },
+                  { label: "Thermal Consumption", path: "/solar/reports/thermal" },
+                  { label: "Thermal Consumption & CE", path: "/solar/reports/thermal-ce" },
+                  { label: "Details Reports Energy", path: "/solar/reports/energy" },
                 ].map((item) => (
                   <button
-                    key={item}
+                    key={item.label}
+                    onClick={() => navigate(item.path)}
                     className="w-full flex items-center gap-3 px-4 py-3 text-[#D6D8DB] hover:bg-[#495057] rounded transition"
                   >
                     <PieChart size={18} />
-                    <span className="text-[15px]">{item}</span>
+                    <span className="text-[15px]">{item.label}</span>
                   </button>
                 ))}
               </div>
@@ -164,7 +165,9 @@ export default function Sidebar() {
 
             {energyOpen && (
               <div className="mt-2 ml-2">
-                <button className="w-full flex items-center gap-3 px-4 py-3 text-[#D6D8DB] hover:bg-[#495057] rounded transition">
+                <button
+                 onClick={() => navigate("/solar/reports/dashboard")}
+                className="w-full flex items-center gap-3 px-4 py-3 text-[#D6D8DB] hover:bg-[#495057] rounded transition">
                   <LayoutDashboard size={18} />
                   <span className="text-[15px]">Dashboard</span>
                 </button>

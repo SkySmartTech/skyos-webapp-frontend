@@ -12,6 +12,8 @@ export default function SolarPage() {
       {/* Main Dashboard */}
       <div className="flex-1 overflow-auto">
         <HVACDashboard />
+      
+
       </div>
     </div>
   );
