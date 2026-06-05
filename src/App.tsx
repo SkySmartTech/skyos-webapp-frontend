@@ -3,8 +3,9 @@ import { ChevronDown } from 'lucide-react';
 import Topbar from './components/COMMON/Topbar';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/SPM-1693/production_tracking_page';
+import AndonPage from './pages/DSCS1515A(Anadon)/andonpage';
 
-export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
+export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom' | 'andon';
 
 function App() {
   const [activeModule, setActiveModule] = useState<ActiveModule>('home');
@@ -19,6 +20,7 @@ function App() {
             activeModule={activeModule}
             onDashboardClick={() => setActiveModule('home')}
             onProductionTrackingClick={() => setActiveModule('production')}
+            onAndonClick={() => setActiveModule('andon')}
             onDcscClick={() => setActiveModule('dcsc')}
             onWipClick={() => setActiveModule('wip')}
             onCustomClick={() => setActiveModule('custom')}
@@ -43,6 +45,8 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
         {activeModule === 'production' ? (
           <ProductionTrackingPage />
+        ) : activeModule === 'andon' ? (
+          <AndonPage />
         ) : activeModule === 'dcsc' ? (
           <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
             DCSC1515A — Coming Soon
