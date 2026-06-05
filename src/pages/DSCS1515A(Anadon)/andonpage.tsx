@@ -7,7 +7,9 @@ export default function AndonPage() {
   const dark = theme === "dark";
 
   return (
-    <div className={`flex w-full h-full overflow-hidden transition-colors duration-300 ${dark ? "bg-gray-950" : "bg-slate-100"}`}>
+    <div
+      className={`flex w-full h-full overflow-hidden transition-colors duration-300 ${dark ? "bg-gray-950" : "bg-slate-100"}`}
+    >
       <div className="shrink-0 h-full">
         <AndonSidebar />
       </div>

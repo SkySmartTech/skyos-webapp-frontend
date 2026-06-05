@@ -11,7 +11,14 @@ import {
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 
-type MenuKey = "dashboard" | "downtime" | "charts" | "reports" | "profile" | "help" | "logout";
+type MenuKey =
+  | "dashboard"
+  | "downtime"
+  | "charts"
+  | "reports"
+  | "profile"
+  | "help"
+  | "logout";
 
 export default function AndonSidebar() {
   const { theme } = useTheme();
@@ -45,7 +52,9 @@ export default function AndonSidebar() {
         : "text-gray-500 hover:text-gray-900";
 
   return (
-    <aside className={`w-72 h-full border-r px-4 py-5 overflow-y-auto transition-colors duration-300 ${base}`}>
+    <aside
+      className={`w-72 h-full border-r px-4 py-5 overflow-y-auto transition-colors duration-300 ${base}`}
+    >
       <div className="space-y-3">
         <button
           onClick={() => setActiveItem("dashboard")}
@@ -73,7 +82,9 @@ export default function AndonSidebar() {
         </button>
 
         <button
-          onClick={() => setOpenMenus(prev => ({ ...prev, charts: !prev.charts }))}
+          onClick={() =>
+            setOpenMenus((prev) => ({ ...prev, charts: !prev.charts }))
+          }
           className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
             activeItem === "charts" ? active : inactive
           }`}
@@ -82,7 +93,10 @@ export default function AndonSidebar() {
             <BarChart3 size={21} />
             Charts
           </span>
-          <ChevronDown size={18} className={`transition-transform duration-200 ${openMenus.charts ? "rotate-180" : ""}`} />
+          <ChevronDown
+            size={18}
+            className={`transition-transform duration-200 ${openMenus.charts ? "rotate-180" : ""}`}
+          />
         </button>
 
         {openMenus.charts && (
@@ -95,7 +109,9 @@ export default function AndonSidebar() {
         )}
 
         <button
-          onClick={() => setOpenMenus(prev => ({ ...prev, reports: !prev.reports }))}
+          onClick={() =>
+            setOpenMenus((prev) => ({ ...prev, reports: !prev.reports }))
+          }
           className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
             activeItem === "reports" ? active : inactive
           }`}
@@ -104,7 +120,10 @@ export default function AndonSidebar() {
             <List size={21} />
             Reports
           </span>
-          <ChevronDown size={18} className={`transition-transform duration-200 ${openMenus.reports ? "rotate-180" : ""}`} />
+          <ChevronDown
+            size={18}
+            className={`transition-transform duration-200 ${openMenus.reports ? "rotate-180" : ""}`}
+          />
         </button>
 
         {openMenus.reports && (
@@ -117,7 +136,9 @@ export default function AndonSidebar() {
         )}
       </div>
 
-      <div className={`my-8 border-t ${dark ? "border-white/10" : "border-gray-200"}`} />
+      <div
+        className={`my-8 border-t ${dark ? "border-white/10" : "border-gray-200"}`}
+      />
 
       <div className="space-y-3">
         <button
