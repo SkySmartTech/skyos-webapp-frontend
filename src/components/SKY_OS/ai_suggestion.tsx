@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Brain, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2,
+  Brain, TrendingUp, TrendingDown,
   Zap, Factory, Cpu, Activity, Globe, Server, ArrowRight,
   Lightbulb, Target, BarChart2, RefreshCw, ChevronDown, ChevronUp,
 } from 'lucide-react';
