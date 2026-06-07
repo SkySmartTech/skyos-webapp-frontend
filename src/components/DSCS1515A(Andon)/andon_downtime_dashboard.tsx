@@ -110,9 +110,6 @@ export default function AndonDowntimeDashboard() {
     <div className="min-h-full w-full overflow-y-auto bg-[#f5f5f5] px-3 py-3 text-slate-900">
       <div className="mx-auto flex min-h-full max-w-[1920px] flex-col gap-3">
         <header className="flex items-center justify-between gap-4 bg-[#3a456d] px-4 py-4 shadow-sm">
-          <div className="flex h-12 w-20 items-center justify-center bg-white px-2 text-[28px] font-light tracking-tight text-slate-700">
-            ILUETA
-          </div>
           <h1 className="flex-1 text-center text-[clamp(1.8rem,2.4vw,3.2rem)] font-bold tracking-tight text-[#d6de62]">
             Smart Andon System -Dashboard
           </h1>
