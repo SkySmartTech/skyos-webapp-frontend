@@ -17,10 +17,13 @@ export type ActiveModule =
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const initialModule: ActiveModule = location.pathname.startsWith("/andon") ? "andon" : "home";
+  const initialModule: ActiveModule = location.pathname.startsWith("/andon")
+    ? "andon"
+    : "home";
   const [activeModule, setActiveModule] = useState<ActiveModule>(initialModule);
   const [topbarVisible, setTopbarVisible] = useState(true);
-  const showAndonHome = location.pathname === "/andon/home-dashboard" || activeModule === "andon";
+  const showAndonHome =
+    location.pathname === "/andon/home-dashboard" || activeModule === "andon";
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
