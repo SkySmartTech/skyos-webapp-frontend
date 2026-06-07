@@ -32,8 +32,16 @@ const lineBoards = [
 ];
 
 const downtimeRows: DowntimeRow[] = [
-  { label: "TECHNICAL", cells: Array(22).fill("00:00:00"), color: "bg-red-500" },
-  { label: "CUTTING", cells: Array(22).fill("00:00:00"), color: "bg-green-600" },
+  {
+    label: "TECHNICAL",
+    cells: Array(22).fill("00:00:00"),
+    color: "bg-red-500",
+  },
+  {
+    label: "CUTTING",
+    cells: Array(22).fill("00:00:00"),
+    color: "bg-green-600",
+  },
   { label: "MMT", cells: Array(22).fill("00:00:00"), color: "bg-yellow-300" },
   { label: "QA/MQA", cells: Array(22).fill("00:00:00"), color: "bg-sky-300" },
 ];
@@ -50,7 +58,10 @@ function useClock() {
 }
 
 function DowntimeMatrix({ startIndex }: { startIndex: number }) {
-  const columns = useMemo(() => lineBoards.slice(startIndex, startIndex + 11), [startIndex]);
+  const columns = useMemo(
+    () => lineBoards.slice(startIndex, startIndex + 11),
+    [startIndex],
+  );
 
   return (
     <div className="overflow-hidden border border-white bg-white shadow-sm">
@@ -119,7 +130,9 @@ export default function AndonDowntimeDashboard() {
           <div className="text-center text-[15px] md:text-left">
             Copyright © 2024 Sky Smart Technology Pvt Ltd. All Rights Reserved
           </div>
-          <div className="text-center text-[15px] md:text-right">Soft Ver: 1.0</div>
+          <div className="text-center text-[15px] md:text-right">
+            Soft Ver: 1.0
+          </div>
         </footer>
       </div>
     </div>
