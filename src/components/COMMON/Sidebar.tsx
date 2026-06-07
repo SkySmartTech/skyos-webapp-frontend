@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   BarChart3,
@@ -12,7 +12,7 @@ import {
   Info,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type ProductionView = "dashboard" | "settings" | "update";
 type SidebarMode = "production" | "andon";
@@ -38,6 +38,7 @@ const Sidebar = ({
   mode = "production",
 }: SidebarProps) => {
   const { theme } = useTheme();
+  const location = useLocation();
   const navigate = useNavigate();
   const dark = theme === "dark";
 
@@ -85,6 +86,17 @@ const Sidebar = ({
         ? "text-slate-400 hover:text-white"
         : "text-gray-500 hover:text-gray-900";
 
+  useEffect(() => {
+    if (location.pathname === "/andon/downtime-dashboard") {
+      setActiveAndonItem("downtime");
+      return;
+    }
+
+    if (location.pathname === "/andon/home-dashboard") {
+      setActiveAndonItem("dashboard");
+    }
+  }, [location.pathname]);
+
   if (mode === "andon") {
     return (
       <aside
@@ -110,7 +122,10 @@ const Sidebar = ({
           </button>
 
           <button
-            onClick={() => setActiveAndonItem("downtime")}
+            onClick={() => {
+              setActiveAndonItem("downtime");
+              navigate("/andon/downtime-dashboard");
+            }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
               activeAndonItem === "downtime" ? andonActive : andonInactive
             }`}
