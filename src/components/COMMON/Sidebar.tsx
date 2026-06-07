@@ -12,6 +12,7 @@ import {
   Info,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 type ProductionView = 'dashboard' | 'settings' | 'update';
 type SidebarMode = 'production' | 'andon';
@@ -33,6 +34,7 @@ interface SidebarProps {
 
 const Sidebar = ({ setActiveView, activeView = 'dashboard', mode = 'production' }: SidebarProps) => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const dark = theme === 'dark';
 
   const [activeAndonItem, setActiveAndonItem] = useState<AndonMenuKey>('dashboard');
@@ -80,7 +82,10 @@ const Sidebar = ({ setActiveView, activeView = 'dashboard', mode = 'production' 
       <aside className={`w-72 h-full border-r px-4 py-5 overflow-y-auto transition-colors duration-300 ${andonBase}`}>
         <div className="space-y-3">
           <button
-            onClick={() => setActiveAndonItem('dashboard')}
+            onClick={() => {
+              setActiveAndonItem('dashboard');
+              navigate('/andon/home-dashboard');
+            }}
             className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
               activeAndonItem === 'dashboard' ? andonActive : andonInactive
             }`}

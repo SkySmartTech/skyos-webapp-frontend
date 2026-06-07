@@ -4,6 +4,7 @@ import Topbar from "./components/COMMON/Topbar";
 import SkyOs from "./pages/SKY_OS_PAGES/sky_os";
 import ProductionTrackingPage from "./pages/SPM-1693/production_tracking_page";
 import AndonPage from "./pages/DSCS1515A(Anadon)/andonpage";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export type ActiveModule =
   | "home"
@@ -14,8 +15,12 @@ export type ActiveModule =
   | "andon";
 
 function App() {
-  const [activeModule, setActiveModule] = useState<ActiveModule>("home");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const initialModule: ActiveModule = location.pathname.startsWith("/andon") ? "andon" : "home";
+  const [activeModule, setActiveModule] = useState<ActiveModule>(initialModule);
   const [topbarVisible, setTopbarVisible] = useState(true);
+  const showAndonHome = location.pathname === "/andon/home-dashboard" || activeModule === "andon";
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
@@ -23,12 +28,30 @@ function App() {
         <div className="shrink-0 z-50 relative shadow-sm">
           <Topbar
             activeModule={activeModule}
-            onDashboardClick={() => setActiveModule("home")}
-            onProductionTrackingClick={() => setActiveModule("production")}
-            onAndonClick={() => setActiveModule("andon")}
-            onDcscClick={() => setActiveModule("dcsc")}
-            onWipClick={() => setActiveModule("wip")}
-            onCustomClick={() => setActiveModule("custom")}
+            onDashboardClick={() => {
+              setActiveModule("home");
+              navigate("/");
+            }}
+            onProductionTrackingClick={() => {
+              setActiveModule("production");
+              navigate("/");
+            }}
+            onAndonClick={() => {
+              setActiveModule("andon");
+              navigate("/andon/home-dashboard");
+            }}
+            onDcscClick={() => {
+              setActiveModule("dcsc");
+              navigate("/");
+            }}
+            onWipClick={() => {
+              setActiveModule("wip");
+              navigate("/");
+            }}
+            onCustomClick={() => {
+              setActiveModule("custom");
+              navigate("/");
+            }}
             productionActive={activeModule === "production"}
             showSidebar={true}
             onToggleSidebar={() => {}}
@@ -48,10 +71,10 @@ function App() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        {activeModule === "production" ? (
-          <ProductionTrackingPage />
-        ) : activeModule === "andon" ? (
+        {showAndonHome ? (
           <AndonPage />
+        ) : activeModule === "production" ? (
+          <ProductionTrackingPage />
         ) : activeModule === "dcsc" ? (
           <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
             DCSC1515A — Coming Soon
