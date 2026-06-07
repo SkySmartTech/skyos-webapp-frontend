@@ -1,16 +1,42 @@
+import { useState } from 'react';
 import {
-  LayoutDashboard, BarChart3, ChevronDown, Settings, Activity, Users, LogOut, User,
-} from "lucide-react";
+  LayoutDashboard,
+  BarChart3,
+  ChevronDown,
+  Settings,
+  Activity,
+  Users,
+  LogOut,
+  User,
+  List,
+  Info,
+} from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
+type ProductionView = 'dashboard' | 'settings' | 'update';
+type SidebarMode = 'production' | 'andon';
+
+type AndonMenuKey =
+  | 'dashboard'
+  | 'downtime'
+  | 'charts'
+  | 'reports'
+  | 'profile'
+  | 'help'
+  | 'logout';
+
 interface SidebarProps {
-  setActiveView: (view: 'dashboard' | 'settings' | 'update') => void;
-  activeView: 'dashboard' | 'settings' | 'update';
+  setActiveView?: (view: ProductionView) => void;
+  activeView?: ProductionView;
+  mode?: SidebarMode;
 }
 
-const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
+const Sidebar = ({ setActiveView, activeView = 'dashboard', mode = 'production' }: SidebarProps) => {
   const { theme } = useTheme();
   const dark = theme === 'dark';
+
+  const [activeAndonItem, setActiveAndonItem] = useState<AndonMenuKey>('dashboard');
+  const [openAndonMenus, setOpenAndonMenus] = useState({ charts: true, reports: true });
 
   const base = dark
     ? 'bg-gray-900 border-gray-800 text-gray-400'
@@ -28,16 +54,155 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
 
   const divider = dark ? 'border-gray-800' : 'border-gray-200';
 
-  return (
-    <div className={`w-[280px] h-full border-r px-6 py-6 overflow-y-auto transition-colors duration-300 ${base}`}>
+  const andonBase = dark
+    ? 'bg-gradient-to-b from-[#07111f] to-[#0c1422] border-[#1e2a3a] text-slate-300'
+    : 'bg-white border-gray-200 text-gray-600';
 
-      {/* SYSTEMS */}
+  const andonActive = dark
+    ? 'bg-orange-500/10 text-orange-400 shadow-[0_0_0_1px_rgba(249,115,22,0.08)]'
+    : 'bg-orange-50 text-orange-600';
+
+  const andonInactive = dark
+    ? 'hover:bg-white/5 hover:text-white'
+    : 'hover:bg-gray-100 hover:text-gray-900';
+
+  const andonSubItem = (isActive: boolean) =>
+    isActive
+      ? dark
+        ? 'text-orange-400'
+        : 'text-orange-600'
+      : dark
+        ? 'text-slate-400 hover:text-white'
+        : 'text-gray-500 hover:text-gray-900';
+
+  if (mode === 'andon') {
+    return (
+      <aside className={`w-72 h-full border-r px-4 py-5 overflow-y-auto transition-colors duration-300 ${andonBase}`}>
+        <div className="space-y-3">
+          <button
+            onClick={() => setActiveAndonItem('dashboard')}
+            className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              activeAndonItem === 'dashboard' ? andonActive : andonInactive
+            }`}
+          >
+            <span className="flex items-center gap-3 text-[17px] font-semibold">
+              <LayoutDashboard size={21} />
+              Home Dashboard
+            </span>
+            <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-[11px] font-bold flex items-center justify-center shadow-md">
+              3
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveAndonItem('downtime')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
+              activeAndonItem === 'downtime' ? andonActive : andonInactive
+            }`}
+          >
+            <Activity size={21} />
+            Downtime Dashboard
+          </button>
+
+          <button
+            onClick={() => setOpenAndonMenus(prev => ({ ...prev, charts: !prev.charts }))}
+            className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
+              activeAndonItem === 'charts' ? andonActive : andonInactive
+            }`}
+          >
+            <span className="flex items-center gap-3">
+              <BarChart3 size={21} />
+              Charts
+            </span>
+            <ChevronDown
+              size={18}
+              className={`transition-transform duration-200 ${openAndonMenus.charts ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {openAndonMenus.charts && (
+            <button
+              onClick={() => setActiveAndonItem('charts')}
+              className={`w-full text-left pl-14 pr-4 py-2.5 rounded-lg text-[16px] font-medium transition-colors duration-200 ${andonSubItem(
+                activeAndonItem === 'charts',
+              )}`}
+            >
+              Factory Wise
+            </button>
+          )}
+
+          <button
+            onClick={() => setOpenAndonMenus(prev => ({ ...prev, reports: !prev.reports }))}
+            className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
+              activeAndonItem === 'reports' ? andonActive : andonInactive
+            }`}
+          >
+            <span className="flex items-center gap-3">
+              <List size={21} />
+              Reports
+            </span>
+            <ChevronDown
+              size={18}
+              className={`transition-transform duration-200 ${openAndonMenus.reports ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {openAndonMenus.reports && (
+            <button
+              onClick={() => setActiveAndonItem('reports')}
+              className={`w-full text-left pl-14 pr-4 py-2.5 rounded-lg text-[16px] font-medium transition-colors duration-200 ${andonSubItem(
+                activeAndonItem === 'reports',
+              )}`}
+            >
+              Details
+            </button>
+          )}
+        </div>
+
+        <div className={`my-8 border-t ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+
+        <div className="space-y-3">
+          <button
+            onClick={() => setActiveAndonItem('profile')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[17px] font-semibold transition-all duration-200 ${
+              activeAndonItem === 'profile' ? andonActive : andonInactive
+            }`}
+          >
+            <User size={21} />
+            User Profile
+          </button>
+
+          <button
+            onClick={() => setActiveAndonItem('help')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[17px] font-semibold transition-all duration-200 ${
+              activeAndonItem === 'help' ? andonActive : andonInactive
+            }`}
+          >
+            <Info size={21} />
+            Help
+          </button>
+
+          <button
+            onClick={() => setActiveAndonItem('logout')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[17px] font-semibold transition-all duration-200 ${
+              activeAndonItem === 'logout' ? andonActive : andonInactive
+            }`}
+          >
+            <LogOut size={21} />
+            Logout
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
+  return (
+    <div className={`w-70 h-full border-r px-6 py-6 overflow-y-auto transition-colors duration-300 ${base}`}>
       <div>
         <p className={`text-xs font-bold tracking-widest mb-5 uppercase ${label}`}>Systems</p>
 
-        {/* Dashboard */}
         <div
-          onClick={() => setActiveView('dashboard')}
+          onClick={() => setActiveView?.('dashboard')}
           className={`flex items-center justify-between mb-2 cursor-pointer px-3 py-2.5 rounded-xl transition-all duration-200 ${
             activeView === 'dashboard' ? active : hover
           }`}
@@ -51,7 +216,6 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
           </div>
         </div>
 
-        {/* P2P Section */}
         <div className={`flex items-center justify-between cursor-pointer px-3 py-2.5 rounded-xl transition-all duration-200 ${hover}`}>
           <div className="flex items-center gap-3">
             <BarChart3 size={19} />
@@ -61,16 +225,13 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
         </div>
       </div>
 
-      {/* DIVIDER */}
       <div className={`border-t my-6 ${divider}`} />
 
-      {/* CONFIGURATION */}
       <div>
         <p className={`text-xs font-bold tracking-widest mb-5 uppercase ${label}`}>Configuration</p>
 
-        {/* Production Update */}
         <div
-          onClick={() => setActiveView('update')}
+          onClick={() => setActiveView?.('update')}
           className={`flex items-center gap-3 mb-2 cursor-pointer px-3 py-2.5 rounded-xl transition-all duration-200 ${
             activeView === 'update' ? active : hover
           }`}
@@ -79,9 +240,8 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
           <span className="text-base font-medium">Production Update</span>
         </div>
 
-        {/* Plan Settings */}
         <div
-          onClick={() => setActiveView('settings')}
+          onClick={() => setActiveView?.('settings')}
           className={`flex items-center gap-3 mb-2 cursor-pointer px-3 py-2.5 rounded-xl transition-all duration-200 ${
             activeView === 'settings' ? active : hover
           }`}
@@ -90,7 +250,6 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
           <span className="text-base font-medium">Plan Settings</span>
         </div>
 
-        {/* Company Setting */}
         <div className={`flex items-center justify-between cursor-pointer px-3 py-2.5 rounded-xl transition-all duration-200 ${hover}`}>
           <div className="flex items-center gap-3">
             <Users size={19} />
@@ -100,10 +259,8 @@ const Sidebar = ({ setActiveView, activeView }: SidebarProps) => {
         </div>
       </div>
 
-      {/* DIVIDER */}
       <div className={`border-t my-6 ${divider}`} />
 
-      {/* COMPONENTS */}
       <div>
         <p className={`text-xs font-bold tracking-widest mb-5 uppercase ${label}`}>Account</p>
         <div className="space-y-1">
