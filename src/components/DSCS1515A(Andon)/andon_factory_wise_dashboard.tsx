@@ -221,7 +221,9 @@ function ReportPanel({
 
   return (
     <section className={`overflow-hidden rounded-md border ${panel}`}>
-      <header className={`flex items-center justify-between px-3 py-2 text-[13px] font-semibold ${header} ${titleBg}`}>
+      <header
+        className={`flex items-center justify-between px-3 py-2 text-[13px] font-semibold ${header} ${titleBg}`}
+      >
         <span>{title}</span>
         <span className="text-[16px] leading-none">-</span>
       </header>
@@ -242,9 +244,15 @@ export default function AndonFactoryWiseDashboard() {
     color: dark ? "#e2e8f0" : "#111827",
   };
 
-  const page = dark ? "bg-[#0b1220] text-slate-100" : "bg-[#f3f3f3] text-gray-800";
-  const outerPanel = dark ? "border-slate-700 bg-slate-900 shadow-black/20" : "border-gray-300 bg-white shadow-sm";
-  const outerHeader = dark ? "border-slate-700 bg-slate-800 text-slate-100" : "border-gray-200 bg-[#f0f0f0] text-gray-700";
+  const page = dark
+    ? "bg-[#0b1220] text-slate-100"
+    : "bg-[#f3f3f3] text-gray-800";
+  const outerPanel = dark
+    ? "border-slate-700 bg-slate-900 shadow-black/20"
+    : "border-gray-300 bg-white shadow-sm";
+  const outerHeader = dark
+    ? "border-slate-700 bg-slate-800 text-slate-100"
+    : "border-gray-200 bg-[#f0f0f0] text-gray-700";
   const label = dark ? "text-slate-200" : "text-gray-700";
   const field = dark
     ? "border-slate-700 bg-slate-950 text-slate-100"
@@ -253,14 +261,20 @@ export default function AndonFactoryWiseDashboard() {
     ? "bg-cyan-600 text-white hover:bg-cyan-500"
     : "bg-blue-600 text-white hover:bg-blue-700";
   const gridStroke = dark ? "#334155" : "#e5e7eb";
-  const axisTick = dark ? { fill: "#cbd5e1", fontSize: 10 } : { fill: "#6b7280", fontSize: 10 };
-  const legendText = dark ? { color: "#cbd5e1", fontSize: 11 } : { color: "#6b7280", fontSize: 11 };
+  const axisTick = dark
+    ? { fill: "#cbd5e1", fontSize: 10 }
+    : { fill: "#6b7280", fontSize: 10 };
+  const legendText = dark
+    ? { color: "#cbd5e1", fontSize: 11 }
+    : { color: "#6b7280", fontSize: 11 };
 
   return (
     <div className={`h-full w-full overflow-y-auto p-3 ${page}`}>
       <div className="space-y-3">
         <section className={`rounded-md border ${outerPanel}`}>
-          <header className={`border-b px-3 py-2 text-[13px] font-semibold ${outerHeader}`}>
+          <header
+            className={`border-b px-3 py-2 text-[13px] font-semibold ${outerHeader}`}
+          >
             Downtime Reports
           </header>
 
@@ -285,7 +299,9 @@ export default function AndonFactoryWiseDashboard() {
 
             <label className={`space-y-1 text-[12px] font-semibold ${label}`}>
               <span>Shift</span>
-              <select className={`h-9 w-full rounded border px-2 text-[12px] ${field}`}>
+              <select
+                className={`h-9 w-full rounded border px-2 text-[12px] ${field}`}
+              >
                 <option>All</option>
                 <option>Shift A</option>
                 <option>Shift B</option>
@@ -295,10 +311,14 @@ export default function AndonFactoryWiseDashboard() {
           </div>
 
           <div className="flex flex-wrap gap-3 px-3 pb-3">
-            <button className={`rounded px-4 py-2 text-[12px] font-semibold ${action}`}>
+            <button
+              className={`rounded px-4 py-2 text-[12px] font-semibold ${action}`}
+            >
               View Report
             </button>
-            <button className={`rounded px-4 py-2 text-[12px] font-semibold ${action}`}>
+            <button
+              className={`rounded px-4 py-2 text-[12px] font-semibold ${action}`}
+            >
               Print Report
             </button>
           </div>
@@ -330,7 +350,12 @@ export default function AndonFactoryWiseDashboard() {
                     />
                   ))}
                 </Pie>
-                <Legend verticalAlign="top" height={30} iconType="rect" formatter={(value) => <span style={legendText}>{value}</span>} />
+                <Legend
+                  verticalAlign="top"
+                  height={30}
+                  iconType="rect"
+                  formatter={(value) => <span style={legendText}>{value}</span>}
+                />
                 <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
@@ -360,7 +385,12 @@ export default function AndonFactoryWiseDashboard() {
                     />
                   ))}
                 </Pie>
-                <Legend verticalAlign="top" height={30} iconType="rect" formatter={(value) => <span style={legendText}>{value}</span>} />
+                <Legend
+                  verticalAlign="top"
+                  height={30}
+                  iconType="rect"
+                  formatter={(value) => <span style={legendText}>{value}</span>}
+                />
                 <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
@@ -393,7 +423,11 @@ export default function AndonFactoryWiseDashboard() {
             </ResponsiveContainer>
           </ReportPanel>
 
-          <ReportPanel title="Line Wise Total Occurance" titleBg="bg-green-600" dark={dark}>
+          <ReportPanel
+            title="Line Wise Total Occurance"
+            titleBg="bg-green-600"
+            dark={dark}
+          >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={lineData}

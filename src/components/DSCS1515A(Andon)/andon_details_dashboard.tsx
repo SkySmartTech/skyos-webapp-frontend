@@ -155,9 +155,15 @@ export default function AndonDetailsDashboard() {
   const { theme } = useTheme();
   const dark = theme === "dark";
 
-  const page = dark ? "bg-[#0b1220] text-slate-100" : "bg-[#e9ecef] text-gray-800";
-  const panel = dark ? "bg-[#111827] border-slate-700 shadow-black/20" : "bg-white border-gray-300 shadow-sm";
-  const panelHeader = dark ? "bg-[#182235] border-slate-700 text-slate-100" : "bg-[#f3f3f3] border-gray-300 text-[#23354a]";
+  const page = dark
+    ? "bg-[#0b1220] text-slate-100"
+    : "bg-[#e9ecef] text-gray-800";
+  const panel = dark
+    ? "bg-[#111827] border-slate-700 shadow-black/20"
+    : "bg-white border-gray-300 shadow-sm";
+  const panelHeader = dark
+    ? "bg-[#182235] border-slate-700 text-slate-100"
+    : "bg-[#f3f3f3] border-gray-300 text-[#23354a]";
   const labelText = dark ? "text-slate-200" : "text-[#12263a]";
   const field = dark
     ? "bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500"
@@ -213,7 +219,9 @@ export default function AndonDetailsDashboard() {
             <span className={`block text-[13px] font-semibold ${labelText}`}>
               Shift
             </span>
-            <select className={`h-8 w-full rounded border px-2 text-[12px] ${field}`}>
+            <select
+              className={`h-8 w-full rounded border px-2 text-[12px] ${field}`}
+            >
               <option>All</option>
               <option>1</option>
               <option>2</option>
@@ -225,7 +233,9 @@ export default function AndonDetailsDashboard() {
             <span className={`block text-[13px] font-semibold ${labelText}`}>
               Category Name
             </span>
-            <select className={`h-8 w-full rounded border px-2 text-[12px] ${field}`}>
+            <select
+              className={`h-8 w-full rounded border px-2 text-[12px] ${field}`}
+            >
               <option>All</option>
               <option>MMT</option>
               <option>CUTTING</option>
@@ -235,10 +245,14 @@ export default function AndonDetailsDashboard() {
         </div>
 
         <div className="flex flex-wrap gap-3 px-3 pb-4">
-          <button className={`rounded px-4 py-1.5 text-[12px] font-semibold ${primaryButton}`}>
+          <button
+            className={`rounded px-4 py-1.5 text-[12px] font-semibold ${primaryButton}`}
+          >
             View Report
           </button>
-          <button className={`rounded px-4 py-1.5 text-[12px] font-semibold ${primaryButton}`}>
+          <button
+            className={`rounded px-4 py-1.5 text-[12px] font-semibold ${primaryButton}`}
+          >
             Print Report
           </button>
         </div>
@@ -252,26 +266,40 @@ export default function AndonDetailsDashboard() {
         <div className="px-3 py-3">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap gap-1.5">
-              <button className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}>
+              <button
+                className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}
+              >
                 Copy
               </button>
-              <button className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}>
+              <button
+                className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}
+              >
                 Excel
               </button>
-              <button className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}>
+              <button
+                className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}
+              >
                 CSV
               </button>
-              <button className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}>
+              <button
+                className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}
+              >
                 PDF
               </button>
-              <button className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}>
+              <button
+                className={`rounded px-2.5 py-1 text-[11px] font-semibold ${toolbarButton}`}
+              >
                 Print
               </button>
             </div>
 
-            <label className={`flex items-center gap-2 text-[12px] ${mutedText}`}>
+            <label
+              className={`flex items-center gap-2 text-[12px] ${mutedText}`}
+            >
               Search:
-              <input className={`h-7 w-[140px] rounded border px-2 ${searchField}`} />
+              <input
+                className={`h-7 w-[140px] rounded border px-2 ${searchField}`}
+              />
             </label>
           </div>
 
@@ -294,7 +322,12 @@ export default function AndonDetailsDashboard() {
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.id} className={dark ? "hover:bg-slate-800/60" : "hover:bg-gray-50"}>
+                  <tr
+                    key={row.id}
+                    className={
+                      dark ? "hover:bg-slate-800/60" : "hover:bg-gray-50"
+                    }
+                  >
                     <td className={tableBody}>{row.id}</td>
                     <td className={tableBody}>{row.date}</td>
                     <td className={tableBody}>{row.line}</td>
@@ -312,35 +345,53 @@ export default function AndonDetailsDashboard() {
             </table>
           </div>
 
-          <div className={`mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] ${mutedText}`}>
+          <div
+            className={`mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] ${mutedText}`}
+          >
             <p>Showing 1 to 10 of 212 entries</p>
 
             <div className="flex items-center gap-2">
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-slate-400" : "border-gray-300 bg-white text-gray-500"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-slate-400" : "border-gray-300 bg-white text-gray-500"}`}
+              >
                 Previous
               </button>
               <button className="rounded border border-blue-600 bg-blue-600 px-3 py-1 text-[12px] text-white">
                 1
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 2
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 3
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 4
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 5
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 ...
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 22
               </button>
-              <button className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}>
+              <button
+                className={`rounded border px-3 py-1 text-[12px] ${dark ? "border-slate-700 bg-slate-950 text-sky-400" : "border-gray-300 bg-white text-blue-600"}`}
+              >
                 Next
               </button>
             </div>
