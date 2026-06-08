@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+
 import Topbar from './components/COMMON/Topbar';
 import Profile from './components/COMMON/Profile';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/SPM-1693/production_tracking_page';
+
 import SkyAuth, { useAuth } from './components/SKY_OS/sky_auth';
 import SkyBackground from './components/SKY_OS/SkyBackground';
 import SkySplash from './components/SKY_OS/sky_splash';
@@ -14,35 +16,49 @@ export type ProductionView = 'dashboard' | 'settings' | 'update';
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
-  const [splashDone,      setSplashDone]      = useState(false);
-  const [activeModule,    setActiveModule]    = useState<ActiveModule>('home');
-  const [productionView,  setProductionView]  = useState<ProductionView>('dashboard');
-  const [topbarVisible,   setTopbarVisible]   = useState(true);
-  const [showSidebar,     setShowSidebar]     = useState(true);
-  const [showProfile,     setShowProfile]     = useState(false);
+
+  const [splashDone, setSplashDone] = useState(false);
+  const [activeModule, setActiveModule] = useState<ActiveModule>('home');
+  const [productionView, setProductionView] = useState<ProductionView>('dashboard');
+
+  const [topbarVisible, setTopbarVisible] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [showProfile, setShowProfile] = useState(false);
 
   const handleModuleNavigate = (module: ActiveModule, view?: string) => {
-    if (module === 'production' && (view === 'dashboard' || view === 'settings' || view === 'update')) {
+    if (
+      module === 'production' &&
+      (view === 'dashboard' || view === 'settings' || view === 'update')
+    ) {
       setProductionView(view);
     }
     setActiveModule(module);
     setShowProfile(false);
   };
 
-  // ── Intro (splash → login) with shared Three.js background ─────────────────
+  // ── Splash + Login Flow ─────────────────────────────
   if (!isAuthenticated) {
     return (
-      <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#050505' }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          background: '#050505',
+        }}
+      >
         <SkyBackground />
-        {!splashDone
-          ? <SkySplash onComplete={() => setSplashDone(true)} />
-          : <SkyLogin glass />
-        }
+        {!splashDone ? (
+          <SkySplash onComplete={() => setSplashDone(true)} />
+        ) : (
+          <SkyLogin glass />
+        )}
       </div>
     );
   }
 
-  // ── Main app ────────────────────────────────────────────────────────────────
+  // ── Main App ────────────────────────────────────────
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
 
@@ -51,11 +67,26 @@ function AppContent() {
         <div className="shrink-0 z-50 relative shadow-sm">
           <Topbar
             activeModule={activeModule}
-            onDashboardClick={() => { setActiveModule('home'); setShowProfile(false); }}
-            onProductionTrackingClick={() => { setActiveModule('production'); setShowProfile(false); }}
-            onDcscClick={() => { setActiveModule('dcsc'); setShowProfile(false); }}
-            onWipClick={() => { setActiveModule('wip'); setShowProfile(false); }}
-            onCustomClick={() => { setActiveModule('custom'); setShowProfile(false); }}
+            onDashboardClick={() => {
+              setActiveModule('home');
+              setShowProfile(false);
+            }}
+            onProductionTrackingClick={() => {
+              setActiveModule('production');
+              setShowProfile(false);
+            }}
+            onDcscClick={() => {
+              setActiveModule('dcsc');
+              setShowProfile(false);
+            }}
+            onWipClick={() => {
+              setActiveModule('wip');
+              setShowProfile(false);
+            }}
+            onCustomClick={() => {
+              setActiveModule('custom');
+              setShowProfile(false);
+            }}
             productionActive={activeModule === 'production'}
             showSidebar={showSidebar}
             onToggleSidebar={() => setShowSidebar(prev => !prev)}
@@ -75,10 +106,9 @@ function AppContent() {
         </div>
       )}
 
-      {/* Content area */}
+      {/* Content */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Profile page replaces content when open */}
         {showProfile ? (
           <Profile onBack={() => setShowProfile(false)} />
         ) : activeModule === 'production' ? (
