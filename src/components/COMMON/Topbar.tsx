@@ -21,7 +21,6 @@ interface TopbarProps {
   onDashboardClick: () => void;
   onProductionTrackingClick: () => void;
   onAndonClick: () => void;
-  onDcscClick: () => void;
   onWipClick: () => void;
   onCustomClick: () => void;
   productionActive: boolean;
@@ -34,7 +33,6 @@ export default function Topbar({
   activeModule,
   onDashboardClick,
   onProductionTrackingClick,
-  onDcscClick,
   onWipClick,
   onCustomClick,
   onAndonClick,
@@ -237,14 +235,9 @@ export default function Topbar({
           WIP
         </button>
 
-        <button onClick={onDcscClick} className={navBtn("dcsc")}>
-          <Cpu size={17} />
-          DCSC1515A
-        </button>
-
         <button onClick={onAndonClick} className={navBtn("andon")}>
           <Factory size={17} />
-          Andon
+          DCSC1515A
         </button>
 
         <button onClick={onCustomClick} className={navBtn("custom")}>

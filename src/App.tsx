@@ -43,10 +43,6 @@ function App() {
               setActiveModule("andon");
               navigate("/andon/home-dashboard");
             }}
-            onDcscClick={() => {
-              setActiveModule("dcsc");
-              navigate("/");
-            }}
             onWipClick={() => {
               setActiveModule("wip");
               navigate("/");
