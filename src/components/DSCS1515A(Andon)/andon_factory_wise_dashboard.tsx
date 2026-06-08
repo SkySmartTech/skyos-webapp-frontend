@@ -345,7 +345,10 @@ export default function AndonFactoryWiseDashboard() {
             titleBg="bg-green-600"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={lineData} margin={{ top: 8, right: 8, left: -5, bottom: 0 }}>
+              <BarChart
+                data={lineData}
+                margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
+              >
                 <CartesianGrid stroke="#e5e7eb" />
                 <XAxis
                   dataKey="line"
@@ -365,7 +368,10 @@ export default function AndonFactoryWiseDashboard() {
 
           <ReportPanel title="Line Wise Total Occurance" titleBg="bg-green-600">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={lineData} margin={{ top: 8, right: 8, left: -5, bottom: 0 }}>
+              <BarChart
+                data={lineData}
+                margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
+              >
                 <CartesianGrid stroke="#e5e7eb" />
                 <XAxis
                   dataKey="line"
@@ -388,7 +394,10 @@ export default function AndonFactoryWiseDashboard() {
             titleBg="bg-green-600"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={lineData} margin={{ top: 8, right: 8, left: -5, bottom: 0 }}>
+              <BarChart
+                data={lineData}
+                margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
+              >
                 <CartesianGrid stroke="#e5e7eb" />
                 <XAxis
                   dataKey="line"
@@ -401,10 +410,22 @@ export default function AndonFactoryWiseDashboard() {
                 <YAxis tick={{ fontSize: 10 }} width={35} />
                 <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="TECHNICAL" stackId="a" fill={departmentColors.TECHNICAL} />
+                <Bar
+                  dataKey="TECHNICAL"
+                  stackId="a"
+                  fill={departmentColors.TECHNICAL}
+                />
                 <Bar dataKey="MMT" stackId="a" fill={departmentColors.MMT} />
-                <Bar dataKey="CUTTING" stackId="a" fill={departmentColors.CUTTING} />
-                <Bar dataKey="QA/MQA" stackId="a" fill={departmentColors["QA/MQA"]} />
+                <Bar
+                  dataKey="CUTTING"
+                  stackId="a"
+                  fill={departmentColors.CUTTING}
+                />
+                <Bar
+                  dataKey="QA/MQA"
+                  stackId="a"
+                  fill={departmentColors["QA/MQA"]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ReportPanel>
@@ -414,7 +435,10 @@ export default function AndonFactoryWiseDashboard() {
             titleBg="bg-green-600"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={lineData} margin={{ top: 8, right: 8, left: -5, bottom: 0 }}>
+              <BarChart
+                data={lineData}
+                margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
+              >
                 <CartesianGrid stroke="#e5e7eb" />
                 <XAxis
                   dataKey="line"
@@ -427,10 +451,22 @@ export default function AndonFactoryWiseDashboard() {
                 <YAxis tick={{ fontSize: 10 }} width={35} />
                 <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="TECHNICAL" stackId="a" fill={departmentColors.TECHNICAL} />
+                <Bar
+                  dataKey="TECHNICAL"
+                  stackId="a"
+                  fill={departmentColors.TECHNICAL}
+                />
                 <Bar dataKey="MMT" stackId="a" fill={departmentColors.MMT} />
-                <Bar dataKey="CUTTING" stackId="a" fill={departmentColors.CUTTING} />
-                <Bar dataKey="QA/MQA" stackId="a" fill={departmentColors["QA/MQA"]} />
+                <Bar
+                  dataKey="CUTTING"
+                  stackId="a"
+                  fill={departmentColors.CUTTING}
+                />
+                <Bar
+                  dataKey="QA/MQA"
+                  stackId="a"
+                  fill={departmentColors["QA/MQA"]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ReportPanel>
