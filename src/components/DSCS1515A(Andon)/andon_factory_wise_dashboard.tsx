@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import type { ReactNode } from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 type DeptKey = "TECHNICAL" | "MMT" | "CUTTING" | "QA/MQA";
 
@@ -205,17 +206,22 @@ const totalOccurrenceByDept = (Object.keys(departmentColors) as DeptKey[]).map(
 function ReportPanel({
   title,
   titleBg,
+  dark,
   children,
 }: {
   title: string;
   titleBg: string;
+  dark: boolean;
   children: ReactNode;
 }) {
+  const panel = dark
+    ? "border-slate-700 bg-slate-900 shadow-black/20"
+    : "border-gray-300 bg-white shadow-sm";
+  const header = dark ? "text-slate-100" : "text-white";
+
   return (
-    <section className="overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm">
-      <header
-        className={`flex items-center justify-between px-3 py-2 text-[13px] font-semibold text-white ${titleBg}`}
-      >
+    <section className={`overflow-hidden rounded-md border ${panel}`}>
+      <header className={`flex items-center justify-between px-3 py-2 text-[13px] font-semibold ${header} ${titleBg}`}>
         <span>{title}</span>
         <span className="text-[16px] leading-none">-</span>
       </header>
@@ -225,43 +231,61 @@ function ReportPanel({
 }
 
 export default function AndonFactoryWiseDashboard() {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+
   const tooltipStyle = {
-    backgroundColor: "#ffffff",
-    border: "1px solid #d1d5db",
+    backgroundColor: dark ? "#0f172a" : "#ffffff",
+    border: `1px solid ${dark ? "#334155" : "#d1d5db"}`,
     borderRadius: 8,
     fontSize: 12,
+    color: dark ? "#e2e8f0" : "#111827",
   };
 
+  const page = dark ? "bg-[#0b1220] text-slate-100" : "bg-[#f3f3f3] text-gray-800";
+  const outerPanel = dark ? "border-slate-700 bg-slate-900 shadow-black/20" : "border-gray-300 bg-white shadow-sm";
+  const outerHeader = dark ? "border-slate-700 bg-slate-800 text-slate-100" : "border-gray-200 bg-[#f0f0f0] text-gray-700";
+  const label = dark ? "text-slate-200" : "text-gray-700";
+  const field = dark
+    ? "border-slate-700 bg-slate-950 text-slate-100"
+    : "border-gray-300 bg-white text-gray-700";
+  const action = dark
+    ? "bg-cyan-600 text-white hover:bg-cyan-500"
+    : "bg-blue-600 text-white hover:bg-blue-700";
+  const gridStroke = dark ? "#334155" : "#e5e7eb";
+  const axisTick = dark ? { fill: "#cbd5e1", fontSize: 10 } : { fill: "#6b7280", fontSize: 10 };
+  const legendText = dark ? { color: "#cbd5e1", fontSize: 11 } : { color: "#6b7280", fontSize: 11 };
+
   return (
-    <div className="h-full w-full overflow-y-auto bg-[#f3f3f3] p-3 text-gray-800">
+    <div className={`h-full w-full overflow-y-auto p-3 ${page}`}>
       <div className="space-y-3">
-        <section className="rounded-md border border-gray-300 bg-white shadow-sm">
-          <header className="border-b border-gray-200 bg-[#f0f0f0] px-3 py-2 text-[13px] font-semibold text-gray-700">
+        <section className={`rounded-md border ${outerPanel}`}>
+          <header className={`border-b px-3 py-2 text-[13px] font-semibold ${outerHeader}`}>
             Downtime Reports
           </header>
 
           <div className="grid grid-cols-1 gap-3 p-3 lg:grid-cols-[1fr_1fr_170px]">
-            <label className="space-y-1 text-[12px] font-semibold text-gray-700">
+            <label className={`space-y-1 text-[12px] font-semibold ${label}`}>
               <span>Start Date Time:</span>
               <input
                 type="text"
                 defaultValue="06/08/2026 05:00 AM"
-                className="h-9 w-full rounded border border-gray-300 px-2 text-[12px] text-gray-600"
+                className={`h-9 w-full rounded border px-2 text-[12px] ${field}`}
               />
             </label>
 
-            <label className="space-y-1 text-[12px] font-semibold text-gray-700">
+            <label className={`space-y-1 text-[12px] font-semibold ${label}`}>
               <span>End Date Time:</span>
               <input
                 type="text"
                 defaultValue="06/09/2026 10:30 PM"
-                className="h-9 w-full rounded border border-gray-300 px-2 text-[12px] text-gray-600"
+                className={`h-9 w-full rounded border px-2 text-[12px] ${field}`}
               />
             </label>
 
-            <label className="space-y-1 text-[12px] font-semibold text-gray-700">
+            <label className={`space-y-1 text-[12px] font-semibold ${label}`}>
               <span>Shift</span>
-              <select className="h-9 w-full rounded border border-gray-300 bg-white px-2 text-[12px] text-gray-700">
+              <select className={`h-9 w-full rounded border px-2 text-[12px] ${field}`}>
                 <option>All</option>
                 <option>Shift A</option>
                 <option>Shift B</option>
@@ -271,10 +295,10 @@ export default function AndonFactoryWiseDashboard() {
           </div>
 
           <div className="flex flex-wrap gap-3 px-3 pb-3">
-            <button className="rounded bg-blue-600 px-4 py-2 text-[12px] font-semibold text-white hover:bg-blue-700">
+            <button className={`rounded px-4 py-2 text-[12px] font-semibold ${action}`}>
               View Report
             </button>
-            <button className="rounded bg-blue-600 px-4 py-2 text-[12px] font-semibold text-white hover:bg-blue-700">
+            <button className={`rounded px-4 py-2 text-[12px] font-semibold ${action}`}>
               Print Report
             </button>
           </div>
@@ -284,6 +308,7 @@ export default function AndonFactoryWiseDashboard() {
           <ReportPanel
             title="Department Wise Total Downtime"
             titleBg="bg-red-500"
+            dark={dark}
           >
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -300,12 +325,12 @@ export default function AndonFactoryWiseDashboard() {
                     <Cell
                       key={entry.name}
                       fill={entry.fill}
-                      stroke="#ffffff"
+                      stroke={dark ? "#0f172a" : "#ffffff"}
                       strokeWidth={2}
                     />
                   ))}
                 </Pie>
-                <Legend verticalAlign="top" height={30} iconType="rect" />
+                <Legend verticalAlign="top" height={30} iconType="rect" formatter={(value) => <span style={legendText}>{value}</span>} />
                 <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
@@ -314,6 +339,7 @@ export default function AndonFactoryWiseDashboard() {
           <ReportPanel
             title="Department wise Downtime Occurrence"
             titleBg="bg-red-500"
+            dark={dark}
           >
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -329,12 +355,12 @@ export default function AndonFactoryWiseDashboard() {
                     <Cell
                       key={entry.name}
                       fill={entry.fill}
-                      stroke="#ffffff"
+                      stroke={dark ? "#0f172a" : "#ffffff"}
                       strokeWidth={2}
                     />
                   ))}
                 </Pie>
-                <Legend verticalAlign="top" height={30} iconType="rect" />
+                <Legend verticalAlign="top" height={30} iconType="rect" formatter={(value) => <span style={legendText}>{value}</span>} />
                 <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
@@ -343,47 +369,48 @@ export default function AndonFactoryWiseDashboard() {
           <ReportPanel
             title="Line Wise Total Downtime (Minutes)"
             titleBg="bg-green-600"
+            dark={dark}
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={lineData}
                 margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
               >
-                <CartesianGrid stroke="#e5e7eb" />
+                <CartesianGrid stroke={gridStroke} />
                 <XAxis
                   dataKey="line"
-                  tick={{ fontSize: 10 }}
+                  tick={axisTick}
                   interval={0}
                   angle={-30}
                   textAnchor="end"
                   height={48}
                 />
-                <YAxis tick={{ fontSize: 10 }} width={35} />
+                <YAxis tick={axisTick} width={35} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={legendText} />
                 <Bar dataKey="downtime" name="Downtime (Min)" fill="#4b9bc4" />
               </BarChart>
             </ResponsiveContainer>
           </ReportPanel>
 
-          <ReportPanel title="Line Wise Total Occurance" titleBg="bg-green-600">
+          <ReportPanel title="Line Wise Total Occurance" titleBg="bg-green-600" dark={dark}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={lineData}
                 margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
               >
-                <CartesianGrid stroke="#e5e7eb" />
+                <CartesianGrid stroke={gridStroke} />
                 <XAxis
                   dataKey="line"
-                  tick={{ fontSize: 10 }}
+                  tick={axisTick}
                   interval={0}
                   angle={-30}
                   textAnchor="end"
                   height={48}
                 />
-                <YAxis tick={{ fontSize: 10 }} width={35} />
+                <YAxis tick={axisTick} width={35} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={legendText} />
                 <Bar dataKey="occurrence" name="Occurance" fill="#4b9bc4" />
               </BarChart>
             </ResponsiveContainer>
@@ -392,24 +419,25 @@ export default function AndonFactoryWiseDashboard() {
           <ReportPanel
             title="Line and Category Wise Downtime Stacked Chart"
             titleBg="bg-green-600"
+            dark={dark}
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={lineData}
                 margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
               >
-                <CartesianGrid stroke="#e5e7eb" />
+                <CartesianGrid stroke={gridStroke} />
                 <XAxis
                   dataKey="line"
-                  tick={{ fontSize: 10 }}
+                  tick={axisTick}
                   interval={0}
                   angle={-30}
                   textAnchor="end"
                   height={48}
                 />
-                <YAxis tick={{ fontSize: 10 }} width={35} />
+                <YAxis tick={axisTick} width={35} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={legendText} />
                 <Bar
                   dataKey="TECHNICAL"
                   stackId="a"
@@ -433,24 +461,25 @@ export default function AndonFactoryWiseDashboard() {
           <ReportPanel
             title="Line and Category Wise Occurrence Stacked Chart"
             titleBg="bg-green-600"
+            dark={dark}
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={lineData}
                 margin={{ top: 8, right: 8, left: -5, bottom: 0 }}
               >
-                <CartesianGrid stroke="#e5e7eb" />
+                <CartesianGrid stroke={gridStroke} />
                 <XAxis
                   dataKey="line"
-                  tick={{ fontSize: 10 }}
+                  tick={axisTick}
                   interval={0}
                   angle={-30}
                   textAnchor="end"
                   height={48}
                 />
-                <YAxis tick={{ fontSize: 10 }} width={35} />
+                <YAxis tick={axisTick} width={35} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={legendText} />
                 <Bar
                   dataKey="TECHNICAL"
                   stackId="a"
