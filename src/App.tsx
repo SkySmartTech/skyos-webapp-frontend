@@ -11,6 +11,8 @@ import MFIPage from './pages/PMS-1682(Solar)/dashboard-mfi';
 import DetailsReport from './pages/PMS-1682(Solar)/reports/details-report';
 import DetailsReportIntimo from './pages/PMS-1682(Solar)/reports/details-report-intimo';
 import ThermalConsumptionReport from './pages/PMS-1682(Solar)/reports/thermal-consuption';
+import ThermalConsumptionCEReport from './pages/PMS-1682(Solar)/reports/thermal-consumption-&-ceb';
+import DetailsReportEnergy from './pages/PMS-1682(Solar)/reports/details-report-energy';
 
 export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom' | 'userprofile';
 
@@ -80,6 +82,8 @@ function AppContent() {
           <Route path="/solar/reports/details" element={<DetailsReport />} />
           <Route path="/solar/reports/intimo" element={<DetailsReportIntimo />} />
           <Route path="/solar/reports/thermal" element={<ThermalConsumptionReport />} />
+          <Route path="/solar/reports/thermal-ce" element={<ThermalConsumptionCEReport />} />
+          <Route path="/solar/reports/energy" element={<DetailsReportEnergy />} />
         </Routes>
       </div>
 

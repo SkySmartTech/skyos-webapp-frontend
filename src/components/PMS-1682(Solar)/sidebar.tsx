@@ -126,7 +126,7 @@ export default function Sidebar() {
                   { label: "Details Reports COP", path: "/solar/reports/cop" },
                   { label: "Details Reports Intimo", path: "/solar/reports/intimo" },
                   { label: "Thermal Consumption", path: "/solar/reports/thermal" },
-                  { label: "Thermal Consumption & CE", path: "/solar/reports/thermal-ce" },
+                  { label: "Thermal Consumption & CEB", path: "/solar/reports/thermal-ce" },
                   { label: "Details Reports Energy", path: "/solar/reports/energy" },
                 ].map((item) => (
                   <button
