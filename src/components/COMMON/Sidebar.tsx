@@ -20,7 +20,7 @@ type SidebarMode = "production" | "andon";
 type AndonMenuKey =
   | "dashboard"
   | "downtime"
-  | "charts"
+  | "factoryWise"
   | "reports"
   | "profile"
   | "help"
@@ -92,6 +92,11 @@ const Sidebar = ({
       return;
     }
 
+    if (location.pathname === "/andon/factory-wise") {
+      setActiveAndonItem("factoryWise");
+      return;
+    }
+
     if (location.pathname === "/andon/home-dashboard") {
       setActiveAndonItem("dashboard");
     }
@@ -139,7 +144,7 @@ const Sidebar = ({
               setOpenAndonMenus((prev) => ({ ...prev, charts: !prev.charts }))
             }
             className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-[17px] font-semibold ${
-              activeAndonItem === "charts" ? andonActive : andonInactive
+              activeAndonItem === "factoryWise" ? andonActive : andonInactive
             }`}
           >
             <span className="flex items-center gap-3">
@@ -154,9 +159,12 @@ const Sidebar = ({
 
           {openAndonMenus.charts && (
             <button
-              onClick={() => setActiveAndonItem("charts")}
+              onClick={() => {
+                setActiveAndonItem("factoryWise");
+                navigate("/andon/factory-wise");
+              }}
               className={`w-full text-left pl-14 pr-4 py-2.5 rounded-lg text-[16px] font-medium transition-colors duration-200 ${andonSubItem(
-                activeAndonItem === "charts",
+                activeAndonItem === "factoryWise",
               )}`}
             >
               Factory Wise
