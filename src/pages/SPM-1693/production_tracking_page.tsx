@@ -1,17 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Menu } from 'lucide-react';
 import type { DashboardData } from '../../components/SPM-1693/p_r_dashboard';
 import PRDashboard from '../../components/SPM-1693/p_r_dashboard';
-import PRSetting from '../../components/SPM-1693/p_r_setting';
-import PRUpdate from '../../components/SPM-1693/p_r_update';
-import Sidebar from '../../components/COMMON/Sidebar';
+import PRSetting   from '../../components/SPM-1693/p_r_setting';
+import PRUpdate    from '../../components/SPM-1693/p_r_update';
+import Sidebar     from '../../components/COMMON/Sidebar';
 import { useTheme } from '../../context/ThemeContext';
 
-function ProductionTrackingPage() {
-  const [activeView, setActiveView] = useState<'dashboard' | 'settings' | 'update'>('dashboard');
+function ProductionTrackingPage({ initialView = 'dashboard' }: { initialView?: 'dashboard' | 'settings' | 'update' }) {
+  const [activeView,   setActiveView]   = useState<'dashboard' | 'settings' | 'update'>(initialView);
+  const [sidebarOpen,  setSidebarOpen]  = useState(false);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [showSidebar] = useState(true);
   const { theme } = useTheme();
   const dark = theme === 'dark';
+
+  useEffect(() => { setActiveView(initialView); }, [initialView]);
 
   const handleDataUpload = (data: DashboardData) => {
     setDashboardData(data);
@@ -35,11 +38,22 @@ function ProductionTrackingPage() {
   return (
     <div className={`flex w-full h-full overflow-hidden transition-colors duration-300 ${dark ? 'bg-gray-950' : 'bg-slate-100'}`}>
 
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${showSidebar ? 'w-[280px]' : 'w-0'}`}>
-        <Sidebar activeView={activeView} setActiveView={setActiveView} />
-      </div>
+      <Sidebar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto relative">
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="md:hidden fixed bottom-5 left-4 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30 font-semibold text-sm transition-all"
+        >
+          <Menu size={17} /> Menu
+        </button>
+
         {activeView === 'dashboard' ? (
           <PRDashboard dashboardData={dashboardData} />
         ) : activeView === 'settings' ? (

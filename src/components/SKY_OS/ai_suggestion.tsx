@@ -231,10 +231,10 @@ function AiSuggestion() {
   const scoreColor = overallScore >= 85 ? 'text-green-500' : overallScore >= 65 ? 'text-yellow-500' : 'text-red-500';
 
   return (
-    <div className={`font-sans p-8 transition-colors duration-300 ${bg}`}>
+    <div className={`font-sans p-4 pb-24 md:p-8 md:pb-8 transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
-      <div className={`relative rounded-2xl border p-8 mb-8 shadow-xl overflow-hidden transition-colors duration-300 ${heroCard}`}>
+      <div className={`relative rounded-2xl border p-5 md:p-8 mb-5 md:mb-8 shadow-xl overflow-hidden transition-colors duration-300 ${heroCard}`}>
         {dark && (
           <>
             <div className="absolute -top-20 -left-20 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl pointer-events-none" />
@@ -242,50 +242,38 @@ function AiSuggestion() {
           </>
         )}
 
-        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg shadow-orange-500/30 shrink-0">
-              <Brain size={28} className="text-white" />
+        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-5 md:gap-8">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="w-10 h-10 md:w-14 md:h-14 rounded-2xl bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg shadow-orange-500/30 shrink-0">
+              <Brain size={22} className="text-white md:hidden" />
+              <Brain size={28} className="text-white hidden md:block" />
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className={`text-3xl font-black ${title}`}>AI Efficiency Advisor</h1>
-                <span className="text-[10px] font-bold tracking-widest text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase">
-                  Beta
-                </span>
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h1 className={`text-xl md:text-3xl font-black ${title}`}>AI Efficiency Advisor</h1>
+                <span className="text-[10px] font-bold tracking-widest text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase">Beta</span>
               </div>
-              <p className={`${sub}`}>
-                Real-time analysis across all systems — actionable suggestions to grow your factory efficiency.
-              </p>
+              <p className={`text-sm ${sub}`}>Real-time analysis across all systems — actionable suggestions to grow your factory efficiency.</p>
             </div>
           </div>
 
           {/* Overall Score */}
-          <div className={`flex items-center gap-6 border rounded-2xl px-6 py-4 shrink-0 ${card}`}>
+          <div className={`flex items-center gap-4 md:gap-6 border rounded-2xl px-4 md:px-6 py-3 md:py-4 w-full md:w-auto shrink-0 ${card}`}>
             <div className="text-center">
               <p className={`text-[11px] uppercase tracking-widest font-bold mb-1 ${muted}`}>Overall Score</p>
-              <p className={`text-5xl font-black ${scoreColor}`}>{overallScore}<span className="text-xl">%</span></p>
+              <p className={`text-3xl md:text-5xl font-black ${scoreColor}`}>{overallScore}<span className="text-lg md:text-xl">%</span></p>
             </div>
-            <div className={`w-px h-12 ${divider.replace('border-','bg-')}`} />
+            <div className={`w-px h-10 md:h-12 ${divider.replace('border-','bg-')}`} />
             <div className="space-y-1 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
-                <span className={sub}>{counts.critical} critical alerts</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-orange-500" />
-                <span className={sub}>{counts.high} high priority</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
-                <span className={sub}>{counts.low} optimised</span>
-              </div>
+              <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500" /><span className={sub}>{counts.critical} critical</span></div>
+              <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-orange-500" /><span className={sub}>{counts.high} high</span></div>
+              <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500" /><span className={sub}>{counts.low} optimised</span></div>
             </div>
           </div>
         </div>
 
         {/* Stats strip */}
-        <div className={`relative mt-6 pt-5 border-t flex flex-wrap gap-6 ${divider}`}>
+        <div className={`relative mt-5 pt-4 border-t grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-6 ${divider}`}>
           {[
             { icon: Target,   label: 'Potential Gain',    value: '+35%',    color: 'text-green-500'  },
             { icon: Lightbulb, label: 'Total Suggestions', value: String(SUGGESTIONS.length), color: 'text-orange-500' },
@@ -293,9 +281,10 @@ function AiSuggestion() {
             { icon: RefreshCw, label: 'Last Updated',      value: 'Just now',  color: muted             },
           ].map(s => (
             <div key={s.label} className="flex items-center gap-2">
-              <s.icon size={15} className={s.color} />
-              <span className={`text-xs ${muted}`}>{s.label}:</span>
+              <s.icon size={14} className={`${s.color} shrink-0`} />
+              <span className={`text-xs ${muted} hidden sm:inline`}>{s.label}:</span>
               <span className={`text-xs font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-xs ${muted} sm:hidden`}>{s.label}</span>
             </div>
           ))}
         </div>

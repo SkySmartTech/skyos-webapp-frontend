@@ -29,33 +29,33 @@ function p_r_dashboard({ dashboardData }: PRDashboardProps) {
   const hourBg = dark ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-gray-50 border-gray-200 hover:bg-gray-100';
 
   return (
-    <div className={`min-h-screen p-6 font-sans flex flex-col transition-colors duration-300 ${bg}`}>
+    <div className={`min-h-screen p-3 pb-24 md:p-6 font-sans flex flex-col transition-colors duration-300 ${bg}`}>
 
       {/* Header Info */}
-      <div className={`flex flex-wrap items-center justify-between px-6 py-3 rounded-xl shadow-sm mb-6 text-sm font-medium border transition-colors duration-300 ${header}`}>
+      <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 px-4 md:px-6 py-3 rounded-xl shadow-sm mb-4 md:mb-6 text-xs md:text-sm font-medium border transition-colors duration-300 ${header}`}>
         {[['TEAM', data.team], ['BUYER', data.buyer], ['STYLE', data.style],
           ['GAUGE', data.gauge], ['SMV', data.smv], ['CARDER', data.carder], ['WH / RH', data.whRh]
         ].map(([k, v]) => (
-          <div key={k}>
-            <span className={`mr-2 text-xs font-semibold ${label}`}>{k}:</span>
-            <span>{v}</span>
+          <div key={k} className="flex items-center gap-1">
+            <span className={`text-xs font-semibold ${label}`}>{k}:</span>
+            <span className="font-medium">{v}</span>
           </div>
         ))}
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-4 gap-4 flex-1">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 flex-1">
 
         {/* Perf EFI */}
         <div className={`col-span-1 row-span-2 rounded-xl shadow-sm p-6 flex flex-col justify-center items-center border transition-colors duration-300 ${card}`}>
           <h2 className={`text-xs tracking-widest mb-4 uppercase font-semibold ${label}`}>Performance EFI</h2>
-          <div className={`text-7xl font-black ${bigVal}`}>{data.perfEfi}</div>
+          <div className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black ${bigVal}`}>{data.perfEfi}</div>
         </div>
 
         {/* Line EFI */}
         <div className={`col-span-1 row-span-2 rounded-xl shadow-sm p-6 flex flex-col justify-center items-center border transition-colors duration-300 ${card}`}>
           <h2 className={`text-xs tracking-widest mb-4 uppercase font-semibold ${label}`}>Line EFI</h2>
-          <div className={`text-7xl font-black ${bigVal}`}>{data.lineEfi}</div>
+          <div className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black ${bigVal}`}>{data.lineEfi}</div>
         </div>
 
         {/* Hourly Target */}
@@ -97,7 +97,7 @@ function p_r_dashboard({ dashboardData }: PRDashboardProps) {
         {/* DHU */}
         <div className={`col-span-1 row-span-2 rounded-xl shadow-sm p-6 flex flex-col justify-center items-center border transition-colors duration-300 ${card}`}>
           <h2 className={`text-xs tracking-widest mb-4 self-start uppercase font-semibold ${label}`}>DHU</h2>
-          <div className={`text-7xl font-black ${bigVal}`}>{data.dhu}</div>
+          <div className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black ${bigVal}`}>{data.dhu}</div>
         </div>
 
         {/* Top 3 Defects */}
@@ -125,9 +125,9 @@ function p_r_dashboard({ dashboardData }: PRDashboardProps) {
       </div>
 
       {/* Hourly Status */}
-      <div className={`mt-4 rounded-xl shadow-sm p-6 border transition-colors duration-300 ${card}`}>
+      <div className={`mt-3 md:mt-4 rounded-xl shadow-sm p-4 md:p-6 border transition-colors duration-300 ${card}`}>
         <h2 className={`text-xs tracking-widest mb-4 uppercase font-semibold ${label}`}>Hourly Status (1 – 10)</h2>
-        <div className="grid grid-cols-10 gap-3">
+        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3">
           {[1,2,3,4,5,6,7,8,9,10].map(h => (
             <div key={h} className={`flex flex-col items-center justify-center py-4 border rounded-lg transition-colors cursor-default ${hourBg}`}>
               <span className={`text-[10px] font-bold tracking-wider uppercase mb-1 ${label}`}>Hour</span>

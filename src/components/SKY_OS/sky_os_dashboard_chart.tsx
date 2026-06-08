@@ -93,15 +93,15 @@ function SkyOsDashboardChart() {
   };
 
   return (
-    <div className={`px-6 pb-6 pt-2 font-sans transition-colors duration-300 ${bg}`}>
+    <div className={`px-3 pb-24 pt-2 md:px-6 md:pb-6 font-sans transition-colors duration-300 ${bg}`}>
 
       {/* ── HEADER ── */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
           <h2 className={`text-base font-bold ${titleCl}`}>Analytics Engine</h2>
           <p className={`text-xs ${subCl}`}>System efficiency &amp; diagnostics</p>
         </div>
-        <div className={`flex gap-1 p-1 rounded-lg border transition-colors ${tabBg}`}>
+        <div className={`flex gap-1 p-1 rounded-lg border transition-colors shrink-0 ${tabBg}`}>
           {(['daily','monthly','yearly'] as Timeframe[]).map(f => (
             <button key={f} onClick={() => setTimeframe(f)} className={btnClass(f)}>
               {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -114,13 +114,13 @@ function SkyOsDashboardChart() {
 
         {/* ── MULTI-LINE EFFICIENCY CHART (full width) ── */}
         <div className={`lg:col-span-3 border rounded-xl p-4 transition-colors duration-300 ${card}`}>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
             <div>
               <h3 className={`text-sm font-bold ${titleCl}`}>System Efficiency Over Time (%)</h3>
               <p className={`text-xs ${subCl}`}>All 6 systems — real-time efficiency tracking</p>
             </div>
             {/* Colour legend pills */}
-            <div className="hidden md:flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-x-3 gap-y-1">
               {SYS_LINES.map(s => (
                 <span key={s.key} className="flex items-center gap-1 text-[11px] font-medium" style={{ color: s.color }}>
                   <span className="w-3 h-0.5 inline-block rounded" style={{ backgroundColor: s.color }} />
@@ -130,7 +130,7 @@ function SkyOsDashboardChart() {
             </div>
           </div>
 
-          <div className="h-52">
+          <div className="h-52 md:h-60">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={efficiencyData[timeframe]} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={grid} />
@@ -157,7 +157,7 @@ function SkyOsDashboardChart() {
         {/* ── BAR CHART — system load (2/3 width) ── */}
         <div className={`lg:col-span-2 border rounded-xl p-4 transition-colors duration-300 ${card}`}>
           <h3 className={`text-sm font-bold mb-3 ${titleCl}`}>Average System Load (%)</h3>
-          <div className="h-44">
+          <div className="h-44 md:h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={systemLoadData[timeframe]} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
