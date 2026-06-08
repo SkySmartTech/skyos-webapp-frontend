@@ -35,8 +35,8 @@ function p_r_update({ onDataUpdate }: PRUpdateProps) {
   ];
 
   return (
-    <div className={`min-h-screen p-6 font-sans transition-colors duration-300 ${bg}`}>
-      <div className={`border rounded-xl shadow-sm p-8 transition-colors duration-300 ${card}`}>
+    <div className={`min-h-screen p-3 pb-24 md:p-6 font-sans transition-colors duration-300 ${bg}`}>
+      <div className={`border rounded-xl shadow-sm p-4 md:p-8 transition-colors duration-300 ${card}`}>
 
         {/* Header Info */}
         <div className={`flex flex-wrap items-center justify-between text-sm font-semibold tracking-wide mb-8 border-b pb-4 ${headerText} ${divider}`}>
@@ -47,7 +47,7 @@ function p_r_update({ onDataUpdate }: PRUpdateProps) {
         </div>
 
         {/* Dropdowns */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6 mb-8 md:mb-12">
           {dropdowns.map(d => (
             <div key={d.label} className="flex flex-col">
               <label className={`text-xs font-semibold tracking-wide uppercase mb-2 ${label}`}>{d.label}</label>
@@ -64,33 +64,33 @@ function p_r_update({ onDataUpdate }: PRUpdateProps) {
         </div>
 
         {/* Counter Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-12">
 
           <div className="flex flex-col items-center">
-            <div className={`text-[5rem] font-light mb-4 leading-none ${val}`}>{successCount}</div>
+            <div className={`text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-light mb-4 leading-none ${val}`}>{successCount}</div>
             <button
               onClick={() => { const n = successCount + 1; setSuccessCount(n); onDataUpdate({ successCount: n, reworkCount, defectCount }); }}
-              className="w-full bg-[#7bc17e] hover:bg-[#6ba96e] transition-colors text-white py-5 rounded-xl flex items-center justify-center gap-3 text-2xl font-semibold shadow-sm"
+              className="w-full bg-[#7bc17e] hover:bg-[#6ba96e] transition-colors text-white py-4 md:py-5 rounded-xl flex items-center justify-center gap-3 text-xl md:text-2xl font-semibold shadow-sm"
             >
-              <Check size={26} /> Success
+              <Check size={24} /> Success
             </button>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className={`text-[5rem] font-light mb-4 leading-none ${val}`}>{reworkCount}</div>
+            <div className={`text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-light mb-4 leading-none ${val}`}>{reworkCount}</div>
             <button
               onClick={() => { const n = reworkCount + 1; setReworkCount(n); onDataUpdate({ successCount, reworkCount: n, defectCount }); }}
-              className="w-full bg-[#edc05c] hover:bg-[#d8ae4f] transition-colors text-[#2c2c2c] py-5 rounded-xl flex items-center justify-center gap-3 text-2xl font-semibold shadow-sm"
+              className="w-full bg-[#edc05c] hover:bg-[#d8ae4f] transition-colors text-[#2c2c2c] py-4 md:py-5 rounded-xl flex items-center justify-center gap-3 text-xl md:text-2xl font-semibold shadow-sm"
             >
-              <AlertCircle size={24} /> Rework
+              <AlertCircle size={22} /> Rework
             </button>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className={`text-[5rem] font-light mb-4 leading-none ${val}`}>{defectCount}</div>
+            <div className={`text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-light mb-4 leading-none ${val}`}>{defectCount}</div>
             <button
               onClick={() => { const n = defectCount + 1; setDefectCount(n); onDataUpdate({ successCount, reworkCount, defectCount: n }); }}
-              className="w-full bg-[#d64152] hover:bg-[#bd3846] transition-colors text-white py-5 rounded-xl flex items-center justify-center gap-3 text-2xl font-semibold shadow-sm"
+              className="w-full bg-[#d64152] hover:bg-[#bd3846] transition-colors text-white py-4 md:py-5 rounded-xl flex items-center justify-center gap-3 text-xl md:text-2xl font-semibold shadow-sm"
             >
               <X size={26} /> Defect
             </button>
@@ -98,19 +98,19 @@ function p_r_update({ onDataUpdate }: PRUpdateProps) {
         </div>
 
         {/* Hourly Table */}
-        <div className="border rounded-lg overflow-hidden border-gray-700">
-          <div className={`grid grid-cols-8 border-b text-center ${hourHead}`}>
+        <div className="border rounded-lg overflow-hidden border-gray-700 overflow-x-auto -mx-1">
+          <div className={`grid grid-cols-8 border-b text-center min-w-lg ${hourHead}`}>
             {[1,2,3,4,5,6,7,8].map(h => (
-              <div key={h} className={`py-4 text-xs font-semibold uppercase tracking-wider ${h < 8 ? `border-r ${hourBorder}` : ''}`}>
+              <div key={h} className={`py-3 md:py-4 text-xs font-semibold uppercase tracking-wider ${h < 8 ? `border-r ${hourBorder}` : ''}`}>
                 Hour: {h}
               </div>
             ))}
           </div>
-          <div className={`grid grid-cols-8 text-center ${hourRow}`}>
+          <div className={`grid grid-cols-8 text-center min-w-lg ${hourRow}`}>
             {[0,0,0,0,0,0,0].map((_, i) => (
-              <div key={i} className={`py-4 text-gray-800 border-r ${hourBorder}`}>0</div>
+              <div key={i} className={`py-3 md:py-4 text-gray-800 border-r ${hourBorder}`}>0</div>
             ))}
-            <div className="py-4 bg-orange-600 text-white font-bold">{successCount}</div>
+            <div className="py-3 md:py-4 bg-orange-600 text-white font-bold">{successCount}</div>
           </div>
         </div>
 

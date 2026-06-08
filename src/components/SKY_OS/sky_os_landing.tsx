@@ -108,32 +108,32 @@ function SkyOsLanding() {
   const KPI    = dark ? KPI_DARK    : KPI_LIGHT;
 
   return (
-    <div className={`font-sans p-8 transition-colors duration-300 ${bg}`}>
+    <div className={`font-sans p-4 pb-24 md:p-8 md:pb-8 transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
-      <div className={`relative mb-10 rounded-2xl overflow-hidden border p-8 shadow-xl transition-colors duration-300 ${heroCard}`}>
+      <div className={`relative mb-6 md:mb-10 rounded-2xl overflow-hidden border p-5 md:p-8 shadow-xl transition-colors duration-300 ${heroCard}`}>
         {dark && <>
           <div className="absolute -top-24 -left-24 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-20 -right-12 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         </>}
 
-        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-orange-500 to-orange-700 shadow-lg shadow-orange-500/30" />
-              <span className="text-xs font-bold tracking-[0.3em] text-orange-500 uppercase">Sky Technology (Pvt) Ltd</span>
+        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-linear-to-br from-orange-500 to-orange-700 shadow-lg shadow-orange-500/30 shrink-0" />
+              <span className="text-xs font-bold tracking-widest text-orange-500 uppercase">Sky Technology (Pvt) Ltd</span>
             </div>
-            <h1 className={`text-5xl font-black tracking-tight leading-tight mb-2 ${textPri}`}>
+            <h1 className={`text-3xl md:text-5xl font-black tracking-tight leading-tight mb-2 ${textPri}`}>
               Sky<span className="text-orange-500">OS</span>
             </h1>
-            <p className={`text-lg font-light ${textSec}`}>Smart Factory Operating System — Command Center</p>
+            <p className={`text-base md:text-lg font-light ${textSec}`}>Smart Factory Operating System — Command Center</p>
             <p className={`text-sm mt-1 ${textMut}`}>Engineering Intelligent Industrial Futures</p>
           </div>
 
-          <div className="flex flex-col items-end gap-3 shrink-0">
-            <div className={`flex items-center gap-3 border rounded-xl px-5 py-3 transition-colors ${clockBg}`}>
-              <Clock size={16} className="text-orange-500" />
-              <span className={`text-2xl font-mono font-bold tracking-widest ${textPri}`}>
+          <div className="flex flex-col items-start md:items-end gap-2 md:gap-3 w-full md:w-auto shrink-0">
+            <div className={`flex items-center gap-3 border rounded-xl px-4 md:px-5 py-2.5 md:py-3 w-full md:w-auto transition-colors ${clockBg}`}>
+              <Clock size={15} className="text-orange-500 shrink-0" />
+              <span className={`text-base md:text-2xl font-mono font-bold tracking-widest ${textPri}`}>
                 {now.toLocaleTimeString()}
               </span>
             </div>
@@ -149,7 +149,7 @@ function SkyOsLanding() {
       </div>
 
       {/* ── KPIs ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         {kpis.map(k => (
           <div key={k.label} className={`rounded-xl border p-5 transition-colors duration-300 ${KPI[k.color]}`}>
             <div className="flex items-start justify-between mb-3">
@@ -167,10 +167,10 @@ function SkyOsLanding() {
       </div>
 
       {/* ── SYSTEMS + ACTIVITY ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
 
         {/* Systems */}
-        <div className="xl:col-span-2">
+        <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className={`text-base font-bold tracking-wide ${textPri}`}>Active Systems</h2>
             <span className={`text-xs border px-3 py-1 rounded-full ${badge}`}>
@@ -220,7 +220,7 @@ function SkyOsLanding() {
         </div>
 
         {/* Activity */}
-        <div className="xl:col-span-1 flex flex-col gap-4">
+        <div className="lg:col-span-1 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className={`text-base font-bold tracking-wide ${textPri}`}>Live Activity</h2>
             <span className="text-[10px] tracking-widest text-green-500 uppercase font-bold bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">
@@ -258,10 +258,10 @@ function SkyOsLanding() {
       {/* ── FOOTER ── */}
       <div className={`mt-8 pt-5 border-t flex flex-wrap items-center justify-between gap-3 text-xs transition-colors duration-300 ${divider} ${textMut}`}>
         <span>SkyOS v2.0 — Sky Technology (Pvt) Ltd</span>
-        <div className="flex items-center gap-5">
+        <div className="flex flex-wrap items-center gap-3 md:gap-5">
           <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-green-500" /> System Normal</span>
           <span className="flex items-center gap-1"><Users size={11} /> 184 Operators Online</span>
-          <span className="flex items-center gap-1"><BarChart3 size={11} /> Real-time Data</span>
+          <span className="hidden sm:flex items-center gap-1"><BarChart3 size={11} /> Real-time Data</span>
         </div>
       </div>
     </div>

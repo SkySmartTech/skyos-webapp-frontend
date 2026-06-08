@@ -1,66 +1,104 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+
 import Topbar from './components/COMMON/Topbar';
+import Profile from './components/COMMON/Profile';
 import SkyOs from './pages/SKY_OS_PAGES/sky_os';
 import ProductionTrackingPage from './pages/SPM-1693/production_tracking_page';
-import UserProfile from './pages/PMS-1682(Solar)/userprofile';
-import SolarPage from './pages/PMS-1682(Solar)/solarpage';
-import MFMPage from './pages/PMS-1682(Solar)/dashboard-mfm';
-import MFIPage from './pages/PMS-1682(Solar)/dashboard-mfi';
-import DetailsReport from './pages/PMS-1682(Solar)/reports/details-report';
-import DetailsReportIntimo from './pages/PMS-1682(Solar)/reports/details-report-intimo';
-import ThermalConsumptionReport from './pages/PMS-1682(Solar)/reports/thermal-consuption';
-import ThermalConsumptionCEReport from './pages/PMS-1682(Solar)/reports/thermal-consumption-&-ceb';
-import DetailsReportEnergy from './pages/PMS-1682(Solar)/reports/details-report-energy';
 
-export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom' | 'userprofile';
+import SkyAuth, { useAuth } from './components/SKY_OS/sky_auth';
+import SkyBackground from './components/SKY_OS/SkyBackground';
+import SkySplash from './components/SKY_OS/sky_splash';
+import SkyLogin from './components/SKY_OS/sky_login';
+
+export type ActiveModule = 'home' | 'production' | 'dcsc' | 'wip' | 'custom';
+export type ProductionView = 'dashboard' | 'settings' | 'update';
 
 function AppContent() {
-  const [activeModule, setActiveModule] = useState<ActiveModule>('home');
-  const [topbarVisible, setTopbarVisible] = useState(true);
-  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
-  const handleNavigation = (module: ActiveModule) => {
-    setActiveModule(module);
-    if (module === 'userprofile') {
-      navigate('/userprofile');
-    } else if (module === 'production') {
-      navigate('/production');
-    } else if (module === 'dcsc') {
-      navigate('/dcsc');
-    } else if (module === 'wip') {
-      navigate('/wip');
-    } else if (module === 'custom') {
-      navigate('/custom');
-    } else {
-      navigate('/');
+  const [splashDone, setSplashDone] = useState(false);
+  const [activeModule, setActiveModule] = useState<ActiveModule>('home');
+  const [productionView, setProductionView] = useState<ProductionView>('dashboard');
+
+  const [topbarVisible, setTopbarVisible] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [showProfile, setShowProfile] = useState(false);
+
+  const handleModuleNavigate = (module: ActiveModule, view?: string) => {
+    if (
+      module === 'production' &&
+      (view === 'dashboard' || view === 'settings' || view === 'update')
+    ) {
+      setProductionView(view);
     }
+    setActiveModule(module);
+    setShowProfile(false);
   };
 
+  // ── Splash + Login Flow ─────────────────────────────
+  if (!isAuthenticated) {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          background: '#050505',
+        }}
+      >
+        <SkyBackground />
+        {!splashDone ? (
+          <SkySplash onComplete={() => setSplashDone(true)} />
+        ) : (
+          <SkyLogin glass />
+        )}
+      </div>
+    );
+  }
+
+  // ── Main App ────────────────────────────────────────
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-slate-100 dark:bg-gray-950 transition-colors duration-300">
 
+      {/* Topbar */}
       {topbarVisible ? (
         <div className="shrink-0 z-50 relative shadow-sm">
           <Topbar
             activeModule={activeModule}
-            onDashboardClick={() => handleNavigation('home')}
-            onProductionTrackingClick={() => handleNavigation('production')}
-            onDcscClick={() => handleNavigation('dcsc')}
-            onWipClick={() => handleNavigation('wip')}
-            onCustomClick={() => handleNavigation('custom')}
+            onDashboardClick={() => {
+              setActiveModule('home');
+              setShowProfile(false);
+            }}
+            onProductionTrackingClick={() => {
+              setActiveModule('production');
+              setShowProfile(false);
+            }}
+            onDcscClick={() => {
+              setActiveModule('dcsc');
+              setShowProfile(false);
+            }}
+            onWipClick={() => {
+              setActiveModule('wip');
+              setShowProfile(false);
+            }}
+            onCustomClick={() => {
+              setActiveModule('custom');
+              setShowProfile(false);
+            }}
             productionActive={activeModule === 'production'}
-            showSidebar={true}
-            onToggleSidebar={() => {}}
+            showSidebar={showSidebar}
+            onToggleSidebar={() => setShowSidebar(prev => !prev)}
             onCloseTopbar={() => setTopbarVisible(false)}
+            onProfileClick={() => setShowProfile(true)}
           />
         </div>
       ) : (
-        <div className="shrink-0 z-50 bg-gray-900 border-b border-gray-800">
+        <div className="shrink-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
           <button
             onClick={() => setTopbarVisible(true)}
-            className="flex items-center gap-2 px-5 py-1.5 text-gray-400 hover:text-white text-xs transition-colors hover:bg-gray-800 w-full"
+            className="flex items-center gap-2 px-5 py-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xs transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 w-full"
           >
             <ChevronDown size={14} />
             Show navigation
@@ -68,35 +106,38 @@ function AppContent() {
         </div>
       )}
 
-      <div className="overflow-hidden">
-        <Routes>
-          <Route path="/" element={<SkyOs />} />
-          <Route path="/production" element={<ProductionTrackingPage />} />
-          <Route path="/dcsc" element={<div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">DCSC1515A — Coming Soon</div>} />
-          <Route path="/wip" element={<div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">WIP — Coming Soon</div>} />
-          <Route path="/custom" element={<div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">Custom System — Coming Soon</div>} />
-          <Route path="/userprofile" element={<UserProfile />} />
-          <Route path="/solar/dashboard" element={<SolarPage />} />
-          <Route path="/solar/mfm" element={<MFMPage />} />
-          <Route path="/solar/mfi" element={<MFIPage />} />
-          <Route path="/solar/reports/details" element={<DetailsReport />} />
-          <Route path="/solar/reports/intimo" element={<DetailsReportIntimo />} />
-          <Route path="/solar/reports/thermal" element={<ThermalConsumptionReport />} />
-          <Route path="/solar/reports/thermal-ce" element={<ThermalConsumptionCEReport />} />
-          <Route path="/solar/reports/energy" element={<DetailsReportEnergy />} />
-        </Routes>
-      </div>
+      {/* Content */}
+      <div className="flex flex-1 overflow-hidden">
 
+        {showProfile ? (
+          <Profile onBack={() => setShowProfile(false)} />
+        ) : activeModule === 'production' ? (
+          <ProductionTrackingPage initialView={productionView} />
+        ) : activeModule === 'dcsc' ? (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            DSCS1515A — Coming Soon
+          </div>
+        ) : activeModule === 'wip' ? (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            BSM-1740 — Coming Soon
+          </div>
+        ) : activeModule === 'custom' ? (
+          <div className="flex items-center justify-center w-full h-full text-gray-400 text-lg">
+            PMS-1682 — Coming Soon
+          </div>
+        ) : (
+          <SkyOs onNavigateModule={handleModuleNavigate} />
+        )}
+
+      </div>
     </div>
   );
 }
 
-function App() {
+export default function App() {
   return (
-    <BrowserRouter>
+    <SkyAuth>
       <AppContent />
-    </BrowserRouter>
+    </SkyAuth>
   );
 }
-
-export default App;

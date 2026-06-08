@@ -38,18 +38,18 @@ function p_r_setting({ onDataUpload }: PRSettingProps) {
   };
 
   return (
-    <div className={`min-h-screen p-8 font-sans transition-colors duration-300 ${bg}`}>
+    <div className={`min-h-screen p-4 pb-24 md:p-8 font-sans transition-colors duration-300 ${bg}`}>
 
       {/* Header */}
-      <div className={`border rounded-xl shadow-sm p-5 flex justify-between items-center mb-6 transition-colors duration-300 ${card}`}>
-        <h1 className={`text-xl font-bold ${title}`}>Day Plan Upload</h1>
+      <div className={`border rounded-xl shadow-sm p-4 md:p-5 flex flex-wrap justify-between items-center gap-2 mb-6 transition-colors duration-300 ${card}`}>
+        <h1 className={`text-lg md:text-xl font-bold ${title}`}>Day Plan Upload</h1>
         <div className={`text-sm ${sub}`}>
           <span>Settings</span> &gt; <span>Day Plan Upload</span>
         </div>
       </div>
 
       {/* Upload */}
-      <div className={`border rounded-xl shadow-sm p-6 mb-8 flex items-center gap-4 transition-colors duration-300 ${card}`}>
+      <div className={`border rounded-xl shadow-sm p-4 md:p-6 mb-8 flex flex-wrap items-center gap-3 transition-colors duration-300 ${card}`}>
         <span className={`font-semibold text-sm ${sub}`}>*.XLSX</span>
         <input
           type="file"
