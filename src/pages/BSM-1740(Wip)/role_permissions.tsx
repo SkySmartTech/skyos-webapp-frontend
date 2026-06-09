@@ -18,13 +18,23 @@ const permissionGroups: PermissionGroup[] = [
   {
     title: "Operations",
     description: "Access to day-to-day access control workflows.",
-    items: ["View users", "Update status", "Reset passwords", "Review access logs"],
+    items: [
+      "View users",
+      "Update status",
+      "Reset passwords",
+      "Review access logs",
+    ],
     icon: Users2,
   },
   {
     title: "Security Policies",
     description: "Define restrictions and approval flow for access changes.",
-    items: ["MFA required", "Approval routing", "Session timeout", "Change history"],
+    items: [
+      "MFA required",
+      "Approval routing",
+      "Session timeout",
+      "Change history",
+    ],
     icon: LockKeyhole,
   },
 ];
@@ -34,7 +44,9 @@ export default function RolePermissions() {
   const dark = theme === "dark";
 
   const page = dark ? "bg-[#070707] text-white" : "bg-white text-slate-900";
-  const card = dark ? "border-white/10 bg-[#0e0e0e]" : "border-slate-200 bg-white";
+  const card = dark
+    ? "border-white/10 bg-[#0e0e0e]"
+    : "border-slate-200 bg-white";
   const muted = dark ? "text-slate-400" : "text-slate-500";
 
   return (
@@ -56,7 +68,10 @@ export default function RolePermissions() {
         {permissionGroups.map((group) => {
           const Icon = group.icon;
           return (
-            <article key={group.title} className={`rounded-2xl border p-5 ${card}`}>
+            <article
+              key={group.title}
+              className={`rounded-2xl border p-5 ${card}`}
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3">
