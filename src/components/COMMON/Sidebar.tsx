@@ -214,26 +214,8 @@ const Sidebar = ({
         />
 
         <div className="space-y-3">
-          <button
-            onClick={() => setActiveAndonItem("profile")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[17px] font-semibold transition-all duration-200 ${
-              activeAndonItem === "profile" ? andonActive : andonInactive
-            }`}
-          >
-            <User size={21} />
-            User Profile
-          </button>
-
-          <button
-            onClick={() => setActiveAndonItem("help")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[17px] font-semibold transition-all duration-200 ${
-              activeAndonItem === "help" ? andonActive : andonInactive
-            }`}
-          >
-            <Info size={21} />
-            Help
-          </button>
-
+         
+         
           <button
             onClick={() => setActiveAndonItem("logout")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[17px] font-semibold transition-all duration-200 ${
