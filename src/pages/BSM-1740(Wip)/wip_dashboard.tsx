@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import InventoryEntry from "./inventory_entry";
 import Reports from "./reports";
+import AiAssistant from "./ai_assistant";
 
 type StatCard = {
   title: string;
@@ -230,14 +231,7 @@ export default function WipDashboardPage() {
           ) : activeSection === "reports" ? (
             <Reports />
           ) : activeSection === "ai" ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>
-                  AI Assistant
-                </p>
-                <p className={`text-sm ${muted}`}>Coming Soon</p>
-              </div>
-            </div>
+            <AiAssistant />
           ) : activeSection === "setup" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
