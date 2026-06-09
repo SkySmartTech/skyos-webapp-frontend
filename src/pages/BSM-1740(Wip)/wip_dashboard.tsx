@@ -15,6 +15,7 @@ import {
   Warehouse,
 } from "lucide-react";
 import InventoryEntry from "./inventory_entry";
+import Reports from "./reports";
 
 type StatCard = {
   title: string;
@@ -227,12 +228,7 @@ export default function WipDashboardPage() {
           {activeSection === "inventory" ? (
             <InventoryEntry />
           ) : activeSection === "reports" ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>Reports</p>
-                <p className={`text-sm ${muted}`}>Coming Soon</p>
-              </div>
-            </div>
+            <Reports />
           ) : activeSection === "ai" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
