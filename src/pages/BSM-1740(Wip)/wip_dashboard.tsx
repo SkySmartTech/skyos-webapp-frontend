@@ -125,12 +125,7 @@ export default function WipDashboardPage() {
   const { theme } = useTheme();
   const dark = theme === "dark";
   const [activeSection, setActiveSection] = useState<
-    | "dashboard"
-    | "inventory"
-    | "reports"
-    | "ai"
-    | "setup"
-    | "access"
+    "dashboard" | "inventory" | "reports" | "ai" | "setup" | "access"
   >("dashboard");
 
   const page = dark ? "bg-[#070707] text-white" : "bg-[#f3f5f7] text-slate-900";
@@ -241,21 +236,27 @@ export default function WipDashboardPage() {
           ) : activeSection === "ai" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>AI Assistant</p>
+                <p className={`text-lg font-semibold ${heading}`}>
+                  AI Assistant
+                </p>
                 <p className={`text-sm ${muted}`}>Coming Soon</p>
               </div>
             </div>
           ) : activeSection === "setup" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>Production Setup</p>
+                <p className={`text-lg font-semibold ${heading}`}>
+                  Production Setup
+                </p>
                 <p className={`text-sm ${muted}`}>Coming Soon</p>
               </div>
             </div>
           ) : activeSection === "access" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>Access Control</p>
+                <p className={`text-lg font-semibold ${heading}`}>
+                  Access Control
+                </p>
                 <p className={`text-sm ${muted}`}>Coming Soon</p>
               </div>
             </div>

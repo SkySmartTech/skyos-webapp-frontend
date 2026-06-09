@@ -138,11 +138,19 @@ export default function InventoryEntry() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    setFormData({ productName: "", category: "", price: "", quantity: "", description: "" });
+    setFormData({
+      productName: "",
+      category: "",
+      price: "",
+      quantity: "",
+      description: "",
+    });
   };
 
   const page = dark ? "bg-[#070707] text-white" : "bg-[#f3f5f7] text-slate-900";
-  const card = dark ? "border-white/10 bg-[#0e0e0e]" : "border-slate-200 bg-white";
+  const card = dark
+    ? "border-white/10 bg-[#0e0e0e]"
+    : "border-slate-200 bg-white";
   const input = dark
     ? "bg-[#1a1a1a] border-white/10 text-white placeholder:text-slate-500"
     : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400";
@@ -163,11 +171,17 @@ export default function InventoryEntry() {
     <div className={`h-full w-full overflow-hidden ${page}`}>
       <div className="flex h-full flex-col">
         {/* Header */}
-        <div className={`border-b px-6 py-5 ${dark ? "border-white/10" : "border-slate-200"}`}>
+        <div
+          className={`border-b px-6 py-5 ${dark ? "border-white/10" : "border-slate-200"}`}
+        >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className={`text-3xl font-black tracking-tight ${heading}`}>Inventory Entry</h1>
-              <p className={`mt-1 text-sm ${muted}`}>Manage supermarket inventory and stock</p>
+              <h1 className={`text-3xl font-black tracking-tight ${heading}`}>
+                Inventory Entry
+              </h1>
+              <p className={`mt-1 text-sm ${muted}`}>
+                Manage supermarket inventory and stock
+              </p>
             </div>
             <button
               onClick={() => setShowModal(true)}
@@ -184,12 +198,18 @@ export default function InventoryEntry() {
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             {/* Left: New Item Form */}
             <div className={`rounded-3xl border p-6 lg:col-span-1 ${card}`}>
-              <h2 className={`mb-4 text-lg font-bold ${heading}`}>New Inventory Item</h2>
-              <p className={`mb-6 text-sm ${muted}`}>Add a new item to supermarket inventory</p>
+              <h2 className={`mb-4 text-lg font-bold ${heading}`}>
+                New Inventory Item
+              </h2>
+              <p className={`mb-6 text-sm ${muted}`}>
+                Add a new item to supermarket inventory
+              </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                  <label
+                    className={`mb-2 block text-sm font-semibold ${label}`}
+                  >
                     Product Name
                   </label>
                   <input
@@ -203,7 +223,9 @@ export default function InventoryEntry() {
                 </div>
 
                 <div>
-                  <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                  <label
+                    className={`mb-2 block text-sm font-semibold ${label}`}
+                  >
                     Category
                   </label>
                   <select
@@ -224,11 +246,15 @@ export default function InventoryEntry() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                    <label
+                      className={`mb-2 block text-sm font-semibold ${label}`}
+                    >
                       Price
                     </label>
                     <div className="relative">
-                      <span className={`absolute left-3 top-2.5 text-sm font-semibold ${muted}`}>
+                      <span
+                        className={`absolute left-3 top-2.5 text-sm font-semibold ${muted}`}
+                      >
                         $
                       </span>
                       <input
@@ -243,7 +269,9 @@ export default function InventoryEntry() {
                     </div>
                   </div>
                   <div>
-                    <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                    <label
+                      className={`mb-2 block text-sm font-semibold ${label}`}
+                    >
                       Quantity
                     </label>
                     <input
@@ -258,7 +286,9 @@ export default function InventoryEntry() {
                 </div>
 
                 <div>
-                  <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                  <label
+                    className={`mb-2 block text-sm font-semibold ${label}`}
+                  >
                     Description
                   </label>
                   <textarea
@@ -282,19 +312,37 @@ export default function InventoryEntry() {
 
             {/* Right: Statistics */}
             <div className={`rounded-3xl border p-6 lg:col-span-2 ${card}`}>
-              <h2 className={`mb-6 text-lg font-bold ${heading}`}>Entry Statistics</h2>
+              <h2 className={`mb-6 text-lg font-bold ${heading}`}>
+                Entry Statistics
+              </h2>
               <div className="space-y-4">
-                <div className={`rounded-xl border px-4 py-3 ${dark ? "border-white/10 bg-white/5" : "border-slate-200 bg-slate-50"}`}>
-                  <p className={`text-sm font-semibold ${muted}`}>Total Entries</p>
+                <div
+                  className={`rounded-xl border px-4 py-3 ${dark ? "border-white/10 bg-white/5" : "border-slate-200 bg-slate-50"}`}
+                >
+                  <p className={`text-sm font-semibold ${muted}`}>
+                    Total Entries
+                  </p>
                   <p className={`mt-2 text-3xl font-black ${heading}`}>1,234</p>
                 </div>
-                <div className={`rounded-xl border px-4 py-3 ${dark ? "border-white/10 bg-white/5" : "border-slate-200 bg-slate-50"}`}>
-                  <p className={`text-sm font-semibold ${muted}`}>Today's Entries</p>
-                  <p className={`mt-2 text-3xl font-black text-orange-500`}>47</p>
+                <div
+                  className={`rounded-xl border px-4 py-3 ${dark ? "border-white/10 bg-white/5" : "border-slate-200 bg-slate-50"}`}
+                >
+                  <p className={`text-sm font-semibold ${muted}`}>
+                    Today's Entries
+                  </p>
+                  <p className={`mt-2 text-3xl font-black text-orange-500`}>
+                    47
+                  </p>
                 </div>
-                <div className={`rounded-xl border px-4 py-3 ${dark ? "border-orange-500/15 bg-orange-500/5" : "border-orange-200 bg-orange-50"}`}>
-                  <p className={`text-sm font-semibold ${muted}`}>Pending Review</p>
-                  <p className={`mt-2 text-3xl font-black text-orange-500`}>12</p>
+                <div
+                  className={`rounded-xl border px-4 py-3 ${dark ? "border-orange-500/15 bg-orange-500/5" : "border-orange-200 bg-orange-50"}`}
+                >
+                  <p className={`text-sm font-semibold ${muted}`}>
+                    Pending Review
+                  </p>
+                  <p className={`mt-2 text-3xl font-black text-orange-500`}>
+                    12
+                  </p>
                 </div>
               </div>
             </div>
@@ -302,15 +350,23 @@ export default function InventoryEntry() {
 
           {/* Recent Entries Table */}
           <div className={`mt-5 rounded-3xl border ${card}`}>
-            <div className={`border-b px-6 py-4 ${dark ? "border-white/10" : "border-slate-200"}`}>
+            <div
+              className={`border-b px-6 py-4 ${dark ? "border-white/10" : "border-slate-200"}`}
+            >
               <div className="flex items-center justify-between gap-3">
-                <h2 className={`text-lg font-bold ${heading}`}>Recent Entries (10 Examples)</h2>
+                <h2 className={`text-lg font-bold ${heading}`}>
+                  Recent Entries (10 Examples)
+                </h2>
                 <div className="flex items-center gap-2">
-                  <button className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`}>
+                  <button
+                    className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`}
+                  >
                     <Filter size={16} />
                     Filter
                   </button>
-                  <button className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`}>
+                  <button
+                    className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`}
+                  >
                     <Download size={16} />
                     Export
                   </button>
@@ -350,19 +406,34 @@ export default function InventoryEntry() {
                 </thead>
                 <tbody>
                   {recentEntries.map((entry) => (
-                    <tr key={entry.id} className={`border-b transition ${tableRow}`}>
-                      <td className={`px-6 py-3 text-sm font-medium text-orange-500`}>
+                    <tr
+                      key={entry.id}
+                      className={`border-b transition ${tableRow}`}
+                    >
+                      <td
+                        className={`px-6 py-3 text-sm font-medium text-orange-500`}
+                      >
                         {entry.id}
                       </td>
-                      <td className={`px-6 py-3 text-sm ${heading}`}>{entry.productName}</td>
-                      <td className={`px-6 py-3 text-sm ${muted}`}>{entry.category}</td>
-                      <td className={`px-6 py-3 text-sm font-semibold ${heading}`}>
+                      <td className={`px-6 py-3 text-sm ${heading}`}>
+                        {entry.productName}
+                      </td>
+                      <td className={`px-6 py-3 text-sm ${muted}`}>
+                        {entry.category}
+                      </td>
+                      <td
+                        className={`px-6 py-3 text-sm font-semibold ${heading}`}
+                      >
                         ${entry.price.toFixed(2)}
                       </td>
-                      <td className={`px-6 py-3 text-sm font-semibold ${heading}`}>
+                      <td
+                        className={`px-6 py-3 text-sm font-semibold ${heading}`}
+                      >
                         {entry.quantity}
                       </td>
-                      <td className={`px-6 py-3 text-sm ${muted}`}>{entry.date}</td>
+                      <td className={`px-6 py-3 text-sm ${muted}`}>
+                        {entry.date}
+                      </td>
                       <td className={`px-6 py-3 text-sm`}>
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${
@@ -376,13 +447,19 @@ export default function InventoryEntry() {
                       </td>
                       <td className={`px-6 py-3 text-sm`}>
                         <div className="flex items-center gap-2">
-                          <button className={`rounded p-1 transition ${dark ? "hover:bg-white/10" : "hover:bg-slate-100"}`}>
+                          <button
+                            className={`rounded p-1 transition ${dark ? "hover:bg-white/10" : "hover:bg-slate-100"}`}
+                          >
                             <Eye size={16} className={muted} />
                           </button>
-                          <button className={`rounded p-1 transition ${dark ? "hover:bg-white/10" : "hover:bg-slate-100"}`}>
+                          <button
+                            className={`rounded p-1 transition ${dark ? "hover:bg-white/10" : "hover:bg-slate-100"}`}
+                          >
                             <Edit2 size={16} className={muted} />
                           </button>
-                          <button className={`rounded p-1 transition ${dark ? "hover:bg-red-500/20" : "hover:bg-red-100"}`}>
+                          <button
+                            className={`rounded p-1 transition ${dark ? "hover:bg-red-500/20" : "hover:bg-red-100"}`}
+                          >
                             <Trash2 size={16} className="text-red-500" />
                           </button>
                         </div>
@@ -419,7 +496,13 @@ export default function InventoryEntry() {
               </button>
             </div>
 
-            <form onSubmit={(e) => { handleSubmit(e); setShowModal(false); }} className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                handleSubmit(e);
+                setShowModal(false);
+              }}
+              className="space-y-4"
+            >
               <div>
                 <label className={`mb-2 block text-sm font-semibold ${label}`}>
                   Product Name
@@ -450,11 +533,15 @@ export default function InventoryEntry() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                  <label
+                    className={`mb-2 block text-sm font-semibold ${label}`}
+                  >
                     Price
                   </label>
                   <div className="relative">
-                    <span className={`absolute left-3 top-2.5 text-sm font-semibold ${muted}`}>
+                    <span
+                      className={`absolute left-3 top-2.5 text-sm font-semibold ${muted}`}
+                    >
                       $
                     </span>
                     <input
@@ -466,7 +553,9 @@ export default function InventoryEntry() {
                   </div>
                 </div>
                 <div>
-                  <label className={`mb-2 block text-sm font-semibold ${label}`}>
+                  <label
+                    className={`mb-2 block text-sm font-semibold ${label}`}
+                  >
                     Quantity
                   </label>
                   <input
