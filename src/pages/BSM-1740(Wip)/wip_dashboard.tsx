@@ -19,6 +19,7 @@ import Reports from "./reports";
 import AiAssistant from "./ai_assistant";
 import ProductionSetup from "./production_setup";
 import ProductionStyles from "./production_styles";
+import AccessUsers from "./access_users";
 
 type StatCard = {
   title: string;
@@ -280,6 +281,8 @@ export default function WipDashboardPage() {
             <ProductionSetup />
           ) : activeSection === "setupStyles" ? (
             <ProductionStyles />
+          ) : activeSection === "access" || activeSection === "accessUsers" ? (
+            <AccessUsers />
           ) : activeSection === "access" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
