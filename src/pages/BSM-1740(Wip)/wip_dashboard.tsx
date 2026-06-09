@@ -18,6 +18,7 @@ import InventoryEntry from "./inventory_entry";
 import Reports from "./reports";
 import AiAssistant from "./ai_assistant";
 import ProductionSetup from "./production_setup";
+import ProductionStyles from "./production_styles";
 
 type StatCard = {
   title: string;
@@ -277,6 +278,8 @@ export default function WipDashboardPage() {
             <AiAssistant />
           ) : activeSection === "setup" || activeSection === "setupLines" ? (
             <ProductionSetup />
+          ) : activeSection === "setupStyles" ? (
+            <ProductionStyles />
           ) : activeSection === "access" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
