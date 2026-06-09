@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import {
   Activity,
@@ -13,6 +14,7 @@ import {
   Sparkles,
   Warehouse,
 } from "lucide-react";
+import InventoryEntry from "./inventory_entry";
 
 type StatCard = {
   title: string;
@@ -93,14 +95,17 @@ function SidebarLink({
   label,
   active = false,
   collapsible = false,
+  onClick,
 }: {
   icon: typeof LayoutDashboard;
   label: string;
   active?: boolean;
   collapsible?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
+      onClick={onClick}
       className={`flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm font-semibold transition-all duration-200 ${
         active
           ? "border-orange-500/30 bg-orange-500/10 text-orange-300 shadow-[0_0_0_1px_rgba(249,115,22,0.18)]"
@@ -119,6 +124,14 @@ function SidebarLink({
 export default function WipDashboardPage() {
   const { theme } = useTheme();
   const dark = theme === "dark";
+  const [activeSection, setActiveSection] = useState<
+    | "dashboard"
+    | "inventory"
+    | "reports"
+    | "ai"
+    | "setup"
+    | "access"
+  >("dashboard");
 
   const page = dark ? "bg-[#070707] text-white" : "bg-[#f3f5f7] text-slate-900";
   const sidebar = dark
@@ -155,19 +168,43 @@ export default function WipDashboardPage() {
           </div>
 
           <nav className="space-y-2">
-            <SidebarLink icon={LayoutDashboard} label="Dashboard" active />
-            <SidebarLink icon={Warehouse} label="Inventory Entry" />
-            <SidebarLink icon={Activity} label="Reports" />
-            <SidebarLink icon={Cpu} label="AI Assistant" />
+            <SidebarLink
+              icon={LayoutDashboard}
+              label="Dashboard"
+              active={activeSection === "dashboard"}
+              onClick={() => setActiveSection("dashboard")}
+            />
+            <SidebarLink
+              icon={Warehouse}
+              label="Inventory Entry"
+              active={activeSection === "inventory"}
+              onClick={() => setActiveSection("inventory")}
+            />
+            <SidebarLink
+              icon={Activity}
+              label="Reports"
+              active={activeSection === "reports"}
+              onClick={() => setActiveSection("reports")}
+            />
+            <SidebarLink
+              icon={Cpu}
+              label="AI Assistant"
+              active={activeSection === "ai"}
+              onClick={() => setActiveSection("ai")}
+            />
             <SidebarLink
               icon={Settings2}
               label="Production Setup"
               collapsible
+              active={activeSection === "setup"}
+              onClick={() => setActiveSection("setup")}
             />
             <SidebarLink
               icon={ShieldCheck}
               label="Access Control"
               collapsible
+              active={activeSection === "access"}
+              onClick={() => setActiveSection("access")}
             />
           </nav>
 
@@ -192,139 +229,173 @@ export default function WipDashboardPage() {
         </aside>
 
         <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <div
-            className={`border-b px-6 py-5 ${dark ? "border-white/10" : "border-slate-200"}`}
-          >
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <p
-                  className={`text-xs font-bold uppercase tracking-[0.3em] ${muted}`}
-                >
-                  Dashboard
-                </p>
-                <h1
-                  className={`mt-1 text-3xl font-black tracking-tight ${heading}`}
-                >
-                  Flowtrace Supermarket System Overview
-                </h1>
-                <p className={`mt-2 text-sm ${sub}`}>
-                  WIP click කරන විට open වන operational dashboard shell එක.
-                </p>
+          {activeSection === "inventory" ? (
+            <InventoryEntry />
+          ) : activeSection === "reports" ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${heading}`}>Reports</p>
+                <p className={`text-sm ${muted}`}>Coming Soon</p>
               </div>
-              <button className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-black/10 transition hover:translate-y-[-1px] hover:bg-slate-100 dark:bg-orange-500 dark:text-white dark:hover:bg-orange-400">
-                <Plus size={16} />
-                Add Line
-              </button>
             </div>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
-            <section className="grid grid-cols-1 gap-4 xl:grid-cols-4">
-              {stats.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <article
-                    key={item.title}
-                    className={`rounded-2xl border p-5 ${card}`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className={`text-sm font-semibold ${heading}`}>
-                          {item.title}
-                        </p>
-                        <p
-                          className={`mt-8 text-[2rem] font-black leading-none ${heading}`}
-                        >
-                          {item.value}
-                        </p>
-                        <p className={`mt-2 text-xs ${muted}`}>
-                          {item.subtitle}
-                        </p>
-                      </div>
-                      <div
-                        className={`rounded-xl border px-3 py-3 ${dark ? "border-white/10 bg-white/5 text-orange-400" : "border-slate-200 bg-slate-50 text-orange-600"}`}
-                      >
-                        <Icon size={18} />
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </section>
-
-            <section className={`mt-5 rounded-3xl border p-5 ${card}`}>
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h2 className={`text-lg font-bold ${heading}`}>
-                    Production Lines (3)
-                  </h2>
-                  <p className={`text-sm ${muted}`}>
-                    Live line cards, efficiency and control actions.
-                  </p>
-                </div>
-                <div
-                  className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] ${dark ? "border-white/10 text-orange-300" : "border-slate-200 text-orange-600"}`}
-                >
-                  Active monitoring
+          ) : activeSection === "ai" ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${heading}`}>AI Assistant</p>
+                <p className={`text-sm ${muted}`}>Coming Soon</p>
+              </div>
+            </div>
+          ) : activeSection === "setup" ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${heading}`}>Production Setup</p>
+                <p className={`text-sm ${muted}`}>Coming Soon</p>
+              </div>
+            </div>
+          ) : activeSection === "access" ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${heading}`}>Access Control</p>
+                <p className={`text-sm ${muted}`}>Coming Soon</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                className={`border-b px-6 py-5 ${dark ? "border-white/10" : "border-slate-200"}`}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p
+                      className={`text-xs font-bold uppercase tracking-[0.3em] ${muted}`}
+                    >
+                      Dashboard
+                    </p>
+                    <h1
+                      className={`mt-1 text-3xl font-black tracking-tight ${heading}`}
+                    >
+                      Flowtrace Supermarket System Overview
+                    </h1>
+                    <p className={`mt-2 text-sm ${sub}`}>
+                      WIP click කරන විට open වන operational dashboard shell එක.
+                    </p>
+                  </div>
+                  <button className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-black/10 transition hover:translate-y-[-1px] hover:bg-slate-100 dark:bg-orange-500 dark:text-white dark:hover:bg-orange-400">
+                    <Plus size={16} />
+                    Add Line
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {lineCards.map((line) => (
-                  <article
-                    key={line.code}
-                    className={`rounded-2xl border p-5 ${dark ? "border-white/10 bg-[#0b0b0b]" : "border-slate-200 bg-slate-50"}`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className={`text-lg font-bold ${heading}`}>
-                          {line.title}
-                        </h3>
-                        <p className={`text-sm ${muted}`}>
-                          {line.code} - {line.type}
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-slate-900 shadow-sm">
-                        {line.status}
-                      </span>
-                    </div>
+              <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+                <section className="grid grid-cols-1 gap-4 xl:grid-cols-4">
+                  {stats.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <article
+                        key={item.title}
+                        className={`rounded-2xl border p-5 ${card}`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className={`text-sm font-semibold ${heading}`}>
+                              {item.title}
+                            </p>
+                            <p
+                              className={`mt-8 text-[2rem] font-black leading-none ${heading}`}
+                            >
+                              {item.value}
+                            </p>
+                            <p className={`mt-2 text-xs ${muted}`}>
+                              {item.subtitle}
+                            </p>
+                          </div>
+                          <div
+                            className={`rounded-xl border px-3 py-3 ${dark ? "border-white/10 bg-white/5 text-orange-400" : "border-slate-200 bg-slate-50 text-orange-600"}`}
+                          >
+                            <Icon size={18} />
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </section>
 
-                    <div className="mt-8 grid grid-cols-[1fr_auto] gap-x-3 gap-y-2 text-sm">
-                      <span className={muted}>Upper Limit</span>
-                      <span className={`font-semibold ${heading}`}>
-                        {line.upperLimit}
-                      </span>
-                      <span className={muted}>Lower Limit</span>
-                      <span className={`font-semibold ${heading}`}>
-                        {line.lowerLimit}
-                      </span>
-                      <span className={muted}>Efficiency</span>
-                      <span
-                        className={`font-black ${dark ? "text-white" : "text-slate-900"}`}
-                      >
-                        {line.efficiency}
-                      </span>
+                <section className={`mt-5 rounded-3xl border p-5 ${card}`}>
+                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className={`text-lg font-bold ${heading}`}>
+                        Production Lines (3)
+                      </h2>
+                      <p className={`text-sm ${muted}`}>
+                        Live line cards, efficiency and control actions.
+                      </p>
                     </div>
+                    <div
+                      className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] ${dark ? "border-white/10 text-orange-300" : "border-slate-200 text-orange-600"}`}
+                    >
+                      Active monitoring
+                    </div>
+                  </div>
 
-                    <div className="mt-6 grid grid-cols-2 gap-3">
-                      <button
-                        className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-800 hover:bg-slate-100"}`}
+                  <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                    {lineCards.map((line) => (
+                      <article
+                        key={line.code}
+                        className={`rounded-2xl border p-5 ${dark ? "border-white/10 bg-[#0b0b0b]" : "border-slate-200 bg-slate-50"}`}
                       >
-                        <LayoutDashboard size={15} />
-                        Edit
-                      </button>
-                      <button
-                        className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-800 hover:bg-slate-100"}`}
-                      >
-                        <Settings2 size={15} />
-                        Configure
-                      </button>
-                    </div>
-                  </article>
-                ))}
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className={`text-lg font-bold ${heading}`}>
+                              {line.title}
+                            </h3>
+                            <p className={`text-sm ${muted}`}>
+                              {line.code} - {line.type}
+                            </p>
+                          </div>
+                          <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-slate-900 shadow-sm">
+                            {line.status}
+                          </span>
+                        </div>
+
+                        <div className="mt-8 grid grid-cols-[1fr_auto] gap-x-3 gap-y-2 text-sm">
+                          <span className={muted}>Upper Limit</span>
+                          <span className={`font-semibold ${heading}`}>
+                            {line.upperLimit}
+                          </span>
+                          <span className={muted}>Lower Limit</span>
+                          <span className={`font-semibold ${heading}`}>
+                            {line.lowerLimit}
+                          </span>
+                          <span className={muted}>Efficiency</span>
+                          <span
+                            className={`font-black ${dark ? "text-white" : "text-slate-900"}`}
+                          >
+                            {line.efficiency}
+                          </span>
+                        </div>
+
+                        <div className="mt-6 grid grid-cols-2 gap-3">
+                          <button
+                            className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-800 hover:bg-slate-100"}`}
+                          >
+                            <LayoutDashboard size={15} />
+                            Edit
+                          </button>
+                          <button
+                            className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${dark ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-200 bg-white text-slate-800 hover:bg-slate-100"}`}
+                          >
+                            <Settings2 size={15} />
+                            Configure
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
               </div>
-            </section>
-          </div>
+            </>
+          )}
         </main>
       </div>
     </div>
