@@ -60,7 +60,9 @@ export default function Reports() {
   const dark = theme === "dark";
 
   const bg = dark ? "bg-[#070707] text-white" : "bg-[#f3f5f7] text-slate-900";
-  const card = dark ? "border-white/10 bg-[#0e0e0e]" : "border-slate-200 bg-white";
+  const card = dark
+    ? "border-white/10 bg-[#0e0e0e]"
+    : "border-slate-200 bg-white";
   const muted = dark ? "text-slate-400" : "text-slate-500";
   const heading = dark ? "text-white" : "text-slate-900";
   const axis = dark ? "#6b7280" : "#9ca3af";
@@ -71,10 +73,16 @@ export default function Reports() {
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className={`text-3xl font-black ${heading}`}>Reports & Analytics</h1>
-            <p className={`text-sm ${muted}`}>View comprehensive business insights</p>
+            <h1 className={`text-3xl font-black ${heading}`}>
+              Reports & Analytics
+            </h1>
+            <p className={`text-sm ${muted}`}>
+              View comprehensive business insights
+            </p>
           </div>
-          <button className={`rounded-lg border px-4 py-2 text-sm font-semibold ${dark ? "border-white/10 bg-white/5 text-white" : "border-slate-200 bg-white text-slate-700"}`}>
+          <button
+            className={`rounded-lg border px-4 py-2 text-sm font-semibold ${dark ? "border-white/10 bg-white/5 text-white" : "border-slate-200 bg-white text-slate-700"}`}
+          >
             Export Report
           </button>
         </div>
@@ -91,11 +99,16 @@ export default function Reports() {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div className={`rounded-xl border p-4 ${card}`}>
-            <p className={`text-sm font-semibold ${muted}`}>Revenue vs Expenses</p>
+            <p className={`text-sm font-semibold ${muted}`}>
+              Revenue vs Expenses
+            </p>
             <p className={`text-xs ${muted}`}>Monthly financial overview</p>
             <div className="h-64 mt-3">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={revenueData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+                <BarChart
+                  data={revenueData}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} />
                   <XAxis dataKey="month" stroke={axis} />
                   <YAxis stroke={axis} />
@@ -108,16 +121,27 @@ export default function Reports() {
           </div>
 
           <div className={`rounded-xl border p-4 ${card}`}>
-            <p className={`text-sm font-semibold ${muted}`}>Transaction Trend</p>
+            <p className={`text-sm font-semibold ${muted}`}>
+              Transaction Trend
+            </p>
             <p className={`text-xs ${muted}`}>Daily transaction volume</p>
             <div className="h-64 mt-3">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={transactionTrend} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+                <LineChart
+                  data={transactionTrend}
+                  margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} />
                   <XAxis dataKey="month" stroke={axis} />
                   <YAxis stroke={axis} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="tx" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="tx"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -126,12 +150,21 @@ export default function Reports() {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4">
           <div className={`rounded-xl border p-4 ${card}`}>
-            <p className={`text-sm font-semibold ${muted}`}>Category Distribution</p>
+            <p className={`text-sm font-semibold ${muted}`}>
+              Category Distribution
+            </p>
             <p className={`text-xs ${muted}`}>Sales by product category</p>
             <div className="h-56 mt-3">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={pieData} dataKey="value" cx="50%" cy="50%" outerRadius={80} innerRadius={40}>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    innerRadius={40}
+                  >
                     {pieData.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />
                     ))}
@@ -142,7 +175,9 @@ export default function Reports() {
           </div>
 
           <div className={`rounded-xl border p-4 ${card}`}>
-            <p className={`text-sm font-semibold ${muted}`}>Top Performing Products</p>
+            <p className={`text-sm font-semibold ${muted}`}>
+              Top Performing Products
+            </p>
             <p className={`text-xs ${muted}`}>Best sellers this month</p>
             <div className="mt-3">
               <table className="w-full text-sm">
