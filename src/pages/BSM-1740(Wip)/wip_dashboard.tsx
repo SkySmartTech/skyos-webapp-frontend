@@ -17,6 +17,7 @@ import {
 import InventoryEntry from "./inventory_entry";
 import Reports from "./reports";
 import AiAssistant from "./ai_assistant";
+import ProductionSetup from "./production_setup";
 
 type StatCard = {
   title: string;
@@ -127,8 +128,16 @@ export default function WipDashboardPage() {
   const { theme } = useTheme();
   const dark = theme === "dark";
   const [activeSection, setActiveSection] = useState<
-    "dashboard" | "inventory" | "reports" | "ai" | "setup" | "access"
+    | "dashboard"
+    | "inventory"
+    | "reports"
+    | "ai"
+    | "setup"
+    | "setupLines"
+    | "setupStyles"
+    | "access"
   >("dashboard");
+  const [setupOpen, setSetupOpen] = useState(false);
 
   const page = dark ? "bg-[#070707] text-white" : "bg-[#f3f5f7] text-slate-900";
   const sidebar = dark
@@ -193,9 +202,39 @@ export default function WipDashboardPage() {
               icon={Settings2}
               label="Production Setup"
               collapsible
-              active={activeSection === "setup"}
-              onClick={() => setActiveSection("setup")}
+              active={activeSection === "setup" || activeSection === "setupLines" || activeSection === "setupStyles"}
+              onClick={() => setSetupOpen((s) => !s)}
             />
+            {setupOpen && (
+              <div className="mt-2 space-y-2 pl-5">
+                <button
+                  onClick={() => {
+                    setActiveSection("setupLines");
+                    setSetupOpen(true);
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    activeSection === "setupLines"
+                      ? "text-orange-300 bg-white/5"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  Lines
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveSection("setupStyles");
+                    setSetupOpen(true);
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    activeSection === "setupStyles"
+                      ? "text-orange-300 bg-white/5"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  Styles
+                </button>
+              </div>
+            )}
             <SidebarLink
               icon={ShieldCheck}
               label="Access Control"
@@ -232,15 +271,8 @@ export default function WipDashboardPage() {
             <Reports />
           ) : activeSection === "ai" ? (
             <AiAssistant />
-          ) : activeSection === "setup" ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>
-                  Production Setup
-                </p>
-                <p className={`text-sm ${muted}`}>Coming Soon</p>
-              </div>
-            </div>
+          ) : activeSection === "setup" || activeSection === "setupLines" ? (
+            <ProductionSetup />
           ) : activeSection === "access" ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
