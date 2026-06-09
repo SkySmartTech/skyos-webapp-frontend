@@ -113,7 +113,9 @@ export default function RolePermissions() {
   });
 
   const page = dark ? "bg-[#070707] text-white" : "bg-white text-slate-900";
-  const card = dark ? "border-white/10 bg-[#0e0e0e]" : "border-slate-200 bg-white";
+  const card = dark
+    ? "border-white/10 bg-[#0e0e0e]"
+    : "border-slate-200 bg-white";
   const muted = dark ? "text-slate-400" : "text-slate-500";
   const field = dark
     ? "border-white/10 bg-[#111111] text-white placeholder:text-slate-500"
@@ -183,21 +185,29 @@ export default function RolePermissions() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold tracking-tight">{role.name}</h2>
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    {role.name}
+                  </h2>
                   <p className={`text-lg ${muted}`}>{role.description}</p>
                 </div>
-                <button className={`rounded-lg border p-2 ${dark ? "border-white/10 bg-white/5 text-white" : "border-slate-200 bg-slate-50 text-slate-700"}`}>
+                <button
+                  className={`rounded-lg border p-2 ${dark ? "border-white/10 bg-white/5 text-white" : "border-slate-200 bg-slate-50 text-slate-700"}`}
+                >
                   <Edit2 size={16} />
                 </button>
               </div>
 
               <div className="mt-10 grid grid-cols-[1fr_auto] gap-y-3 text-sm">
                 <span className={muted}>Users</span>
-                <span className={`rounded-full px-3 py-1 font-semibold ${dark ? "bg-white/10 text-white" : "bg-slate-100 text-slate-900"}`}>
+                <span
+                  className={`rounded-full px-3 py-1 font-semibold ${dark ? "bg-white/10 text-white" : "bg-slate-100 text-slate-900"}`}
+                >
                   {role.users}
                 </span>
                 <span className={muted}>Permissions</span>
-                <span className={`rounded-full px-3 py-1 font-semibold ${dark ? "bg-white/10 text-white" : "bg-slate-100 text-slate-900"}`}>
+                <span
+                  className={`rounded-full px-3 py-1 font-semibold ${dark ? "bg-white/10 text-white" : "bg-slate-100 text-slate-900"}`}
+                >
                   {role.permissions}
                 </span>
               </div>
@@ -215,26 +225,34 @@ export default function RolePermissions() {
                 </button>
               </div>
 
-              <div className={`mt-5 h-1.5 rounded-full bg-linear-to-r ${role.accent}`} />
+              <div
+                className={`mt-5 h-1.5 rounded-full bg-linear-to-r ${role.accent}`}
+              />
             </article>
           ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
           <article className={`rounded-3xl border p-6 ${card}`}>
-            <p className={`text-sm uppercase tracking-[0.3em] ${muted}`}>Quick Summary</p>
+            <p className={`text-sm uppercase tracking-[0.3em] ${muted}`}>
+              Quick Summary
+            </p>
             <h2 className="mt-2 text-2xl font-bold">Role coverage</h2>
             <p className={`mt-2 text-sm ${muted}`}>
               Base access profiles for production and office users.
             </p>
           </article>
           <article className={`rounded-3xl border p-6 ${card}`}>
-            <p className={`text-sm uppercase tracking-[0.3em] ${muted}`}>Active roles</p>
+            <p className={`text-sm uppercase tracking-[0.3em] ${muted}`}>
+              Active roles
+            </p>
             <h2 className="mt-2 text-2xl font-bold">10</h2>
             <p className={`mt-2 text-sm ${muted}`}>Admin through Sales</p>
           </article>
           <article className={`rounded-3xl border p-6 ${card}`}>
-            <p className={`text-sm uppercase tracking-[0.3em] ${muted}`}>Policies</p>
+            <p className={`text-sm uppercase tracking-[0.3em] ${muted}`}>
+              Policies
+            </p>
             <h2 className="mt-2 text-2xl font-bold">4</h2>
             <p className={`mt-2 text-sm ${muted}`}>Preset access levels</p>
           </article>
@@ -243,7 +261,10 @@ export default function RolePermissions() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeModal} />
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={closeModal}
+          />
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -269,11 +290,16 @@ export default function RolePermissions() {
 
             <div className="mt-5 space-y-4">
               <label className="block">
-                <span className="mb-2 block text-sm font-semibold">Role Name</span>
+                <span className="mb-2 block text-sm font-semibold">
+                  Role Name
+                </span>
                 <input
                   value={form.name}
                   onChange={(event) =>
-                    setForm((current) => ({ ...current, name: event.target.value }))
+                    setForm((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
                   }
                   placeholder="Enter role name"
                   className={`w-full rounded-xl border px-4 py-3 text-sm outline-none ring-0 ${field}`}
@@ -281,11 +307,16 @@ export default function RolePermissions() {
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-sm font-semibold">Description</span>
+                <span className="mb-2 block text-sm font-semibold">
+                  Description
+                </span>
                 <textarea
                   value={form.description}
                   onChange={(event) =>
-                    setForm((current) => ({ ...current, description: event.target.value }))
+                    setForm((current) => ({
+                      ...current,
+                      description: event.target.value,
+                    }))
                   }
                   placeholder="Describe the role and its purpose"
                   rows={3}
@@ -294,11 +325,16 @@ export default function RolePermissions() {
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-sm font-semibold">Permission Level</span>
+                <span className="mb-2 block text-sm font-semibold">
+                  Permission Level
+                </span>
                 <select
                   value={form.level}
                   onChange={(event) =>
-                    setForm((current) => ({ ...current, level: event.target.value }))
+                    setForm((current) => ({
+                      ...current,
+                      level: event.target.value,
+                    }))
                   }
                   className={`w-full rounded-xl border px-4 py-3 text-sm outline-none ring-0 ${field}`}
                 >
@@ -322,10 +358,15 @@ export default function RolePermissions() {
                           : label === "Reports Access"
                             ? "reportsAccess"
                             : "productionControl";
-                    const checked = form[checkedKey as keyof typeof form] as boolean;
+                    const checked = form[
+                      checkedKey as keyof typeof form
+                    ] as boolean;
 
                     return (
-                      <label key={label} className="flex items-center justify-between gap-4 text-sm font-medium">
+                      <label
+                        key={label}
+                        className="flex items-center justify-between gap-4 text-sm font-medium"
+                      >
                         <span>{label}</span>
                         <button
                           type="button"
