@@ -12,18 +12,29 @@ export default function AiAssistant() {
   const { theme } = useTheme();
   const dark = theme === "dark";
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, from: "ai", text: "Hello! How can I assist you with the supermarket system today?" },
+    {
+      id: 1,
+      from: "ai",
+      text: "Hello! How can I assist you with the supermarket system today?",
+    },
   ]);
   const [input, setInput] = useState("");
   const scroller = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" });
+    scroller.current?.scrollTo({
+      top: scroller.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages]);
 
   function send() {
     if (!input.trim()) return;
-    const userMsg: Message = { id: Date.now(), from: "user", text: input.trim() };
+    const userMsg: Message = {
+      id: Date.now(),
+      from: "user",
+      text: input.trim(),
+    };
     setMessages((s) => [...s, userMsg]);
     setInput("");
 
@@ -38,22 +49,33 @@ export default function AiAssistant() {
     }, 700);
   }
 
-  const container = dark ? "bg-[#070707] text-white" : "bg-white text-slate-900";
-  const card = dark ? "border-white/10 bg-[#0e0e0e]" : "border-slate-200 bg-white";
+  const container = dark
+    ? "bg-[#070707] text-white"
+    : "bg-white text-slate-900";
+  const card = dark
+    ? "border-white/10 bg-[#0e0e0e]"
+    : "border-slate-200 bg-white";
 
   return (
     <div className={`flex h-full gap-6 p-6 ${container}`}>
       <div className="flex w-full flex-col gap-4">
         <div className={`rounded-2xl border px-6 py-5 ${card}`}>
           <h2 className="text-2xl font-bold">AI Assistant</h2>
-          <p className="mt-1 text-sm text-slate-400">Get intelligent help with your tasks</p>
+          <p className="mt-1 text-sm text-slate-400">
+            Get intelligent help with your tasks
+          </p>
         </div>
 
-        <div className={`flex-1 rounded-2xl border ${card} flex overflow-hidden`}> 
+        <div
+          className={`flex-1 rounded-2xl border ${card} flex overflow-hidden`}
+        >
           <div className="flex-1 flex flex-col">
             <div ref={scroller} className="flex-1 overflow-y-auto p-6">
               {messages.map((m) => (
-                <div key={m.id} className={`mb-4 flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
+                <div
+                  key={m.id}
+                  className={`mb-4 flex ${m.from === "user" ? "justify-end" : "justify-start"}`}
+                >
                   <div
                     className={`max-w-[72%] rounded-xl px-4 py-3 text-sm ${
                       m.from === "user"
@@ -94,13 +116,16 @@ export default function AiAssistant() {
           <h3 className="font-semibold">Quick Actions</h3>
           <ul className="mt-3 space-y-2">
             <li className="flex items-center gap-3 rounded-md border px-3 py-2">
-              <Search size={14} /> <span className="text-sm">Search Database</span>
+              <Search size={14} />{" "}
+              <span className="text-sm">Search Database</span>
             </li>
             <li className="flex items-center gap-3 rounded-md border px-3 py-2">
-              <FileText size={14} /> <span className="text-sm">Generate Report</span>
+              <FileText size={14} />{" "}
+              <span className="text-sm">Generate Report</span>
             </li>
             <li className="flex items-center gap-3 rounded-md border px-3 py-2">
-              <BarChart size={14} /> <span className="text-sm">Analyze Trends</span>
+              <BarChart size={14} />{" "}
+              <span className="text-sm">Analyze Trends</span>
             </li>
             <li className="flex items-center gap-3 rounded-md border px-3 py-2">
               <Zap size={14} /> <span className="text-sm">Data Insights</span>
