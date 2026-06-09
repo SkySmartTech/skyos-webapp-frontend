@@ -202,7 +202,11 @@ export default function WipDashboardPage() {
               icon={Settings2}
               label="Production Setup"
               collapsible
-              active={activeSection === "setup" || activeSection === "setupLines" || activeSection === "setupStyles"}
+              active={
+                activeSection === "setup" ||
+                activeSection === "setupLines" ||
+                activeSection === "setupStyles"
+              }
               onClick={() => setSetupOpen((s) => !s)}
             />
             {setupOpen && (

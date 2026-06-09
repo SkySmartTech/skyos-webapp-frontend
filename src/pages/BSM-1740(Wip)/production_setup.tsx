@@ -59,11 +59,19 @@ export default function ProductionSetup() {
   });
 
   const page = dark ? "bg-[#070707] text-white" : "bg-white text-slate-900";
-  const card = dark ? "border-white/10 bg-[#0e0e0e]" : "border-slate-200 bg-white";
+  const card = dark
+    ? "border-white/10 bg-[#0e0e0e]"
+    : "border-slate-200 bg-white";
   const muted = dark ? "text-slate-400" : "text-slate-500";
 
   function openModal() {
-    setForm({ title: "", type: "", upperLimit: "", lowerLimit: "", active: true });
+    setForm({
+      title: "",
+      type: "",
+      upperLimit: "",
+      lowerLimit: "",
+      active: true,
+    });
     setShowModal(true);
   }
 
@@ -89,9 +97,14 @@ export default function ProductionSetup() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-black">Production Setup</h1>
-          <p className={`mt-1 text-sm ${muted}`}>Configure production lines and styles</p>
+          <p className={`mt-1 text-sm ${muted}`}>
+            Configure production lines and styles
+          </p>
         </div>
-        <button onClick={openModal} className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg dark:bg-orange-500 dark:text-white">
+        <button
+          onClick={openModal}
+          className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg dark:bg-orange-500 dark:text-white"
+        >
           <Plus size={14} /> Add Production Line
         </button>
       </div>
@@ -102,10 +115,16 @@ export default function ProductionSetup() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold">{line.title}</h3>
-                <p className="text-sm text-slate-400">{line.code} • {line.type}</p>
+                <p className="text-sm text-slate-400">
+                  {line.code} • {line.type}
+                </p>
               </div>
               <div className="text-right">
-                {line.active && <span className="rounded-full bg-slate-800 px-3 py-1 text-xs">Active</span>}
+                {line.active && (
+                  <span className="rounded-full bg-slate-800 px-3 py-1 text-xs">
+                    Active
+                  </span>
+                )}
               </div>
             </div>
 
@@ -138,19 +157,28 @@ export default function ProductionSetup() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setShowModal(false)} />
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowModal(false)}
+          />
           <form
             onSubmit={handleAddLine}
             className="relative z-10 w-full max-w-md rounded-xl bg-white p-6 text-slate-900 border border-slate-200 dark:bg-[#0b0b0b] dark:text-white dark:border-white/10"
           >
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Create Line</h2>
-              <button type="button" onClick={() => setShowModal(false)} className="rounded-full p-1">
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="rounded-full p-1"
+              >
                 <X />
               </button>
             </div>
 
-            <p className="mt-2 text-sm text-slate-500">Set up a new production line with style, limits and status colors</p>
+            <p className="mt-2 text-sm text-slate-500">
+              Set up a new production line with style, limits and status colors
+            </p>
 
             <div className="mt-4 space-y-3">
               <div>
@@ -182,7 +210,9 @@ export default function ProductionSetup() {
                   <label className="text-sm font-semibold">Upper Limit</label>
                   <input
                     value={form.upperLimit}
-                    onChange={(e) => setForm({ ...form, upperLimit: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, upperLimit: e.target.value })
+                    }
                     className="mt-2 w-full rounded-lg border px-3 py-2 text-sm bg-transparent border-slate-200 dark:border-white/10 text-slate-900 dark:text-white"
                   />
                 </div>
@@ -190,7 +220,9 @@ export default function ProductionSetup() {
                   <label className="text-sm font-semibold">Lower Limit</label>
                   <input
                     value={form.lowerLimit}
-                    onChange={(e) => setForm({ ...form, lowerLimit: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, lowerLimit: e.target.value })
+                    }
                     className="mt-2 w-full rounded-lg border px-3 py-2 text-sm bg-transparent border-slate-200 dark:border-white/10 text-slate-900 dark:text-white"
                   />
                 </div>
@@ -202,10 +234,14 @@ export default function ProductionSetup() {
                   <input
                     type="checkbox"
                     checked={form.active}
-                    onChange={(e) => setForm({ ...form, active: e.target.checked })}
+                    onChange={(e) =>
+                      setForm({ ...form, active: e.target.checked })
+                    }
                     className="accent-orange-500"
                   />
-                  <span className="text-sm text-slate-500 dark:text-slate-400">Line is active and operational</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400">
+                    Line is active and operational
+                  </span>
                 </label>
               </div>
             </div>
@@ -218,7 +254,12 @@ export default function ProductionSetup() {
               >
                 Cancel
               </button>
-              <button type="submit" className="rounded-md bg-orange-600 px-4 py-2 text-sm text-white">Create Line</button>
+              <button
+                type="submit"
+                className="rounded-md bg-orange-600 px-4 py-2 text-sm text-white"
+              >
+                Create Line
+              </button>
             </div>
           </form>
         </div>
