@@ -152,9 +152,9 @@ export default function AccessUsers() {
     <div className={`h-full w-full p-6 ${page}`}>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-black">Access Control</h1>
+          <h1 className="text-3xl font-black">Users</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Manage users, roles, and permissions
+            Manage user accounts and status for access control
           </p>
         </div>
         <button

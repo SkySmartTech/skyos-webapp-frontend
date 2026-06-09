@@ -20,6 +20,7 @@ import AiAssistant from "./ai_assistant";
 import ProductionSetup from "./production_setup";
 import ProductionStyles from "./production_styles";
 import AccessUsers from "./access_users";
+import RolePermissions from "./role_permissions";
 
 type StatCard = {
   title: string;
@@ -138,8 +139,11 @@ export default function WipDashboardPage() {
     | "setupLines"
     | "setupStyles"
     | "access"
+    | "accessUsers"
+    | "accessPermissions"
   >("dashboard");
   const [setupOpen, setSetupOpen] = useState(false);
+  const [accessOpen, setAccessOpen] = useState(false);
 
   const page = dark ? "bg-[#070707] text-white" : "bg-[#f3f5f7] text-slate-900";
   const sidebar = dark
@@ -157,10 +161,10 @@ export default function WipDashboardPage() {
     <div className={`h-full w-full overflow-hidden ${page}`}>
       <div className="flex h-full min-h-0">
         <aside
-          className={`hidden w-[250px] shrink-0 border-r px-4 py-4 lg:block ${sidebar}`}
+          className={`hidden w-62.5 shrink-0 border-r px-4 py-4 lg:block ${sidebar}`}
         >
           <div className="mb-6 flex items-center gap-3 px-2 py-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-700 text-white shadow-lg shadow-orange-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-orange-500 to-amber-700 text-white shadow-lg shadow-orange-500/20">
               <Layers3 size={18} />
             </div>
             <div>
@@ -245,9 +249,43 @@ export default function WipDashboardPage() {
               icon={ShieldCheck}
               label="Access Control"
               collapsible
-              active={activeSection === "access"}
-              onClick={() => setActiveSection("access")}
+              active={
+                activeSection === "access" ||
+                activeSection === "accessUsers" ||
+                activeSection === "accessPermissions"
+              }
+              onClick={() => setAccessOpen((s) => !s)}
             />
+            {accessOpen && (
+              <div className="mt-2 space-y-2 pl-5">
+                <button
+                  onClick={() => {
+                    setActiveSection("accessUsers");
+                    setAccessOpen(true);
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    activeSection === "accessUsers"
+                      ? "text-orange-300 bg-white/5"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  Users
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveSection("accessPermissions");
+                    setAccessOpen(true);
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    activeSection === "accessPermissions"
+                      ? "text-orange-300 bg-white/5"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  Role & Permissions
+                </button>
+              </div>
+            )}
           </nav>
 
           <div
@@ -281,17 +319,10 @@ export default function WipDashboardPage() {
             <ProductionSetup />
           ) : activeSection === "setupStyles" ? (
             <ProductionStyles />
-          ) : activeSection === "access" || activeSection === "accessUsers" ? (
+          ) : activeSection === "accessUsers" ? (
             <AccessUsers />
-          ) : activeSection === "access" ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className={`text-lg font-semibold ${heading}`}>
-                  Access Control
-                </p>
-                <p className={`text-sm ${muted}`}>Coming Soon</p>
-              </div>
-            </div>
+          ) : activeSection === "accessPermissions" ? (
+            <RolePermissions />
           ) : (
             <>
               <div
@@ -313,7 +344,7 @@ export default function WipDashboardPage() {
                       WIP click කරන විට open වන operational dashboard shell එක.
                     </p>
                   </div>
-                  <button className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-black/10 transition hover:translate-y-[-1px] hover:bg-slate-100 dark:bg-orange-500 dark:text-white dark:hover:bg-orange-400">
+                  <button className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-black/10 transition hover:-translate-y-px hover:bg-slate-100 dark:bg-orange-500 dark:text-white dark:hover:bg-orange-400">
                     <Plus size={16} />
                     Add Line
                   </button>
