@@ -4,7 +4,7 @@ import Topbar from "./components/COMMON/Topbar";
 import SkyOs from "./pages/SKY_OS_PAGES/sky_os";
 import ProductionTrackingPage from "./pages/SPM-1693/production_tracking_page";
 import AndonPage from "./pages/DSCS1515A(Anadon)/andonpage";
-import WipDashboardPage from "./pages/BSM-1740(Wip)/wip_dashboard";
+import WipPage from "./pages/BSM-1740(Wip)/wippage";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export type ActiveModule =
@@ -91,7 +91,7 @@ function App() {
 
       <div className="flex flex-1 overflow-hidden">
         {location.pathname.startsWith("/wip") || activeModule === "wip" ? (
-          <WipDashboardPage />
+          <WipPage />
         ) : showAndonHome ? (
           <AndonPage />
         ) : activeModule === "production" ? (
