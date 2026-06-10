@@ -340,9 +340,7 @@ export default function WipDashboardPage() {
                     >
                       Flowtrace Supermarket System Overview
                     </h1>
-                    <p className={`mt-2 text-sm ${sub}`}>
-                      WIP click කරන විට open වන operational dashboard shell එක.
-                    </p>
+                    
                   </div>
                   <button className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-black/10 transition hover:-translate-y-px hover:bg-slate-100 dark:bg-orange-500 dark:text-white dark:hover:bg-orange-400">
                     <Plus size={16} />
