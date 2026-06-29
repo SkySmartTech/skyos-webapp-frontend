@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "../../../components/PMS-1682(Solar)/sidebar";
 import {
   Search,
   CalendarDays,
@@ -35,11 +34,8 @@ export default function DetailReportEnergy() {
   );
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 overflow-auto min-h-screen bg-[#f3f4f6]">
-      {/* PAGE WRAPPER */}
-      <div className="p-2 sm:p-3 md:p-4">
+    <div className="min-h-full bg-[#f3f4f6] p-2 sm:p-3 md:p-4">
+      <div>
         {/* TOP CARD */}
         <div className="overflow-hidden rounded border border-gray-300 bg-[#efefef] shadow-sm">
           {/* HEADER */}
@@ -248,7 +244,6 @@ export default function DetailReportEnergy() {
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

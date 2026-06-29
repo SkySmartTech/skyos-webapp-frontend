@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Menu } from 'lucide-react';
 import type { DashboardData } from '../../components/SPM-1693/p_r_dashboard';
 import PRDashboard from '../../components/SPM-1693/p_r_dashboard';
@@ -6,37 +6,72 @@ import PRSetting   from '../../components/SPM-1693/p_r_setting';
 import PRUpdate    from '../../components/SPM-1693/p_r_update';
 import Sidebar     from '../../components/COMMON/Sidebar';
 import { useTheme } from '../../context/ThemeContext';
+import productionTrackingService, { type ProductionDashboardResponse } from '../../api/productionTrackingService';
+
+// Realtime-ish refresh — no websocket layer on the backend yet, so the
+// dashboard / active day-plan id are kept fresh via short polling.
+const POLL_INTERVAL_MS = 5000;
+
+function mapToDashboardData(resp: ProductionDashboardResponse): DashboardData | null {
+  if (!resp.day_plan || !resp.stats) return null;
+  const { day_plan: plan, stats } = resp;
+  return {
+    team: plan.team || '-',
+    buyer: plan.buyer || '-',
+    style: plan.style || '-',
+    gauge: plan.gauge || '-',
+    smv: plan.smv || '-',
+    carder: String(plan.carder ?? '-'),
+    whRh: `${plan.display_wh || '-'} | --`,
+    perfEfi: stats.perf_efi,
+    lineEfi: stats.line_efi,
+    hourlyTarget: `${stats.hourly_target} / ${stats.hourly_achieve}`,
+    todayTarget: `${stats.today_target} / ${stats.today_achieve}`,
+    hourlyBalance: String(stats.hourly_balance),
+    todayBalance: String(stats.today_balance),
+    uptoNowTarget: `${stats.upto_now_target} / ${stats.upto_now_achieve}`,
+    todayCheckQty: String(stats.today_check_qty),
+    uptoNowBalance: String(stats.upto_now_balance),
+    totalDefectQty: String(stats.total_defect_qty),
+    dhu: stats.dhu,
+    topDefects: stats.top_defects,
+  };
+}
 
 function ProductionTrackingPage({ initialView = 'dashboard' }: { initialView?: 'dashboard' | 'settings' | 'update' }) {
   const [activeView,   setActiveView]   = useState<'dashboard' | 'settings' | 'update'>(initialView);
   const [sidebarOpen,  setSidebarOpen]  = useState(false);
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardResp, setDashboardResp] = useState<ProductionDashboardResponse | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const { theme } = useTheme();
   const dark = theme === 'dark';
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setActiveView(initialView); }, [initialView]);
 
-  const handleDataUpload = (data: DashboardData) => {
-    setDashboardData(data);
-    setActiveView('dashboard');
-  };
+  const fetchDashboard = useCallback(async () => {
+    try {
+      const data = await productionTrackingService.getDashboard(selectedTeam ?? undefined);
+      setDashboardResp(data);
+      // First load — default the selector to whichever team the backend picked.
+      setSelectedTeam(prev => prev ?? data.day_plan?.team ?? null);
+    } catch {
+      // keep showing the last known data — PRDashboard renders defaults if null
+    }
+  }, [selectedTeam]);
 
-  const handleDataUpdate = (counts: { successCount: number; reworkCount: number; defectCount: number }) => {
-    setDashboardData(prev => {
-      const base: DashboardData = prev ?? {
-        team: '-', buyer: '-', style: '-', gauge: '-', smv: '-', carder: '-', whRh: '- | --',
-        perfEfi: '0%', lineEfi: '0%', hourlyTarget: '0 / 0', todayTarget: '0 / 0',
-        hourlyBalance: '0', todayBalance: '0', uptoNowTarget: '0 / 0', todayCheckQty: '0',
-        uptoNowBalance: '0', totalDefectQty: '0', dhu: '0.0%', topDefects: ['-', '-', '-'],
-      };
-      const total = counts.successCount + counts.reworkCount + counts.defectCount;
-      const dhu = total > 0 ? ((counts.defectCount / total) * 100).toFixed(1) + '%' : '0.0%';
-      return { ...base, todayCheckQty: String(total), totalDefectQty: String(counts.defectCount), dhu };
-    });
-  };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchDashboard();
+    const id = setInterval(fetchDashboard, POLL_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [fetchDashboard]);
+
+  const dashboardData = dashboardResp ? mapToDashboardData(dashboardResp) : null;
+  const availableTeams = dashboardResp?.available_teams ?? [];
 
   return (
-    <div className={`flex w-full h-full overflow-hidden transition-colors duration-300 ${dark ? 'bg-gray-950' : 'bg-slate-100'}`}>
+    <div className={`flex w-full h-full min-h-0 overflow-hidden transition-colors duration-300 ${dark ? 'bg-gray-950' : 'bg-slate-100'}`}>
 
       <Sidebar
         activeView={activeView}
@@ -45,7 +80,7 @@ function ProductionTrackingPage({ initialView = 'dashboard' }: { initialView?: '
         onClose={() => setSidebarOpen(false)}
       />
 
-      <main className="flex-1 overflow-y-auto relative">
+      <main className="flex-1 min-h-0 overflow-y-auto relative">
         {/* Mobile menu button */}
         <button
           onClick={() => setSidebarOpen(true)}
@@ -55,11 +90,16 @@ function ProductionTrackingPage({ initialView = 'dashboard' }: { initialView?: '
         </button>
 
         {activeView === 'dashboard' ? (
-          <PRDashboard dashboardData={dashboardData} />
+          <PRDashboard
+            dashboardData={dashboardData}
+            availableTeams={availableTeams}
+            selectedTeam={selectedTeam}
+            onTeamChange={setSelectedTeam}
+          />
         ) : activeView === 'settings' ? (
-          <PRSetting onDataUpload={handleDataUpload} />
+          <PRSetting onUploaded={() => { fetchDashboard(); setActiveView('dashboard'); }} />
         ) : (
-          <PRUpdate onDataUpdate={handleDataUpdate} />
+          <PRUpdate onChecked={fetchDashboard} />
         )}
       </main>
     </div>

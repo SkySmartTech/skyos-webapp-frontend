@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+    Options -MultiViews -Indexes
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Pass Laravel backend requests through — never rewrite these to index.html
+    RewriteRule ^backend/ - [L]
+
+    # Serve real files (JS, CSS, images, fonts) and real directories directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else → React SPA entry point
+    RewriteRule ^ /index.html [L]
+</IfModule>

@@ -1,198 +1,244 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, type ElementType } from "react";
 import {
-  LayoutDashboard,
-  FileText,
-  PieChart,
-  Monitor,
-  User,
-  HelpCircle,
-  ChevronDown,
-  Menu,
-  X,
+  LayoutDashboard, FileText, PieChart, User, ChevronDown, X, Menu, LogOut,
 } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../SKY_OS/sky_auth";
+import dioLogo from "../../assets/dio-logo.png";
 
-export default function Sidebar() {
+export type SolarView =
+  | "dashboard" | "mfm" | "mfi"
+  | "details" | "energy" | "intimo" | "thermal" | "thermal-ceb"
+  | "userprofile";
+
+interface SolarSidebarProps {
+  activeView: SolarView;
+  onNavigate: (view: SolarView) => void;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function SolarSidebar({ activeView, onNavigate, isOpen, onClose }: SolarSidebarProps) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const { logout } = useAuth();
   const [reportsOpen, setReportsOpen] = useState(true);
-  const [energyOpen, setEnergyOpen] = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(() => !!document.fullscreenElement);
+  const [expanded, setExpanded] = useState(false);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const handler = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      if (!document.fullscreenElement) setExpanded(false);
+    };
+    document.addEventListener('fullscreenchange', handler);
+    return () => document.removeEventListener('fullscreenchange', handler);
+  }, []);
+
+  const mini = isFullscreen && !expanded;
+
+  const base      = dark ? "bg-[#0f172a] border-[#1e293b] text-[#94a3b8]" : "bg-white border-[#e2e8f0] text-[#64748b]";
+  const lbl       = dark ? "text-[#475569]" : "text-[#94a3b8]";
+  const active    = dark ? "bg-blue-500/10 text-blue-400" : "bg-blue-50 text-blue-600";
+  const hover     = dark ? "hover:bg-[#1e293b] hover:text-white" : "hover:bg-[#f8fafc] hover:text-[#0f172a]";
+  const divider   = dark ? "border-[#1e293b]" : "border-[#e2e8f0]";
+  const subActive = dark ? "bg-blue-500/10 text-blue-400" : "bg-blue-50 text-blue-600";
+  const subHover  = dark ? "hover:bg-[#1e293b]/60 hover:text-white" : "hover:bg-[#f8fafc] hover:text-[#0f172a]";
+
+  const navItem = (view: SolarView, Icon: ElementType, label: string) => (
+    <div
+      key={view}
+      onClick={() => { onNavigate(view); onClose(); setExpanded(false); }}
+      title={label}
+      className={`flex items-center ${mini ? 'justify-center' : 'gap-2.5'} mb-1 cursor-pointer px-2 py-2 rounded-xl transition-all duration-200 ${
+        activeView === view ? active : hover
+      }`}
+    >
+      <Icon size={mini ? 18 : 17} className="shrink-0" />
+      {!mini && <span className="text-sm font-medium truncate">{label}</span>}
+    </div>
+  );
+
+  const reportItems: { view: SolarView; label: string }[] = [
+    { view: "details",     label: "Details Report" },
+    { view: "energy",      label: "Report Energy" },
+    { view: "intimo",      label: "Report Intimo" },
+    { view: "thermal",     label: "Thermal Consumption" },
+    { view: "thermal-ceb", label: "Thermal & CEB" },
+  ];
 
   return (
     <>
-      {/* Mobile Top Bar */}
-      <div className="lg:hidden flex items-center justify-between bg-[#343A40] text-white px-4 py-3">
-        <h1 className="text-lg font-semibold">HVAC Dashboard</h1>
-
-        <button onClick={() => setMobileOpen(true)}>
-          <Menu size={28} />
-        </button>
-      </div>
-
-      {/* Overlay */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
+      {isOpen && !isFullscreen && (
+        <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={onClose} />
       )}
 
-      {/* Sidebar */}
-      <div
-        className={`
-          fixed top-0 left-0 z-50
-          w-[310px] h-screen
-          bg-[#343A40]
-          text-white
-          overflow-y-auto
-          p-3
-          transform transition-transform duration-300
+      <div className={`
+        shrink-0 h-full border-r overflow-y-auto flex flex-col
+        transition-all duration-300 ease-in-out
+        ${isFullscreen
+          ? `relative ${mini ? 'w-14 px-1 py-4' : 'w-64 px-4 py-5'}`
+          : `fixed md:relative inset-y-0 md:inset-auto left-0 md:left-auto z-40 md:z-auto
+             w-64 px-4 py-5 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`
+        }
+        ${base}
+      `}>
 
-          ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
-          }
+        {/* Header */}
+        {mini ? (
+          <div className={`flex flex-col items-center gap-1.5 pb-3 mb-2 border-b ${divider}`}>
+            <button
+              onClick={() => setExpanded(true)}
+              title="Expand menu"
+              className={`p-1.5 rounded-lg transition-colors ${hover}`}
+            >
+              <Menu size={17} />
+            </button>
+            <img src={dioLogo} alt="DIO" className="w-8 h-8 rounded-md object-cover" />
+            {/* System tag — mini */}
+            <div className="w-full flex justify-center">
+              <span className="text-[7px] font-bold tracking-wide uppercase px-1.5 py-0.5 rounded bg-teal-600/20 text-teal-400 text-center leading-tight">
+                PMS
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-0">
+            <div className={`flex items-center gap-3 px-1 py-3 border-b ${divider}`}>
+              <img src={dioLogo} alt="DIO" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className={`text-xs font-bold leading-tight ${dark ? "text-white" : "text-gray-900"}`}>
+                  DIO Manufacture LTD
+                </p>
+              </div>
+              {isFullscreen && (
+                <button
+                  onClick={() => setExpanded(false)}
+                  title="Collapse menu"
+                  className={`p-1 rounded-lg shrink-0 transition-colors ${dark ? "hover:bg-[#1e293b] text-[#94a3b8]" : "hover:bg-[#f8fafc] text-[#64748b]"}`}
+                >
+                  <Menu size={16} />
+                </button>
+              )}
+              {!isFullscreen && (
+                <button
+                  onClick={onClose}
+                  className={`md:hidden p-1 rounded-lg shrink-0 transition-colors ${dark ? "hover:bg-[#1e293b] text-[#94a3b8]" : "hover:bg-[#f8fafc] text-[#64748b]"}`}
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            {/* System indicator — full */}
+            <div className="flex items-center gap-2 px-3 py-2 mx-1 mt-2 mb-3 rounded-lg bg-teal-600/10 border border-teal-500/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold tracking-wider uppercase text-teal-400">Energy Monitoring</p>
+                <p className={`text-[9px] ${dark ? 'text-teal-300/60' : 'text-teal-600/70'}`}>PMS-1682</p>
+              </div>
+            </div>
+          </div>
+        )}
 
-          lg:translate-x-0
-          lg:static
-        `}
-      >
-        {/* Mobile Close Button */}
-        <div className="flex items-center justify-between mb-4 lg:hidden">
-          <h2 className="text-xl font-semibold">Menu</h2>
-
-          <button onClick={() => setMobileOpen(false)}>
-            <X size={28} />
-          </button>
+        {/* DASHBOARDS */}
+        <div>
+          {!mini && <p className={`text-xs font-bold tracking-widest mb-3 uppercase ${lbl}`}>Dashboards</p>}
+          {navItem("dashboard", LayoutDashboard, "Dashboard")}
+          {navItem("mfm",       LayoutDashboard, "Dashboard MFM")}
+          {navItem("mfi",       LayoutDashboard, "Dashboard MFI")}
         </div>
 
-        <div className="space-y-1">
-          {/* Dashboard */}
-          <button
-            onClick={() => navigate("/solar/dashboard")}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded bg-[#495057] hover:bg-[#5c636a] transition"
-          >
-            <LayoutDashboard size={20} />
-            <span className="text-[15px] font-medium">Dashboard</span>
-          </button>
+        <div className={`border-t my-3 ${divider}`} />
 
-          {/* Dashboard MFM */}
-          <button
-            onClick={() => navigate("/solar/mfm")}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded bg-[#495057] hover:bg-[#5c636a] transition"
-          >
-            <LayoutDashboard size={20} />
-            <span className="text-[15px] font-medium">
-              Dashboard MFM
-            </span>
-          </button>
-
-          {/* Dashboard MFI */}
-          <button
-            onClick={() => navigate("/solar/mfi")}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded bg-[#495057] hover:bg-[#5c636a] transition"
-          >
-            <LayoutDashboard size={20} />
-            <span className="text-[15px] font-medium">
-              Dashboard MFI
-            </span>
-          </button>
-
-          {/* Reports */}
-          <div>
-            <button
-              onClick={() => setReportsOpen(!reportsOpen)}
-              className="w-full flex items-center justify-between px-4 py-4 rounded bg-[#495057] hover:bg-[#5c636a] transition"
+        {/* REPORTS */}
+        <div>
+          {mini ? (
+            <div
+              title="Reports"
+              onClick={() => setReportsOpen(p => !p)}
+              className={`flex justify-center mb-1 cursor-pointer px-2 py-2 rounded-xl transition-all duration-200 ${hover}`}
             >
-              <div className="flex items-center gap-3">
-                <FileText size={20} />
-                <span className="text-[15px] font-medium">
-                  Reports
-                </span>
-              </div>
-
-              <ChevronDown
-                size={18}
-                className={`transition-transform ${
-                  reportsOpen ? "rotate-0" : "-rotate-90"
-                }`}
-              />
-            </button>
-
-            {reportsOpen && (
-              <div className="mt-2 ml-2 space-y-1">
-                {[
-                  { label: "Details Reports", path: "/solar/reports/details" },
-                  { label: "Details Reports COP", path: "/solar/reports/cop" },
-                  { label: "Details Reports Intimo", path: "/solar/reports/intimo" },
-                  { label: "Thermal Consumption", path: "/solar/reports/thermal" },
-                  { label: "Thermal Consumption & CEB", path: "/solar/reports/thermal-ce" },
-                  { label: "Details Reports Energy", path: "/solar/reports/energy" },
-                ].map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => navigate(item.path)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-[#D6D8DB] hover:bg-[#495057] rounded transition"
-                  >
-                    <PieChart size={18} />
-                    <span className="text-[15px]">{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* CEB Energy */}
-          <div>
-            <button
-              onClick={() => setEnergyOpen(!energyOpen)}
-              className="w-full flex items-center justify-between px-4 py-4 rounded bg-[#495057] hover:bg-[#5c636a] transition"
-            >
-              <div className="flex items-center gap-3">
-                <Monitor size={20} />
-                <span className="text-[15px] font-medium">
-                  CEB Energy
-                </span>
-              </div>
-
-              <ChevronDown
-                size={18}
-                className={`transition-transform ${
-                  energyOpen ? "rotate-0" : "-rotate-90"
-                }`}
-              />
-            </button>
-
-            {energyOpen && (
-              <div className="mt-2 ml-2">
-                <button
-                 onClick={() => navigate("/solar/reports/dashboard")}
-                className="w-full flex items-center gap-3 px-4 py-3 text-[#D6D8DB] hover:bg-[#495057] rounded transition">
-                  <LayoutDashboard size={18} />
-                  <span className="text-[15px]">Dashboard</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* User Profile */}
-          <button
-            onClick={() => navigate("/userprofile")}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded hover:bg-[#495057] transition"
-          >
-            <User size={20} />
-            <span className="text-[15px]">User Profile</span>
-          </button>
-
-          {/* Help */}
-          <button className="w-full flex items-center justify-between px-4 py-4 rounded hover:bg-[#495057] transition">
-            <div className="flex items-center gap-3">
-              <HelpCircle size={20} />
-              <span className="text-[15px]">Help</span>
+              <FileText size={18} className="shrink-0" />
             </div>
+          ) : (
+            <button
+              onClick={() => setReportsOpen(p => !p)}
+              className={`w-full flex items-center justify-between mb-1 px-2 py-2 rounded-xl transition-all duration-200 ${
+                dark ? "text-[#94a3b8] hover:bg-[#1e293b] hover:text-white" : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a]"
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <FileText size={17} className="shrink-0" />
+                <span className="text-sm font-medium">Reports</span>
+              </div>
+              <ChevronDown size={15} className={`transition-transform duration-200 ${reportsOpen ? "" : "-rotate-90"}`} />
+            </button>
+          )}
 
-            <ChevronDown size={18} />
-          </button>
+          {reportsOpen && !mini && (
+            <div className="ml-3 mt-1 space-y-0.5">
+              {reportItems.map(item => (
+                <div
+                  key={item.view}
+                  onClick={() => { onNavigate(item.view); onClose(); setExpanded(false); }}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 text-xs font-medium ${
+                    activeView === item.view ? subActive : subHover
+                  }`}
+                >
+                  <PieChart size={14} className="shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {reportsOpen && mini && (
+            <div className="space-y-0.5">
+              {reportItems.map(item => (
+                <div
+                  key={item.view}
+                  onClick={() => { onNavigate(item.view); onClose(); setExpanded(false); }}
+                  title={item.label}
+                  className={`flex justify-center px-2 py-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                    activeView === item.view ? subActive : subHover
+                  }`}
+                >
+                  <PieChart size={16} className="shrink-0" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={`border-t my-3 ${divider}`} />
+
+        {/* SYSTEM */}
+        <div>
+          {!mini && <p className={`text-xs font-bold tracking-widest mb-3 uppercase ${lbl}`}>System</p>}
+          {navItem("userprofile", User, "User Profile")}
+        </div>
+
+        <div className={`mt-auto pt-4 border-t ${divider}`}>
+          {mini ? (
+            <button
+              onClick={logout}
+              title="Logout"
+              className="w-full flex justify-center px-2 py-2 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors duration-200"
+            >
+              <LogOut size={18} />
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors duration-200 font-medium text-sm"
+              >
+                <LogOut size={16} className="shrink-0" />
+                Logout
+              </button>
+              <p className={`text-[11px] text-center font-semibold mt-3 ${dark ? "text-gray-500" : "text-gray-400"}`}>NEXIS V01</p>
+            </>
+          )}
         </div>
       </div>
     </>

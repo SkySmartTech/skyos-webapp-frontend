@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "../../../components/PMS-1682(Solar)/sidebar";
 import {
   Search,
   CalendarDays,
@@ -39,24 +38,23 @@ export default function EnergyDetailsReportPage() {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="flex min-h-screen bg-[#f1f2f6]">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto p-4">
+    <div className="min-h-full bg-[#f1f2f6] p-2 sm:p-4">
+      <main className="flex-1">
         {/* MAIN CONTAINER */}
         <div className="rounded-md border border-gray-300 bg-white shadow-sm">
           {/* HEADER */}
-          <div className="flex items-center justify-between border-b border-gray-300 px-5 py-4">
-            <h1 className="text-[18px] font-bold text-[#f4a000]">
+          <div className="flex items-center justify-between border-b border-gray-300 px-3 sm:px-5 py-3 sm:py-4">
+            <h1 className="text-base sm:text-lg md:text-[18px] font-bold text-[#f4a000]">
               Details Report
             </h1>
 
             <button className="text-gray-500 transition hover:text-black">
-              <span className="text-2xl font-light">−</span>
+              <span className="text-xl sm:text-2xl font-light">−</span>
             </button>
           </div>
 
           {/* FILTER SECTION */}
-          <div className="grid grid-cols-1 gap-5 p-4 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:gap-5 p-3 sm:p-4 sm:grid-cols-2 md:grid-cols-4">
             {/* DATE START */}
             <div>
               <label className="mb-2 block text-[15px] font-bold text-black">
@@ -120,22 +118,22 @@ export default function EnergyDetailsReportPage() {
         </div>
 
         {/* ENERGY DETAILS */}
-        <div className="mt-5 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm">
+        <div className="mt-3 sm:mt-5 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm">
           {/* RED HEADER */}
-          <div className="bg-[#dc3545] px-6 py-4">
-            <h2 className="text-[17px] font-bold text-white">
+          <div className="bg-[#dc3545] px-3 sm:px-6 py-2 sm:py-4">
+            <h2 className="text-base sm:text-[17px] font-bold text-white">
               Energy Details
             </h2>
           </div>
 
           {/* TABLE TOOLBAR */}
-          <div className="flex flex-col items-start justify-between gap-4 p-6 md:flex-row md:items-center">
+          <div className="flex flex-col items-start justify-between gap-3 sm:gap-4 p-3 sm:p-6 md:flex-row md:items-center">
             {/* EXPORT BUTTONS */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {["Copy", "Excel", "CSV", "PDF", "Print"].map((btn) => (
                 <button
                   key={btn}
-                  className="rounded bg-[#5a6268] px-5 py-3 text-[15px] text-white transition hover:bg-[#4b5257]"
+                  className="rounded bg-[#5a6268] px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-[15px] text-white transition hover:bg-[#4b5257] whitespace-nowrap"
                 >
                   {btn}
                 </button>
@@ -143,15 +141,15 @@ export default function EnergyDetailsReportPage() {
             </div>
 
             {/* SEARCH */}
-            <div className="flex items-center gap-3">
-              <label className="text-[16px] text-black">Search:</label>
+            <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+              <label className="text-sm sm:text-[16px] text-black whitespace-nowrap">Search:</label>
 
-              <div className="relative">
+              <div className="relative flex-1 md:flex-none">
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-[210px] rounded border border-gray-300 px-3 py-2 outline-none focus:border-blue-500"
+                  className="w-full md:w-52 rounded border border-gray-300 px-3 py-2 outline-none focus:border-blue-500"
                 />
 
                 <Search
@@ -163,8 +161,8 @@ export default function EnergyDetailsReportPage() {
           </div>
 
           {/* TABLE */}
-          <div className="overflow-x-auto px-6">
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto px-3 sm:px-6">
+            <table className="w-full border-collapse text-xs sm:text-sm">
               <thead>
                 <tr className="bg-[#11a8c8] text-left text-white">
                   {headers.map((header, index) => (
@@ -235,26 +233,26 @@ export default function EnergyDetailsReportPage() {
           </div>
 
           {/* FOOTER */}
-          <div className="flex flex-col items-start justify-between gap-4 px-6 py-6 md:flex-row md:items-center">
-            <p className="text-[16px] text-gray-700">
+          <div className="flex flex-col items-start justify-between gap-3 sm:gap-4 px-3 sm:px-6 py-4 sm:py-6 md:flex-row md:items-center">
+            <p className="text-sm sm:text-[16px] text-gray-700">
               Showing 0 to 0 of 0 entries
             </p>
 
             {/* PAGINATION */}
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 rounded border border-gray-300 bg-white px-5 py-3 text-gray-600 hover:bg-gray-100">
-                <ChevronLeft size={18} />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button className="flex items-center gap-1 sm:gap-2 rounded border border-gray-300 bg-white px-3 sm:px-5 py-2 sm:py-3 text-sm text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+                <ChevronLeft size={16} />
                 Previous
               </button>
 
-              <button className="flex items-center gap-2 rounded border border-gray-300 bg-white px-5 py-3 text-gray-600 hover:bg-gray-100">
+              <button className="flex items-center gap-1 sm:gap-2 rounded border border-gray-300 bg-white px-3 sm:px-5 py-2 sm:py-3 text-sm text-gray-600 hover:bg-gray-100 whitespace-nowrap">
                 Next
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </button>
             </div>
           </div>
         </div>
-      </main>
+    </main>
     </div>
   );
 }

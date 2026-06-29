@@ -1,11 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   AlertTriangle, Check, CheckCircle, ChevronDown, ClipboardList,
-  Crown, Edit2, Eye, EyeOff, Lock, Plus, Search, Shield,
+  Crown, Edit2, Eye, EyeOff, Lock, Loader2, Plus, Search, Shield,
   Trash2, User, Users, X,
 } from 'lucide-react';
 import { useAuth, type UserRole } from './sky_auth';
 import { useTheme } from '../../context/ThemeContext';
+import userService, { type ApiUser, type AuditLogEntry } from '../../api/userService';
 
 // ── Permission types ───────────────────────────────────────────────────────────
 type RoleKey = 'super_admin' | 'admin' | 'super_user' | 'user';
@@ -104,17 +105,63 @@ const ALL_ROLES: RoleKey[] = ['super_admin','admin','super_user','user'];
 
 // ── SystemUser type ────────────────────────────────────────────────────────────
 interface SystemUser {
-  id:string; name:string; empId:string; email:string;
-  role:RoleKey; status:'active'|'inactive'; lastLogin:string;
+  id: string;
+  numericId: number;
+  name: string;
+  empId: string;
+  email: string;
+  role: RoleKey;
+  status: 'active' | 'pending' | 'disabled';
+  lastLogin: string;
 }
 
-const SEED_USERS: SystemUser[] = [
-  { id:'1', name:'John Doe',     empId:'E001', email:'john@skyos.lk',    role:'super_admin', status:'active',   lastLogin:'Just now'  },
-  { id:'2', name:'Jane Smith',   empId:'E002', email:'jane@skyos.lk',    role:'user',        status:'active',   lastLogin:'2 hrs ago' },
-  { id:'3', name:'Michael Chen', empId:'E003', email:'mchen@skyos.lk',   role:'admin',       status:'active',   lastLogin:'Yesterday' },
-  { id:'4', name:'Sarah Wilson', empId:'E004', email:'swilson@skyos.lk', role:'super_user',  status:'active',   lastLogin:'3 days ago'},
-  { id:'5', name:'David Kumar',  empId:'E005', email:'dkumar@skyos.lk',  role:'user',        status:'inactive', lastLogin:'1 week ago'},
-];
+function formatLoginTime(iso: string | null): string {
+  if (!iso) return 'Never';
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins} min${mins > 1 ? 's' : ''} ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr${hrs > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+  return new Date(iso).toLocaleDateString();
+}
+
+function mapApiUser(u: ApiUser): SystemUser {
+  return {
+    id: String(u.id),
+    numericId: u.id,
+    name: u.name,
+    empId: u.employee_id,
+    email: u.email,
+    role: u.role as RoleKey,
+    status: u.status,
+    lastLogin: formatLoginTime(u.last_login_at),
+  };
+}
+
+function extractApiError(err: unknown): string {
+  const e = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } };
+  const errs = e?.response?.data?.errors;
+  if (errs) {
+    const first = Object.values(errs)[0];
+    if (first?.[0]) return first[0];
+  }
+  return e?.response?.data?.message ?? 'An unexpected error occurred.';
+}
+
+function auditEntryType(action: string): 'info' | 'success' | 'warning' | 'error' {
+  const a = action.toLowerCase();
+  if (a.includes('failed') || a.includes('denied') || a.includes('error') || a.includes('unauthori')) return 'error';
+  if (a.includes('delet') || a.includes('disabled') || a.includes('suspend') || a.includes('inactive')) return 'warning';
+  if (a.includes('creat') || a.includes('updat') || a.includes('enabl') || a.includes('toggl') || a.includes('success')) return 'success';
+  return 'info';
+}
+
+function formatAuditTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
 const PERM_GROUPS = [
   { module:'core',  label:'Core Platform', perms:[
@@ -150,20 +197,9 @@ const PERM_GROUPS = [
   ]},
 ];
 
-const AUDIT_EVENTS = [
-  { time:'14:32', user:'John Doe',     action:'Logged in',                          type:'info'    },
-  { time:'14:28', user:'Jane Smith',   action:'Accessed Production Tracking',       type:'info'    },
-  { time:'14:15', user:'Admin',        action:'User E005 set to Inactive',          type:'warning' },
-  { time:'13:58', user:'Michael Chen', action:'Role changed: E004 → Super User',    type:'success' },
-  { time:'13:40', user:'John Doe',     action:'New user E005 created',              type:'success' },
-  { time:'13:22', user:'Sarah Wilson', action:'Attempted Settings access — denied', type:'error'   },
-  { time:'12:55', user:'Jane Smith',   action:'Password updated',                   type:'info'    },
-  { time:'12:30', user:'John Doe',     action:'Permission audit triggered',         type:'warning' },
-  { time:'11:48', user:'Michael Chen', action:'Module toggle: WIP enabled',         type:'success' },
-  { time:'11:20', user:'System',       action:'Session timeout: E005',              type:'warning' },
-];
-
-const BLANK: Omit<SystemUser,'id'> = { name:'', empId:'', email:'', role:'user', status:'active', lastLogin:'—' };
+const BLANK: Omit<SystemUser, 'id' | 'numericId'> = {
+  name: '', empId: '', email: '', role: 'user', status: 'active', lastLogin: '—',
+};
 
 // ── Sub-components (defined OUTSIDE main component — no re-create on render) ──
 
@@ -229,7 +265,8 @@ function RoleSelect({ value, onChange, inp, textMut }: RoleSelectProps) {
 }
 
 interface StatusSelectProps {
-  value: 'active'|'inactive'; onChange: (v:'active'|'inactive') => void;
+  value: 'active' | 'pending' | 'disabled';
+  onChange: (v: 'active' | 'pending' | 'disabled') => void;
   inp: string; textMut: string;
 }
 function StatusSelect({ value, onChange, inp, textMut }: StatusSelectProps) {
@@ -239,17 +276,25 @@ function StatusSelect({ value, onChange, inp, textMut }: StatusSelectProps) {
       <div className="relative">
         <select
           value={value}
-          onChange={e => onChange(e.target.value as 'active'|'inactive')}
+          onChange={e => onChange(e.target.value as 'active' | 'pending' | 'disabled')}
           className={`w-full appearance-none px-3 py-2 rounded-lg border text-sm outline-none transition-colors pr-8 ${inp}`}
         >
           <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
+          <option value="pending">Pending</option>
+          <option value="disabled">Disabled</option>
         </select>
         <ChevronDown size={13} className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${textMut}`}/>
       </div>
     </div>
   );
 }
+
+// ── Status badge config ────────────────────────────────────────────────────────
+const STATUS_CONF = {
+  active:   { label: 'Active',   cls: 'bg-green-500/10  text-green-500  border border-green-500/20',  dot: 'bg-green-500'  },
+  pending:  { label: 'Pending',  cls: 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20', dot: 'bg-yellow-500' },
+  disabled: { label: 'Disabled', cls: 'bg-gray-500/10   text-gray-400   border border-gray-500/20',   dot: 'bg-gray-400'   },
+};
 
 // ══════════════════════════════════════════════════════════════════════════════
 export default function SkyAccessSecurity() {
@@ -258,15 +303,23 @@ export default function SkyAccessSecurity() {
   const { theme } = useTheme();
   const dark = theme === 'dark';
 
-  const [tab,       setTab]       = useState<TabType>('users');
-  const [users,     setUsers]     = useState<SystemUser[]>(SEED_USERS);
-  const [search,    setSearch]    = useState('');
-  const [slideUser, setSlideUser] = useState<SystemUser|null>(null);
-  const [showAdd,   setShowAdd]   = useState(false);
-  const [newUser,   setNewUser]   = useState<Omit<SystemUser,'id'>>(BLANK);
-  const [deleteId,  setDeleteId]  = useState<string|null>(null);
-  const [showNewPw, setShowNewPw] = useState(false);
-  const [saved,     setSaved]     = useState(false);
+  const [tab,          setTab]          = useState<TabType>('users');
+  const [users,        setUsers]        = useState<SystemUser[]>([]);
+  const [isLoading,    setIsLoading]    = useState(true);
+  const [apiError,     setApiError]     = useState<string | null>(null);
+  const [search,       setSearch]       = useState('');
+  const [slideUser,    setSlideUser]    = useState<SystemUser | null>(null);
+  const [showAdd,      setShowAdd]      = useState(false);
+  const [newUser,      setNewUser]      = useState<Omit<SystemUser, 'id' | 'numericId'>>(BLANK);
+  const [newPassword,  setNewPassword]  = useState('');
+  const [slidePassword,setSlidePassword]= useState('');
+  const [showNewPw,    setShowNewPw]    = useState(false);
+  const [showSlidePw,  setShowSlidePw]  = useState(false);
+  const [deleteId,     setDeleteId]     = useState<string | null>(null);
+  const [saved,        setSaved]        = useState(false);
+  const [formError,    setFormError]    = useState<string | null>(null);
+  const [auditLogs,    setAuditLogs]    = useState<AuditLogEntry[]>([]);
+  const [auditLoading, setAuditLoading] = useState(false);
 
   // ── Style tokens ─────────────────────────────────────────────────────────────
   const bg      = dark ? 'bg-gray-950'                 : 'bg-slate-100';
@@ -280,6 +333,44 @@ export default function SkyAccessSecurity() {
   const divider = dark ? 'border-gray-800' : 'border-gray-200';
   const rowHov  = dark ? 'hover:bg-gray-800/50' : 'hover:bg-gray-50';
   const hdr     = dark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200';
+
+  // ── Data fetching ─────────────────────────────────────────────────────────────
+  const loadUsers = useCallback(async () => {
+    setIsLoading(true);
+    setApiError(null);
+    try {
+      const list = await userService.getUsers();
+      setUsers(list.map(mapApiUser));
+    } catch {
+      setApiError('Failed to load users. Check your connection or permissions.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const loadAuditLogs = useCallback(async () => {
+    setAuditLoading(true);
+    try {
+      const logs = await userService.getAuditLogs(50);
+      setAuditLogs(logs);
+    } catch {
+      // no access or network — keep empty
+    } finally {
+      setAuditLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadUsers();
+  }, [loadUsers]);
+
+  useEffect(() => {
+    if (tab === 'audit') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadAuditLogs();
+    }
+  }, [tab, loadAuditLogs]);
 
   // ── Access gate ───────────────────────────────────────────────────────────────
   if (!can('core.users.view')) {
@@ -306,24 +397,67 @@ export default function SkyAccessSecurity() {
     u.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!slideUser) return;
-    setUsers(u => u.map(x => x.id === slideUser.id ? slideUser : x));
-    setSlideUser(null); setSaved(true); setTimeout(()=>setSaved(false), 2500);
+    setFormError(null);
+    try {
+      await userService.updateUser(slideUser.numericId, {
+        employee_id: slideUser.empId,
+        name: slideUser.name,
+        email: slideUser.email,
+        sky_role: slideUser.role,
+        status: slideUser.status,
+        ...(slidePassword ? { password: slidePassword } : {}),
+      });
+      setSlideUser(null); setSlidePassword(''); setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+      loadUsers();
+    } catch (err) {
+      setFormError(extractApiError(err));
+    }
   };
 
-  const saveAdd = () => {
-    if (!newUser.name || !newUser.empId) return;
-    setUsers(u => [...u, { ...newUser, id: Date.now().toString() }]);
-    setNewUser(BLANK); setShowAdd(false);
+  const saveAdd = async () => {
+    if (!newUser.name || !newUser.empId || !newUser.email || !newPassword) {
+      setFormError('Name, Employee ID, Email and Password are required.');
+      return;
+    }
+    setFormError(null);
+    try {
+      await userService.createUser({
+        employee_id: newUser.empId,
+        name: newUser.name,
+        email: newUser.email,
+        password: newPassword,
+        sky_role: newUser.role,
+        status: newUser.status,
+        assigned_modules: [],
+      });
+      setNewUser(BLANK); setNewPassword(''); setShowAdd(false);
+      setSaved(true); setTimeout(() => setSaved(false), 2500);
+      loadUsers();
+    } catch (err) {
+      setFormError(extractApiError(err));
+    }
   };
 
-  const doDelete = (id: string) => {
-    setUsers(u => u.filter(x => x.id !== id));
-    setDeleteId(null);
+  const doDelete = async (id: string) => {
+    const target = users.find(u => u.id === id);
+    if (!target) return;
+    try {
+      await userService.deleteUser(target.numericId);
+      setDeleteId(null);
+      loadUsers();
+    } catch (err) {
+      setApiError(extractApiError(err));
+      setDeleteId(null);
+    }
   };
 
-  const closePanel = () => { setSlideUser(null); setShowAdd(false); };
+  const closePanel = () => {
+    setSlideUser(null); setShowAdd(false);
+    setFormError(null); setSlidePassword('');
+  };
 
   // ══════════════════════════════════════════════════════════════════════════════
   return (
@@ -371,7 +505,7 @@ export default function SkyAccessSecurity() {
             <span className={`text-xs ${textMut}`}>{filtered.length} user{filtered.length!==1?'s':''}</span>
             {can('core.users.manage') && (
               <button
-                onClick={() => { setShowAdd(true); setSlideUser(null); }}
+                onClick={() => { setShowAdd(true); setSlideUser(null); setFormError(null); }}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition-all shadow shadow-orange-500/20"
               >
                 <Plus size={14}/> Add User
@@ -379,101 +513,111 @@ export default function SkyAccessSecurity() {
             )}
           </div>
 
+          {/* API error banner */}
+          {apiError && (
+            <div className="shrink-0 mx-4 mt-3 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium">
+              <AlertTriangle size={13}/> {apiError}
+            </div>
+          )}
+
           {/* Table — horizontally scrollable on mobile */}
           <div className="flex-1 min-h-0 overflow-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead className={`${dark?'bg-gray-900/80':'bg-gray-50'} sticky top-0 z-10`}>
-                <tr>
-                  {['User','Employee ID','Email','Role','Status','Last Login','Actions'].map(h => (
-                    <th key={h} className={`px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider whitespace-nowrap border-b ${divider} ${textMut}`}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(u => {
-                  const isMe      = u.empId === me?.employeeId;
-                  const isDeleting = deleteId === u.id;
-                  return (
-                    <tr key={u.id} className={`transition-colors ${rowHov} border-b ${divider}`}>
-                      {/* Name */}
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white bg-linear-to-br from-orange-500 to-orange-700 shrink-0">
-                            {u.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className={`font-semibold text-sm leading-tight ${textPri}`}>
-                              {u.name}
-                              {isMe && <span className="text-[9px] text-orange-500 font-bold ml-1">(You)</span>}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={`px-4 py-3 font-mono text-xs font-semibold ${textPri}`}>{u.empId}</td>
-                      <td className={`px-4 py-3 text-xs ${textSec}`}>{u.email}</td>
-                      {/* Role badge */}
-                      <td className="px-4 py-3">
-                        <span className={`flex items-center gap-1 w-fit px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${ROLE_COLOR[u.role]}`}>
-                          {ROLE_ICON[u.role]} {ROLE_LABEL[u.role]}
-                        </span>
-                      </td>
-                      {/* Status badge */}
-                      <td className="px-4 py-3">
-                        <span className={`flex items-center gap-1 w-fit px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          u.status==='active'
-                            ? 'bg-green-500/10 text-green-500 border border-green-500/20'
-                            : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${u.status==='active'?'bg-green-500':'bg-gray-400'}`}/>
-                          {u.status==='active' ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className={`px-4 py-3 text-xs ${textMut}`}>{u.lastLogin}</td>
-                      {/* Actions */}
-                      <td className="px-4 py-3">
-                        {can('core.users.manage') ? (
-                          isDeleting ? (
-                            <div className="flex items-center gap-2">
-                              <span className={`text-xs ${textMut}`}>Delete?</span>
-                              <button onClick={() => doDelete(u.id)}
-                                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold">
-                                <Check size={11}/> Yes
-                              </button>
-                              <button onClick={() => setDeleteId(null)}
-                                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-semibold ${card}`}>
-                                <X size={11}/> No
-                              </button>
+            {isLoading ? (
+              <div className={`flex items-center justify-center gap-2 py-16 text-sm ${textMut}`}>
+                <Loader2 size={16} className="animate-spin"/> Loading users…
+              </div>
+            ) : (
+              <table className="w-full text-sm border-collapse">
+                <thead className={`${dark?'bg-gray-900/80':'bg-gray-50'} sticky top-0 z-10`}>
+                  <tr>
+                    {['User','Employee ID','Email','Role','Status','Last Login','Actions'].map(h => (
+                      <th key={h} className={`px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider whitespace-nowrap border-b ${divider} ${textMut}`}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(u => {
+                    const isMe      = u.empId === me?.employeeId;
+                    const isDeleting = deleteId === u.id;
+                    const sc = STATUS_CONF[u.status] ?? STATUS_CONF.disabled;
+                    return (
+                      <tr key={u.id} className={`transition-colors ${rowHov} border-b ${divider}`}>
+                        {/* Name */}
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white bg-linear-to-br from-orange-500 to-orange-700 shrink-0">
+                              {u.name.charAt(0)}
                             </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => { setSlideUser({...u}); setShowAdd(false); }}
-                                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
-                                  dark ? 'border-gray-700 text-zinc-400 hover:bg-gray-700 hover:text-white'
-                                       : 'border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-900'
-                                }`}>
-                                <Edit2 size={11}/> Edit
-                              </button>
-                              {(!isMe && !(u.role==='super_admin' && myRole!=='super_admin')) && (
-                                <button onClick={() => setDeleteId(u.id)}
-                                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs font-semibold transition-all">
-                                  <Trash2 size={11}/> Delete
-                                </button>
-                              )}
+                            <div>
+                              <p className={`font-semibold text-sm leading-tight ${textPri}`}>
+                                {u.name}
+                                {isMe && <span className="text-[9px] text-orange-500 font-bold ml-1">(You)</span>}
+                              </p>
                             </div>
-                          )
-                        ) : (
-                          <span className={`flex items-center gap-1 text-xs ${textMut}`}>
-                            <Eye size={11}/> View only
+                          </div>
+                        </td>
+                        <td className={`px-4 py-3 font-mono text-xs font-semibold ${textPri}`}>{u.empId}</td>
+                        <td className={`px-4 py-3 text-xs ${textSec}`}>{u.email}</td>
+                        {/* Role badge */}
+                        <td className="px-4 py-3">
+                          <span className={`flex items-center gap-1 w-fit px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${ROLE_COLOR[u.role]}`}>
+                            {ROLE_ICON[u.role]} {ROLE_LABEL[u.role]}
                           </span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {filtered.length === 0 && (
+                        </td>
+                        {/* Status badge */}
+                        <td className="px-4 py-3">
+                          <span className={`flex items-center gap-1 w-fit px-2.5 py-0.5 rounded-full text-[10px] font-bold ${sc.cls}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`}/>
+                            {sc.label}
+                          </span>
+                        </td>
+                        <td className={`px-4 py-3 text-xs ${textMut}`}>{u.lastLogin}</td>
+                        {/* Actions */}
+                        <td className="px-4 py-3">
+                          {can('core.users.manage') ? (
+                            isDeleting ? (
+                              <div className="flex items-center gap-2">
+                                <span className={`text-xs ${textMut}`}>Delete?</span>
+                                <button onClick={() => doDelete(u.id)}
+                                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold">
+                                  <Check size={11}/> Yes
+                                </button>
+                                <button onClick={() => setDeleteId(null)}
+                                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-semibold ${card}`}>
+                                  <X size={11}/> No
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => { setSlideUser({...u}); setShowAdd(false); setFormError(null); setSlidePassword(''); }}
+                                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
+                                    dark ? 'border-gray-700 text-zinc-400 hover:bg-gray-700 hover:text-white'
+                                         : 'border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                                  }`}>
+                                  <Edit2 size={11}/> Edit
+                                </button>
+                                {(!isMe && !(u.role==='super_admin' && myRole!=='super_admin')) && (
+                                  <button onClick={() => setDeleteId(u.id)}
+                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs font-semibold transition-all">
+                                    <Trash2 size={11}/> Delete
+                                  </button>
+                                )}
+                              </div>
+                            )
+                          ) : (
+                            <span className={`flex items-center gap-1 text-xs ${textMut}`}>
+                              <Eye size={11}/> View only
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+            {!isLoading && filtered.length === 0 && !apiError && (
               <div className={`py-12 text-center text-sm ${textMut}`}>No users match your search.</div>
             )}
           </div>
@@ -538,31 +682,41 @@ export default function SkyAccessSecurity() {
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"/> Live
               </span>
             </div>
-            {AUDIT_EVENTS.map((ev, i) => {
-              const colors = { info:'text-blue-400', success:'text-green-400', warning:'text-yellow-400', error:'text-red-400' };
-              const icons  = {
-                info:    <Eye          size={13}/>,
-                success: <CheckCircle  size={13}/>,
-                warning: <AlertTriangle size={13}/>,
-                error:   <X            size={13}/>,
-              };
-              return (
-                <div key={i} className={`flex items-center gap-2 md:gap-4 px-3 md:px-4 py-3 ${i<AUDIT_EVENTS.length-1?`border-b ${divider}`:''} ${rowHov} transition-colors`}>
-                  <span className={`shrink-0 font-mono text-[11px] ${textMut}`}>{ev.time}</span>
-                  <span className={`shrink-0 ${colors[ev.type as keyof typeof colors]}`}>
-                    {icons[ev.type as keyof typeof icons]}
-                  </span>
-                  <span className={`text-xs font-semibold shrink-0 hidden sm:block ${textPri}`}>{ev.user}</span>
-                  <span className={`text-xs min-w-0 flex-1 truncate ${textSec}`} title={ev.action}>{ev.action}</span>
-                  <span className={`ml-auto shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold capitalize hidden xs:block ${
-                    ev.type==='success' ? 'bg-green-500/10  text-green-500'  :
-                    ev.type==='warning' ? 'bg-yellow-500/10 text-yellow-500' :
-                    ev.type==='error'   ? 'bg-red-500/10    text-red-400'    :
+            {auditLoading ? (
+              <div className={`flex items-center justify-center gap-2 py-10 text-sm ${textMut}`}>
+                <Loader2 size={15} className="animate-spin"/> Loading audit log…
+              </div>
+            ) : auditLogs.length === 0 ? (
+              <div className={`py-10 text-center text-sm ${textMut}`}>No audit events recorded yet.</div>
+            ) : (
+              auditLogs.map((ev, i) => {
+                const type = auditEntryType(ev.action);
+                const colors = { info:'text-blue-400', success:'text-green-400', warning:'text-yellow-400', error:'text-red-400' };
+                const icons  = {
+                  info:    <Eye          size={13}/>,
+                  success: <CheckCircle  size={13}/>,
+                  warning: <AlertTriangle size={13}/>,
+                  error:   <X            size={13}/>,
+                };
+                const actionLabel = ev.target_label
+                  ? `${ev.action}: ${ev.target_label}`
+                  : ev.action;
+                return (
+                  <div key={ev.id} className={`flex items-center gap-2 md:gap-4 px-3 md:px-4 py-3 ${i < auditLogs.length - 1 ? `border-b ${divider}` : ''} ${rowHov} transition-colors`}>
+                    <span className={`shrink-0 font-mono text-[11px] ${textMut}`}>{formatAuditTime(ev.created_at)}</span>
+                    <span className={`shrink-0 ${colors[type]}`}>{icons[type]}</span>
+                    <span className={`text-xs font-semibold shrink-0 hidden sm:block ${textPri}`}>{ev.user?.name ?? 'System'}</span>
+                    <span className={`text-xs min-w-0 flex-1 truncate ${textSec}`} title={actionLabel}>{actionLabel}</span>
+                    <span className={`ml-auto shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold capitalize hidden xs:block ${
+                      type==='success' ? 'bg-green-500/10  text-green-500'  :
+                      type==='warning' ? 'bg-yellow-500/10 text-yellow-500' :
+                      type==='error'   ? 'bg-red-500/10    text-red-400'    :
                                          'bg-blue-500/10   text-blue-400'
-                  }`}>{ev.type}</span>
-                </div>
-              );
-            })}
+                    }`}>{type}</span>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       )}
@@ -590,16 +744,21 @@ export default function SkyAccessSecurity() {
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               {showAdd ? (
                 <>
-                  <SlideField label="Full Name"   value={newUser.name}  onChange={v=>setNewUser(p=>({...p,name:v}))}   placeholder="Full name"     inp={inp} textMut={textMut}/>
-                  <SlideField label="Employee ID" value={newUser.empId} onChange={v=>setNewUser(p=>({...p,empId:v}))}  placeholder="E006"          inp={inp} textMut={textMut}/>
+                  <SlideField label="Full Name"   value={newUser.name}  onChange={v=>setNewUser(p=>({...p,name:v}))}   placeholder="Full name"       inp={inp} textMut={textMut}/>
+                  <SlideField label="Employee ID" value={newUser.empId} onChange={v=>setNewUser(p=>({...p,empId:v}))}  placeholder="E001"            inp={inp} textMut={textMut}/>
                   <SlideField label="Email"       value={newUser.email} onChange={v=>setNewUser(p=>({...p,email:v}))}  type="email" placeholder="user@skyos.lk" inp={inp} textMut={textMut}/>
-                  {/* Password field (inline, not extracted — no hooks used) */}
+                  {/* Password field */}
                   <div>
                     <label className={`text-[10px] font-bold uppercase tracking-wider mb-1.5 block ${textMut}`}>Initial Password</label>
                     <div className="relative">
-                      <input type={showNewPw?'text':'password'} placeholder="Set password"
-                        className={`w-full px-3 py-2 rounded-lg border text-sm outline-none transition-colors pr-9 ${inp}`}/>
-                      <button type="button" onClick={()=>setShowNewPw(p=>!p)}
+                      <input
+                        type={showNewPw ? 'text' : 'password'}
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        placeholder="Set password"
+                        className={`w-full px-3 py-2 rounded-lg border text-sm outline-none transition-colors pr-9 ${inp}`}
+                      />
+                      <button type="button" onClick={() => setShowNewPw(p => !p)}
                         className="absolute right-3 top-1/2 -translate-y-1/2">
                         {showNewPw ? <EyeOff size={13} className={textMut}/> : <Eye size={13} className={textMut}/>}
                       </button>
@@ -615,6 +774,24 @@ export default function SkyAccessSecurity() {
                   <SlideField label="Email"       value={slideUser.email} onChange={v=>setSlideUser(p=>p?{...p,email:v}:p)} type="email" inp={inp} textMut={textMut}/>
                   <RoleSelect   value={slideUser.role}   onChange={v=>setSlideUser(p=>p?{...p,role:v}:p)}   inp={inp} textMut={textMut}/>
                   <StatusSelect value={slideUser.status} onChange={v=>setSlideUser(p=>p?{...p,status:v}:p)} inp={inp} textMut={textMut}/>
+
+                  {/* Optional password change */}
+                  <div>
+                    <label className={`text-[10px] font-bold uppercase tracking-wider mb-1.5 block ${textMut}`}>New Password <span className="normal-case font-normal">(leave blank to keep)</span></label>
+                    <div className="relative">
+                      <input
+                        type={showSlidePw ? 'text' : 'password'}
+                        value={slidePassword}
+                        onChange={e => setSlidePassword(e.target.value)}
+                        placeholder="Change password…"
+                        className={`w-full px-3 py-2 rounded-lg border text-sm outline-none transition-colors pr-9 ${inp}`}
+                      />
+                      <button type="button" onClick={() => setShowSlidePw(p => !p)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {showSlidePw ? <EyeOff size={13} className={textMut}/> : <Eye size={13} className={textMut}/>}
+                      </button>
+                    </div>
+                  </div>
 
                   {/* Permissions preview */}
                   <div>
@@ -635,18 +812,26 @@ export default function SkyAccessSecurity() {
             </div>
 
             {/* Footer */}
-            <div className={`shrink-0 flex items-center gap-3 p-4 border-t ${dark?'border-gray-800':'border-gray-200'}`}>
-              <button
-                onClick={showAdd ? saveAdd : saveEdit}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all">
-                <Check size={14}/> {showAdd ? 'Create User' : 'Save Changes'}
-              </button>
-              <button onClick={closePanel}
-                className={`px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
-                  dark ? 'border-gray-700 text-zinc-400 hover:bg-gray-800' : 'border-gray-200 text-gray-500 hover:bg-gray-100'
-                }`}>
-                Cancel
-              </button>
+            <div className={`shrink-0 p-4 border-t ${dark?'border-gray-800':'border-gray-200'}`}>
+              {formError && (
+                <div className="mb-3 flex items-start gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <AlertTriangle size={12} className="mt-0.5 shrink-0"/>
+                  <span>{formError}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={showAdd ? saveAdd : saveEdit}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all">
+                  <Check size={14}/> {showAdd ? 'Create User' : 'Save Changes'}
+                </button>
+                <button onClick={closePanel}
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
+                    dark ? 'border-gray-700 text-zinc-400 hover:bg-gray-800' : 'border-gray-200 text-gray-500 hover:bg-gray-100'
+                  }`}>
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </>

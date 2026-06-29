@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { User, CheckCircle, Lock } from "lucide-react";
-import Sidebar from "../../components/PMS-1682(Solar)/sidebar";
 
 function UserProfileContent() {
   return (
@@ -139,23 +138,17 @@ function HelpContent() {
 }
 
 export default function UserProfile() {
-  const [activeView, setActiveView] = useState<'profile' | 'settings' | 'help'>('profile');
+  const [activeView] = useState<'profile' | 'settings' | 'help'>('profile');
 
   return (
-    <div className="flex w-full h-full overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {activeView === 'profile' ? (
-          <UserProfileContent />
-        ) : activeView === 'settings' ? (
-          <SettingsContent />
-        ) : (
-          <HelpContent />
-        )}
-      </main>
+    <div className="w-full h-full overflow-y-auto">
+      {activeView === 'profile' ? (
+        <UserProfileContent />
+      ) : activeView === 'settings' ? (
+        <SettingsContent />
+      ) : (
+        <HelpContent />
+      )}
     </div>
   );
 }

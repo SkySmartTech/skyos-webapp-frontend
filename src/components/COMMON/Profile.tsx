@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, type ReactNode } from 'react';
 import {
   ArrowLeft, Camera, Save, CheckCircle, User, Mail, MapPin,
   Phone, Lock, Eye, EyeOff, LogOut, Shield, IdCard,
@@ -8,6 +8,63 @@ import { useAuth } from '../SKY_OS/sky_auth';
 import { useTheme } from '../../context/ThemeContext';
 
 interface ProfileProps { onBack: () => void; }
+
+function Field({ dark, label: l, icon, value, onChange, type = 'text', placeholder = '', readOnly = false, right }: {
+  dark: boolean; label?: string; icon?: ReactNode; value: string;
+  onChange?: (v: string) => void; type?: string; placeholder?: string;
+  readOnly?: boolean; right?: ReactNode;
+}) {
+  const inp = dark
+    ? 'bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-orange-500'
+    : 'bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-orange-400';
+  const lbl = dark ? 'text-zinc-500' : 'text-gray-400';
+  return (
+    <div>
+      {l && (
+        <label className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider mb-1.5 ${lbl}`}>
+          {icon} {l}
+        </label>
+      )}
+      <div className="relative">
+        <input
+          type={type} value={value} readOnly={readOnly}
+          onChange={e => onChange?.(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full px-3 py-2 rounded-lg border text-sm outline-none transition-colors ${inp} ${
+            readOnly ? 'opacity-50 cursor-not-allowed' : ''
+          } ${right ? 'pr-10' : ''}`}
+        />
+        {right && <div className="absolute right-3 top-1/2 -translate-y-1/2">{right}</div>}
+      </div>
+    </div>
+  );
+}
+
+function PwEye({ dark, show, toggle }: { dark: boolean; show: boolean; toggle: () => void }) {
+  const textMut = dark ? 'text-zinc-500' : 'text-gray-400';
+  return (
+    <button type="button" onClick={toggle}>
+      {show ? <EyeOff size={13} className={textMut}/> : <Eye size={13} className={textMut}/>}
+    </button>
+  );
+}
+
+function SaveRow({ dark, onSave, saved, label }: { dark: boolean; onSave: () => void; saved: boolean; label: string }) {
+  const divider = dark ? 'border-gray-800' : 'border-gray-200';
+  return (
+    <div className={`flex items-center gap-3 pt-3 mt-1 border-t ${divider}`}>
+      <button onClick={onSave}
+        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold text-xs transition-all shadow shadow-orange-500/20">
+        <Save size={12}/> {label}
+      </button>
+      {saved && (
+        <span className="flex items-center gap-1.5 text-green-500 text-xs font-semibold">
+          <CheckCircle size={13}/> Saved!
+        </span>
+      )}
+    </div>
+  );
+}
 
 function pwStrength(pw: string) {
   return [pw.length >= 8, /[A-Z]/.test(pw), /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)].filter(Boolean).length;
@@ -78,55 +135,6 @@ export default function Profile({ onBack }: ProfileProps) {
   const divider = dark ? 'border-gray-800' : 'border-gray-200';
   const topBar  = dark ? 'bg-gray-900 border-gray-800'  : 'bg-white border-gray-200';
   const leftBg  = dark ? 'bg-gray-900/40 border-gray-800' : 'bg-gray-50 border-gray-200';
-
-  // ── Reusable compact field ────────────────────────────────────────────────
-  const Field = ({
-    label: l, icon, value, onChange, type = 'text',
-    placeholder = '', readOnly = false, right,
-  }: {
-    label?: string; icon?: React.ReactNode; value: string;
-    onChange?: (v: string) => void; type?: string; placeholder?: string;
-    readOnly?: boolean; right?: React.ReactNode;
-  }) => (
-    <div>
-      {l && (
-        <label className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider mb-1.5 ${lbl}`}>
-          {icon} {l}
-        </label>
-      )}
-      <div className="relative">
-        <input
-          type={type} value={value} readOnly={readOnly}
-          onChange={e => onChange?.(e.target.value)}
-          placeholder={placeholder}
-          className={`w-full px-3 py-2 rounded-lg border text-sm outline-none transition-colors ${inp} ${
-            readOnly ? 'opacity-50 cursor-not-allowed' : ''
-          } ${right ? 'pr-10' : ''}`}
-        />
-        {right && <div className="absolute right-3 top-1/2 -translate-y-1/2">{right}</div>}
-      </div>
-    </div>
-  );
-
-  const PwEye = ({ show, toggle }: { show: boolean; toggle: () => void }) => (
-    <button type="button" onClick={toggle}>
-      {show ? <EyeOff size={13} className={textMut}/> : <Eye size={13} className={textMut}/>}
-    </button>
-  );
-
-  const SaveRow = ({ onSave, saved, label }: { onSave: () => void; saved: boolean; label: string }) => (
-    <div className={`flex items-center gap-3 pt-3 mt-1 border-t ${divider}`}>
-      <button onClick={onSave}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold text-xs transition-all shadow shadow-orange-500/20">
-        <Save size={12}/> {label}
-      </button>
-      {saved && (
-        <span className="flex items-center gap-1.5 text-green-500 text-xs font-semibold">
-          <CheckCircle size={13}/> Saved!
-        </span>
-      )}
-    </div>
-  );
 
   // ══════════════════════════════════════════════════════════════════════════
   return (
@@ -299,10 +307,10 @@ export default function Profile({ onBack }: ProfileProps) {
                 <h3 className={`text-sm font-bold ${textPri}`}>Personal Information</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <Field label="Full Name"   icon={<User size={10}/>}   value={fullName} onChange={setFullName} placeholder="Your full name"/>
-                <Field label="Email"       icon={<Mail size={10}/>}   value={email}    onChange={setEmail}    type="email" placeholder="you@example.com"/>
-                <Field label="Phone"       icon={<Phone size={10}/>}  value={phone}    onChange={setPhone}    type="tel"   placeholder="+94 77 000 0000"/>
-                <Field label="Employee ID" icon={<IdCard size={10}/>} value={user?.employeeId ?? ''} readOnly/>
+                <Field dark={dark} label="Full Name"   icon={<User size={10}/>}   value={fullName} onChange={setFullName} placeholder="Your full name"/>
+                <Field dark={dark} label="Email"       icon={<Mail size={10}/>}   value={email}    onChange={setEmail}    type="email" placeholder="you@example.com"/>
+                <Field dark={dark} label="Phone"       icon={<Phone size={10}/>}  value={phone}    onChange={setPhone}    type="tel"   placeholder="+94 77 000 0000"/>
+                <Field dark={dark} label="Employee ID" icon={<IdCard size={10}/>} value={user?.employeeId ?? ''} readOnly/>
               </div>
               <div className="mt-3">
                 <label className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider mb-1.5 ${lbl}`}>
@@ -314,7 +322,7 @@ export default function Profile({ onBack }: ProfileProps) {
                   className={`w-full px-3 py-2 rounded-lg border text-sm outline-none transition-colors resize-none ${inp}`}
                 />
               </div>
-              <SaveRow onSave={handleSaveProfile} saved={savedProfile} label="Save Profile"/>
+              <SaveRow dark={dark} onSave={handleSaveProfile} saved={savedProfile} label="Save Profile"/>
             </div>
 
             {/* Change Password */}
@@ -324,20 +332,20 @@ export default function Profile({ onBack }: ProfileProps) {
                 <h3 className={`text-sm font-bold ${textPri}`}>Change Password</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <Field label="Current" icon={<Lock size={10}/>}
+                <Field dark={dark} label="Current" icon={<Lock size={10}/>}
                   value={curPw} onChange={setCurPw}
                   type={showCur ? 'text' : 'password'} placeholder="Current password"
-                  right={<PwEye show={showCur} toggle={() => setShowCur(p => !p)}/>}
+                  right={<PwEye dark={dark} show={showCur} toggle={() => setShowCur(p => !p)}/>}
                 />
-                <Field label="New Password" icon={<Lock size={10}/>}
+                <Field dark={dark} label="New Password" icon={<Lock size={10}/>}
                   value={newPw} onChange={setNewPw}
                   type={showNew ? 'text' : 'password'} placeholder="Min. 8 characters"
-                  right={<PwEye show={showNew} toggle={() => setShowNew(p => !p)}/>}
+                  right={<PwEye dark={dark} show={showNew} toggle={() => setShowNew(p => !p)}/>}
                 />
-                <Field label="Confirm" icon={<Lock size={10}/>}
+                <Field dark={dark} label="Confirm" icon={<Lock size={10}/>}
                   value={confirmPw} onChange={setConfirmPw}
                   type={showConf ? 'text' : 'password'} placeholder="Repeat new password"
-                  right={<PwEye show={showConf} toggle={() => setShowConf(p => !p)}/>}
+                  right={<PwEye dark={dark} show={showConf} toggle={() => setShowConf(p => !p)}/>}
                 />
               </div>
               {newPw.length > 0 && (
@@ -353,7 +361,7 @@ export default function Profile({ onBack }: ProfileProps) {
                 </div>
               )}
               {pwError && <p className="text-red-400 text-xs mt-2">{pwError}</p>}
-              <SaveRow onSave={handleSaveSecurity} saved={savedSecurity} label="Update Password"/>
+              <SaveRow dark={dark} onSave={handleSaveSecurity} saved={savedSecurity} label="Update Password"/>
             </div>
 
           </div>

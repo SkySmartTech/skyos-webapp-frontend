@@ -8,3 +8,8 @@
 body {
   font-family: "Geist Variable", sans-serif;
 }
+
+html, body, #root {
+  height: 100%;
+}
+

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "../../../components/PMS-1682(Solar)/sidebar";
 import {
   Search,
   CalendarDays,
@@ -125,10 +124,8 @@ export default function ThermalConsumptionReport() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#f3f4f6] overflow-hidden">
-      <Sidebar />
-
-      <main className="flex-1 overflow-auto p-2 sm:p-3 md:p-4">
+    <div className="min-h-full bg-[#f3f4f6] p-2 sm:p-3 md:p-4">
+      <main className="flex-1">
         {/* TOP CARD */}
         <div className="overflow-hidden rounded border border-gray-300 bg-[#efefef] shadow-sm">
           <div className="flex items-center justify-between border-b border-gray-300 px-3 sm:px-5 py-2 sm:py-3">
@@ -360,7 +357,7 @@ export default function ThermalConsumptionReport() {
             </div>
           </div>
         </div>
-      </main>
+    </main>
     </div>
   );
 }

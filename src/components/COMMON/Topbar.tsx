@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, type ElementType } from 'react';
 import {
-  Bell, User, LayoutDashboard, BarChart3, Factory,
-  Cpu, Zap, Layers, ChevronDown, ChevronUp,
-  PanelLeftOpen, PanelLeftClose, Sun, Moon, Menu, X,
+  Bell, User, LayoutDashboard, Factory,
+  Cpu, Layers, Clock,
+  Sun, Moon, Menu, X,
+  Maximize, Minimize, Hammer,
 } from "lucide-react";
-
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../SKY_OS/sky_auth';
 import type { ActiveModule } from '../../App';
@@ -16,12 +16,15 @@ interface TopbarProps {
   onDcscClick: () => void;
   onWipClick: () => void;
   onCustomClick: () => void;
+  onWmsClick: () => void;
   productionActive: boolean;
   showSidebar: boolean;
   onToggleSidebar: () => void;
-  onCloseTopbar: () => void;
   onProfileClick: () => void;
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
 }
+
 
 export default function Topbar({
   activeModule,
@@ -30,199 +33,148 @@ export default function Topbar({
   onDcscClick,
   onWipClick,
   onCustomClick,
+  onWmsClick,
   productionActive,
   showSidebar,
   onToggleSidebar,
-  onCloseTopbar,
   onProfileClick,
+  isFullscreen,
+  onToggleFullscreen,
 }: TopbarProps) {
 
   const { theme, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  useAuth();
 
   const dark = theme === 'dark';
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [now, setNow] = useState(new Date());
 
-  const displayName = user?.fullName ?? user?.name ?? 'Admin';
-  const displayRole = user?.role ?? 'Super User';
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
-  const navBtn = (module: ActiveModule | null) => {
+  const navBtn = (module: ActiveModule | null, onClick?: () => void, label?: string, Icon?: ElementType) => {
     const isActive = module !== null && activeModule === module;
-
-    const base =
-      'flex items-center gap-2 px-4 py-3 md:px-6 md:py-4 text-sm font-semibold border-r border-white/15 shrink-0 transition-all duration-200 ';
-
-    return base + (isActive
-      ? 'bg-orange-500 text-white border-orange-400/40 shadow-md shadow-orange-500/30'
-      : 'text-white/75 hover:bg-orange-500 hover:text-white hover:border-orange-400/40'
+    return (
+      <button
+        onClick={onClick}
+        className={`flex flex-col items-center justify-center gap-1.5 w-24 py-3 rounded-xl border shrink-0 transition-all duration-200 ${
+          isActive
+            ? 'bg-blue-600/20 border-blue-500 text-blue-300'
+            : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/30 hover:text-white'
+        }`}
+      >
+        {Icon && <Icon size={20} />}
+        <span className="text-[10px] font-medium leading-none">{label}</span>
+      </button>
     );
   };
 
   const mobileNavItem = (
     label: string,
-    Icon: React.ElementType,
+    Icon: ElementType,
     onClick: () => void,
     module: ActiveModule | null
   ) => {
     const isActive = module !== null && activeModule === module;
-
     return (
       <button
         onClick={() => { onClick(); setMobileNavOpen(false); }}
-        className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-semibold transition-all rounded-lg ${
+        className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium transition-all rounded-xl border ${
           isActive
-            ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
-            : 'text-white/75 hover:bg-orange-500 hover:text-white'
+            ? 'bg-blue-600/20 border-blue-500 text-blue-300'
+            : 'border-white/15 text-white/70 hover:bg-white/10 hover:text-white'
         }`}
       >
-        <Icon size={16} /> {label}
+        <Icon size={15} /> {label}
       </button>
     );
   };
 
   return (
-    <div className={`w-full z-10 border-b shadow-2xl transition-colors duration-300 ${
-      dark
-        ? 'bg-linear-to-b from-[#050505] to-[#0f0f0f] text-white border-zinc-800'
-        : 'bg-white text-gray-900 border-gray-200'
-    }`}>
+    <div className="w-full z-10 relative">
 
-      {/* ── HEADER ── */}
-      <header className="flex items-center justify-between px-3 py-3 md:px-6 md:py-4">
+      {/* ── NAVBAR (collapses to thin strip when hidden) ── */}
+      <div className={`transition-colors duration-300 shadow-2xl ${dark ? 'bg-[#0f172a] text-white' : 'bg-gray-900 text-white'}`}>
 
-        {/* BRAND */}
-        <div className="flex items-center gap-2 md:gap-4">
-          <div className="relative shrink-0">
-            <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl bg-linear-to-br from-orange-500 to-orange-700 shadow-lg" />
-            <div className="absolute inset-0 rounded-xl bg-orange-500 blur-xl opacity-20" />
-          </div>
+        {/* Main nav row */}
+        <div className="flex items-center px-4 py-2 gap-3">
 
-          <div>
-            <h1 className="text-lg md:text-2xl font-extrabold">
-              Sky<span className="text-orange-500">OS</span>
-            </h1>
-            <p className="hidden sm:block text-xs uppercase text-gray-400 dark:text-zinc-500">
-              Smart Factory Operating System
-            </p>
-          </div>
-        </div>
-
-        {/* ACTIONS */}
-        <div className="flex items-center gap-2 md:gap-3">
-
-          {/* THEME */}
-          <button
-            onClick={toggleTheme}
-            className={`px-3 py-2 rounded-xl border ${
-              dark
-                ? 'bg-zinc-900 border-zinc-700 text-yellow-400'
-                : 'bg-orange-50 border-orange-200 text-orange-600'
-            }`}
-          >
-            {dark ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
-
-          {/* BELL */}
-          <button className="relative p-2 md:p-3 rounded-xl border bg-gray-100 dark:bg-zinc-900">
-            <Bell size={18} className={dark ? 'text-yellow-400' : 'text-orange-500'} />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full">
-              3
-            </span>
-          </button>
-
-          {/* USER */}
-          <button
-            onClick={onProfileClick}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl border bg-gray-100 dark:bg-zinc-900"
-          >
-            <User size={16} />
-            <div className="hidden md:block text-left">
-              <p className="text-sm font-semibold">{displayName}</p>
-              <p className="text-xs text-gray-500 dark:text-zinc-400">{displayRole}</p>
+            {/* LEFT — brand */}
+            <div className="flex items-center shrink-0">
+              <h1 className="text-base font-extrabold leading-tight">
+                <span className="text-[#2563EB]">NEXIS</span>
+              </h1>
             </div>
-          </button>
 
-          {/* MOBILE MENU */}
-          <button
-            onClick={() => setMobileNavOpen(p => !p)}
-            className="md:hidden p-2 rounded-xl border"
-          >
-            {mobileNavOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-      </header>
+            {/* CENTER — nav buttons */}
+            <div className="hidden md:flex items-center gap-2 flex-1 justify-center">
+              {navBtn('home', onDashboardClick, 'Dashboard', LayoutDashboard)}
+              {navBtn('dcsc', onDcscClick, 'Andon Sys', Cpu)}
+              {navBtn('wip', onWipClick, 'Super Market', Layers)}
+              {navBtn('production', onProductionTrackingClick, 'Production Sys', Factory)}
+              {navBtn('solar', onCustomClick, 'Energy Monitoring', Sun)}
+              {navBtn('wms', onWmsClick, 'Work Orders', Hammer)}
+            </div>
 
-      {/* ── DESKTOP NAV ── */}
-      <nav className="hidden md:flex items-center border-t bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-700">
+            {/* RIGHT — clock + actions */}
+            <div className="flex items-center gap-2 ml-auto shrink-0">
+              <div className="hidden md:flex items-center gap-2.5 border border-white/15 rounded-lg px-3 py-1.5">
+                <Clock size={15} className="text-[#2563EB] shrink-0" />
+                <span className="font-mono font-bold text-sm text-white/90 tracking-widest">
+                  {now.toLocaleTimeString()}
+                </span>
+                <span className="text-white/30">|</span>
+                <span className="text-xs text-white/60">
+                  {now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+              </div>
 
-        {productionActive && (
-          <button
-            onClick={onToggleSidebar}
-            className="w-12 h-full border-r text-white/80"
-          >
-            {showSidebar ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
-          </button>
-        )}
+              <button onClick={toggleTheme} className="p-1.5 rounded-lg border bg-zinc-800 border-zinc-700 text-yellow-400">
+                {dark ? <Sun size={14} /> : <Moon size={14} />}
+              </button>
 
-        <button onClick={onDashboardClick} className={navBtn('home')}>
-          <LayoutDashboard size={16} /> Dashboard
-        </button>
+              <button onClick={onToggleFullscreen} className="p-1.5 rounded-lg border bg-zinc-800 border-zinc-700 text-white/70 hover:text-white">
+                {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
+              </button>
 
-        <button className={navBtn(null)}>
-          <BarChart3 size={16} /> Analysis
-        </button>
+              <button className="relative p-1.5 rounded-lg border bg-zinc-800 border-zinc-700">
+                <Bell size={15} className="text-yellow-400" />
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[9px] flex items-center justify-center rounded-full">3</span>
+              </button>
 
-        <button onClick={onProductionTrackingClick} className={navBtn('production')}>
-          <Factory size={16} /> SPM-1693
-        </button>
+              <button onClick={onProfileClick} className="p-1.5 rounded-lg border bg-zinc-800 border-zinc-700 text-white/80">
+                <User size={15} />
+              </button>
 
-        <button onClick={onWipClick} className={navBtn('wip')}>
-          <Layers size={16} /> BSM-1740
-        </button>
-
-        <button onClick={onDcscClick} className={navBtn('dcsc')}>
-          <Cpu size={16} /> DSCS1515A
-        </button>
-
-        <button onClick={onCustomClick} className={navBtn('custom')}>
-          <Zap size={16} /> PMS-1682
-        </button>
-
-        <button
-          onClick={onCloseTopbar}
-          className="ml-auto px-4 py-3 text-white/70 hover:text-white"
-        >
-          <ChevronUp size={16} /> Hide
-        </button>
-      </nav>
+              <button
+                onClick={() => setMobileNavOpen(p => !p)}
+                className="md:hidden p-1.5 rounded-lg border border-white/20 text-white/70"
+              >
+                {mobileNavOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
+            </div>
+          </div>
+      </div>
 
       {/* ── MOBILE NAV ── */}
       {mobileNavOpen && (
-        <div className="md:hidden p-3 space-y-2 bg-gradient-to-b from-blue-700 via-indigo-700 to-violet-700">
-
+        <div className="md:hidden p-3 space-y-1.5 bg-[#0f172a] border-t border-white/10">
           {mobileNavItem('Dashboard', LayoutDashboard, onDashboardClick, 'home')}
-          {mobileNavItem('Analysis', BarChart3, () => {}, null)}
           {mobileNavItem('SPM-1693', Factory, onProductionTrackingClick, 'production')}
           {mobileNavItem('BSM-1740', Layers, onWipClick, 'wip')}
           {mobileNavItem('DSCS1515A', Cpu, onDcscClick, 'dcsc')}
-          {mobileNavItem('PMS-1682', Zap, onCustomClick, 'custom')}
-
+          {mobileNavItem('PMS-1682', Sun, onCustomClick, 'solar')}
+          {mobileNavItem('WMS-1760A', Hammer, onWmsClick, 'wms')}
           {productionActive && (
             <button
               onClick={() => { onToggleSidebar(); setMobileNavOpen(false); }}
-              className="w-full px-4 py-3 text-white/80"
+              className="w-full px-4 py-2.5 text-sm text-white/70 border border-white/15 rounded-xl hover:bg-white/10"
             >
               {showSidebar ? 'Hide Sidebar' : 'Show Sidebar'}
             </button>
           )}
-
-          <button
-            onClick={() => { onCloseTopbar(); setMobileNavOpen(false); }}
-            className="w-full px-4 py-3 text-white/80"
-          >
-            <ChevronUp size={16} /> Hide Topbar
-          </button>
-
         </div>
       )}
     </div>

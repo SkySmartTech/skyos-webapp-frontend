@@ -206,6 +206,28 @@ const INIT_MODULES: ModuleCfg[] = [
   },
 ];
 
+function SaveBtn({ section, canManage, doSave, saved }: {
+  section: Cat; canManage: boolean;
+  doSave: (s: Cat) => void; saved: Cat | null;
+}) {
+  if (!canManage) return null;
+  return (
+    <div className="flex items-center gap-3 pt-4 mt-2">
+      <button
+        onClick={() => doSave(section)}
+        className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all shadow shadow-orange-500/20"
+      >
+        <Save size={13} /> Save Changes
+      </button>
+      {saved === section && (
+        <span className="flex items-center gap-1.5 text-green-500 text-sm font-semibold">
+          <CheckCircle size={14} /> Saved!
+        </span>
+      )}
+    </div>
+  );
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 export default function SkySettings() {
   const { user }  = useAuth();
@@ -256,7 +278,7 @@ export default function SkySettings() {
   const toggleExpand = (key: string) =>
     setExpanded(prev => {
       const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) { next.delete(key); } else { next.add(key); }
       return next;
     });
 
@@ -290,23 +312,6 @@ export default function SkySettings() {
   const catActive = dark ? 'bg-orange-500/10 text-orange-400' : 'bg-orange-50 text-orange-600';
   const catHover  = dark ? 'hover:bg-gray-800 hover:text-white' : 'hover:bg-gray-100 hover:text-gray-900';
   const subBg     = dark ? 'bg-gray-800/50' : 'bg-gray-50';
-
-  const SaveBtn = ({ section }: { section: Cat }) =>
-    canManage ? (
-      <div className="flex items-center gap-3 pt-4 mt-2">
-        <button
-          onClick={() => doSave(section)}
-          className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all shadow shadow-orange-500/20"
-        >
-          <Save size={13} /> Save Changes
-        </button>
-        {saved === section && (
-          <span className="flex items-center gap-1.5 text-green-500 text-sm font-semibold">
-            <CheckCircle size={14} /> Saved!
-          </span>
-        )}
-      </div>
-    ) : null;
 
   // Access gate
   if (!isAdminPlus) {
@@ -401,7 +406,7 @@ export default function SkySettings() {
                     }
                   />
                 </div>
-                <SaveBtn section="company" />
+                <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="company" />
               </SectionCard>
             )}
 
@@ -545,7 +550,7 @@ export default function SkySettings() {
                   );
                 })}
 
-                <SaveBtn section="modules" />
+                <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="modules" />
               </>
             )}
 
@@ -567,7 +572,7 @@ export default function SkySettings() {
                       right={<SettingInput value={minPwLen} onChange={canManage ? setMinPwLen : undefined} readOnly={!canManage} type="number" inp={inp} className="w-24" />}
                     />
                   </div>
-                  <SaveBtn section="security" />
+                  <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="security" />
                 </SectionCard>
 
                 <SectionCard title="Audit & Access" desc="Logging and IP restriction settings." card={card} textPri={textPri} textMut={textMut}>
@@ -579,7 +584,7 @@ export default function SkySettings() {
                       right={<SettingInput value={ipWhitelist} onChange={canManage ? setIpWhitelist : undefined} readOnly={!canManage} inp={inp} className="w-full sm:w-60" placeholder="192.168.1.0/24, 10.0.0.1" />}
                     />
                   </div>
-                  <SaveBtn section="security" />
+                  <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="security" />
                 </SectionCard>
               </>
             )}
@@ -602,7 +607,7 @@ export default function SkySettings() {
                       right={<Toggle checked={slackNotif} onChange={canManage ? setSlackNotif : () => {}} dark={dark} disabled={!canManage} />}
                     />
                   </div>
-                  <SaveBtn section="notifications" />
+                  <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="notifications" />
                 </SectionCard>
 
                 <SectionCard title="Delivery Configuration" desc="Addresses and endpoints for each channel." card={card} textPri={textPri} textMut={textMut}>
@@ -614,7 +619,7 @@ export default function SkySettings() {
                       right={<SettingInput value={slackWebhook} onChange={canManage ? setSlackWebhook : undefined} readOnly={!canManage} inp={inp} className="w-full sm:w-60" placeholder="https://hooks.slack.com/…" />}
                     />
                   </div>
-                  <SaveBtn section="notifications" />
+                  <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="notifications" />
                 </SectionCard>
               </>
             )}
@@ -650,7 +655,7 @@ export default function SkySettings() {
                       }
                     />
                   </div>
-                  <SaveBtn section="system" />
+                  <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="system" />
                 </SectionCard>
 
                 <SectionCard title="Session Behaviour" card={card} textPri={textPri} textMut={textMut}>
@@ -659,7 +664,7 @@ export default function SkySettings() {
                       right={<Toggle checked={autoLogout} onChange={canManage ? setAutoLogout : () => {}} dark={dark} disabled={!canManage} />}
                     />
                   </div>
-                  <SaveBtn section="system" />
+                  <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="system" />
                 </SectionCard>
               </>
             )}
@@ -708,7 +713,7 @@ export default function SkySettings() {
                       <AlertTriangle size={12} /> Maintenance mode is <strong>ON</strong> — all non-admin users are currently blocked.
                     </div>
                   )}
-                  {isSuperAdmin && <SaveBtn section="developer" />}
+                  {isSuperAdmin && <SaveBtn canManage={canManage} doSave={doSave} saved={saved} section="developer" />}
                 </SectionCard>
 
                 <SectionCard title="System Information" desc="Build and runtime details." card={card} textPri={textPri} textMut={textMut}>
