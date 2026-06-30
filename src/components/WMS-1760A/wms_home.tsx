@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, Legend,
   ResponsiveContainer, CartesianGrid,
@@ -9,6 +9,7 @@ import {
   MessageSquare, CheckCircle, RotateCcw,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { createBreakdown, getBreakdowns, type BreakdownPayload, type BreakdownWorkOrder } from "../../api/workOrderService";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -53,75 +54,6 @@ const chartData = [
   { date: "06/18", placed: 9,  completed: 3,  placedBD: 3,  completedBD: 1,  duration: 190 },
 ];
 
-const MOCK_WORK_ORDERS: WorkOrder[] = [
-  {
-    id: 39, wo: "WO_00021139", time: "26-06-19 08:01", department: "Engineering",
-    by: "Danasri", category: "BuildingMaintenance", description: "Repair the Main roller door (building 03)",
-    status: "New", machine: "Repair the Main roller door (building 03)",
-    engagedMechanics: [],
-    allocatedMechanics: ["420,Francis [0772985168]"],
-    eventLog: [
-      { text: "Allocated Francis- On2026-06-19 08:02:56 By Danasri[0773955829]" },
-      { text: "Work Order Placed - On 2026-06-19T08:01 By Danasri[0773955829]" },
-    ],
-  },
-  {
-    id: 38, wo: "WO_00021138", time: "26-06-19 07:51", department: "Engineering",
-    by: "Janith Randima", category: "BuildingMaintenance", description: "ahu visit and cooling tower flow down.",
-    status: "Inprogress", machine: "ahu visit and cooling tower flow down.",
-    engagedMechanics: [{ epf: "2025", name: "Janith Randima", contact: "0771116349", duration: "00:59:37" }],
-    allocatedMechanics: [],
-    eventLog: [
-      { text: "CheckIn Janith Randima- On 2026-06-19T07:52 Actual Time:2026-06-19 07:53:02 By Janith Randima[0771116349]" },
-      { text: "Work Order Placed - On 2026-06-19T07:51 By Janith Randima[0771116349]" },
-    ],
-  },
-  {
-    id: 37, wo: "WO_00021137", time: "26-06-19 07:51", department: "Engineering",
-    by: "Danasri", category: "BuildingMaintenance", description: "Check & repair the Planning office glass door",
-    status: "New", machine: "Check & repair the Planning office glass door",
-    engagedMechanics: [], allocatedMechanics: [],
-    eventLog: [{ text: "Work Order Placed - On 2026-06-19T07:51 By Danasri[0773955829]" }],
-  },
-  {
-    id: 36, wo: "WO_00021136", time: "26-06-19 07:50", department: "Engineering",
-    by: "Senarath", category: "OtherProject", description: "Repair Item (KSR)",
-    status: "Inprogress", machine: "Repair Item (KSR)",
-    engagedMechanics: [], allocatedMechanics: [],
-    eventLog: [{ text: "Work Order Placed - On 2026-06-19T07:50 By Senarath[0771234567]" }],
-  },
-  {
-    id: 35, wo: "WO_00021135", time: "26-06-19 06:34", department: "Finishing",
-    by: "Suren Udara", category: "BreakDown", description: "Scouring 01 (Pneumatic)",
-    status: "Closed", machine: "Scouring 01 [Finishing]Dosing error",
-    engagedMechanics: [],
-    allocatedMechanics: [],
-    eventLog: [
-      { text: "WO Closed () - On2026-06-19 06:50:21 By Kithsiri[0778067178]" },
-      { text: "CheckIn Kithsiri- On 2026-06-19T06:35 Actual Time:2026-06-19 06:35:50 By Kithsiri[0778067178]" },
-    ],
-  },
-  {
-    id: 34, wo: "WO_00021134", time: "26-06-19 04:24", department: "Knitting",
-    by: "Dinesh Witharama", category: "BreakDown", description: "JL 01 (Electrical)",
-    status: "Closed", machine: "JL 01", engagedMechanics: [], allocatedMechanics: [],
-    eventLog: [{ text: "WO Closed - On 2026-06-19 05:10 By Dinesh[0779876543]" }],
-  },
-  {
-    id: 33, wo: "WO_00021133", time: "26-06-19 00:17", department: "DryFinishing",
-    by: "Janaka Udagedara", category: "BreakDown", description: "SB03 (Mechanical)",
-    status: "Closed", machine: "SB03", engagedMechanics: [], allocatedMechanics: [],
-    eventLog: [{ text: "WO Closed - On 2026-06-19 01:30 By Janaka[0770480246]" }],
-  },
-  {
-    id: 32, wo: "WO_00021132", time: "26-06-19 04:55", department: "DryFinishing",
-    by: "Janaka Udagedara", category: "OtherProject",
-    description: "Repair Item (We won't make a 10 barerin roll and 20 spool tightening butterfly pieces for scallopin and Drow code area)",
-    status: "New", machine: "Repair Item",
-    engagedMechanics: [], allocatedMechanics: [],
-    eventLog: [{ text: "Work Order Placed - On 2026-06-19 04:55:01 By Janaka Udagedara(0770480246)" }],
-  },
-];
 
 const LIST_MECHANICS: ListMechanic[] = [
   { epf: "54",  name: "Nishan Costa",   contact: "0772655052" },
@@ -175,7 +107,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   );
 }
 
-function BreakdownModal({ onClose }: { onClose: () => void }) {
+function BreakdownModal({ onClose, onCreated }: { onClose: () => void; onCreated: (wo: BreakdownWorkOrder) => void }) {
   const { theme } = useTheme();
   const dark = theme === "dark";
   const inp = dark ? "bg-[#1e293b] border-[#334155] text-white" : "bg-gray-50 border-gray-200 text-gray-900";
@@ -183,8 +115,36 @@ function BreakdownModal({ onClose }: { onClose: () => void }) {
   const [machineNo, setMachineNo] = useState("");
   const [faultType, setFaultType] = useState("");
   const [faultLevel, setFaultLevel] = useState("");
+  const [description, setDescription] = useState("");
   const [note, setNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [dt] = useState(() => new Date().toLocaleString());
+
+  const handleSubmit = async () => {
+    if (!cat || !machineNo || !faultType || !faultLevel || !description.trim()) return;
+
+    const payload: BreakdownPayload = {
+      department: "Engineering",
+      machine_category: cat,
+      machine_number: machineNo,
+      fault_type: faultType,
+      fault_level: faultLevel,
+      description: description.trim(),
+      note: note.trim(),
+    };
+
+    setSubmitting(true);
+    try {
+      const created = await createBreakdown(payload);
+      onCreated(created);
+      onClose();
+    } catch (error) {
+      console.error("Failed to create breakdown", error);
+      alert("Failed to submit breakdown. Please verify your network/session and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Modal title="Report a Breakdown" onClose={onClose}>
@@ -228,9 +188,21 @@ function BreakdownModal({ onClose }: { onClose: () => void }) {
           className={`rounded-lg border px-2.5 py-2 text-sm ${inp}`}
         />
       </div>
+      <div className="mb-4">
+        <label className="block text-xs font-semibold mb-1">Description</label>
+        <textarea
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          rows={3}
+          placeholder="Describe the breakdown issue"
+          className={`w-full rounded-lg border px-2.5 py-2 text-sm resize-none ${inp}`}
+        />
+      </div>
       <div className="flex justify-end gap-2">
         <button onClick={onClose} className="px-5 py-2 rounded-lg bg-gray-500 text-white text-sm font-semibold hover:bg-gray-600 transition-colors">Cancel</button>
-        <button className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors">Submit</button>
+        <button disabled={submitting} onClick={handleSubmit} className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60">
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
       </div>
     </Modal>
   );
@@ -466,6 +438,8 @@ export default function WmsHome() {
   const [periodFilter] = useState("Last 7 Days");
   const [sortField, setSortField] = useState<keyof WorkOrder | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [showBuilding, setShowBuilding] = useState(false);
@@ -482,8 +456,39 @@ export default function WmsHome() {
     ? "border-[#1e293b] hover:bg-[#1e293b]/50 text-gray-300 text-xs cursor-pointer"
     : "border-gray-100 hover:bg-gray-50 text-gray-700 text-xs cursor-pointer";
 
+  useEffect(() => {
+    const loadWorkOrders = async () => {
+      setLoading(true);
+      try {
+        const data = await getBreakdowns();
+        const mapped = data.map(item => ({
+          id: item.id,
+          wo: item.wo,
+          time: item.time,
+          department: item.department,
+          by: item.by,
+          category: item.category as WOCategory,
+          description: item.description,
+          status: item.status as WOStatus,
+          reOpen: item.re_open,
+          machine: item.machine,
+          engagedMechanics: item.engagedMechanics ?? [],
+          allocatedMechanics: item.allocatedMechanics ?? [],
+          eventLog: item.eventLog ?? [],
+        }));
+        setWorkOrders(mapped);
+      } catch (error) {
+        console.error("Failed to load breakdowns", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadWorkOrders();
+  }, []);
+
   const filtered = useMemo(() => {
-    let data = MOCK_WORK_ORDERS;
+    let data = workOrders;
     if (deptFilter !== "All") data = data.filter(w => w.department === deptFilter);
     if (search) data = data.filter(w =>
       w.wo.toLowerCase().includes(search.toLowerCase()) ||
@@ -641,7 +646,9 @@ export default function WmsHome() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(wo => (
+              {loading ? (
+                <tr><td colSpan={9} className={`text-center py-8 text-xs ${muted}`}>Loading work orders...</td></tr>
+              ) : filtered.map(wo => (
                 <tr
                   key={wo.id}
                   onClick={() => setSelectedWO(wo)}
@@ -697,7 +704,24 @@ export default function WmsHome() {
       </div>
 
       {/* ── Modals ── */}
-      {showBreakdown && <BreakdownModal onClose={() => setShowBreakdown(false)} />}
+      {showBreakdown && <BreakdownModal onClose={() => setShowBreakdown(false)} onCreated={(created) => setWorkOrders(prev => [
+        {
+          id: created.id,
+          wo: created.wo,
+          time: created.time,
+          department: created.department,
+          by: created.by,
+          category: created.category as WOCategory,
+          description: created.description,
+          status: created.status as WOStatus,
+          reOpen: created.re_open,
+          machine: created.machine,
+          engagedMechanics: created.engagedMechanics ?? [],
+          allocatedMechanics: created.allocatedMechanics ?? [],
+          eventLog: created.eventLog ?? [],
+        },
+        ...prev,
+      ])} />}
       {showBuilding  && <BuildingMaintenanceModal onClose={() => setShowBuilding(false)} />}
       {selectedWO && !showAllocate && (
         <WorkOrderDetailsModal

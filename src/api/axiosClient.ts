@@ -24,30 +24,44 @@ export const clearToken = (): void => {
 // Laravel API
 // =======================
 
+const resolveApiBaseUrl = (): string => {
+  const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+  if (typeof window !== "undefined") {
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (isLocal) {
+      return "http://localhost:8000/api";
+    }
+  }
+
+  return configuredBaseUrl || "http://localhost:8000/api";
+};
+
 export const apiClient = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL ||
-    "http://localhost:8000/api",
+  baseURL: resolveApiBaseUrl(),
   headers: {
     Accept: "application/json",
   },
 });
 
 // Add Bearer Token Automatically
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = getToken();
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = getToken();
 
-    if (token) {
-      config.headers.set(
-        "Authorization",
-        `Bearer ${token}`
-      );
+  if (token) {
+    if (!config.headers) {
+      config.headers = {};
     }
 
-    return config;
+    if (typeof (config.headers as any).set === "function") {
+      (config.headers as any).set("Authorization", `Bearer ${token}`);
+    } else {
+      (config.headers as Record<string, string | number | boolean>)["Authorization"] = `Bearer ${token}`;
+    }
   }
-);
+
+  return config;
+});
 
 // Handle Unauthorized
 apiClient.interceptors.response.use(
@@ -55,13 +69,11 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       clearToken();
-      window.dispatchEvent(
-        new Event("skyos:unauthorized")
-      );
+      window.dispatchEvent(new Event("skyos:unauthorized"));
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // =======================
