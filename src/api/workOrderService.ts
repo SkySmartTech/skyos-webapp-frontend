@@ -43,6 +43,30 @@ export interface BuildingMaintenancePayload {
   note?: string;
 }
 
+export interface PlannedMaintenancePayload {
+  department: string;
+  machine_category: string;
+  machine_number: string;
+  note?: string;
+}
+
+export interface RedTagPayload {
+  department: string;
+  red_tag_category: string;
+  machine_category: string;
+  machine_number: string;
+  fault_type: string;
+  fault_level: string;
+  note?: string;
+}
+
+export interface OtherProjectPayload {
+  department: string;
+  project_category: string;
+  description: string;
+  note?: string;
+}
+
 export interface WorkOrderFilters {
   category?: string;
   department?: string;
@@ -89,6 +113,12 @@ export const getRedTagWorkOrders = async (
   return getWorkOrders({ category: "RedTag", ...filters });
 };
 
+export const getOtherProjectWorkOrders = async (
+  filters: WorkOrderFilters = {},
+): Promise<BreakdownWorkOrder[]> => {
+  return getWorkOrders({ category: "OtherProject", ...filters });
+};
+
 export const getBuildingMaintenanceWorkOrders = async (
   filters: WorkOrderFilters = {},
 ): Promise<BreakdownWorkOrder[]> => {
@@ -112,4 +142,31 @@ export const createBuildingMaintenance = async (
     building_maintenance: BreakdownWorkOrder;
   }>("/m/work-orders/building-maintenance", payload);
   return data.building_maintenance;
+};
+
+export const createPlannedMaintenance = async (
+  payload: PlannedMaintenancePayload,
+): Promise<BreakdownWorkOrder> => {
+  const { data } = await axiosClient.post<{
+    planned_maintenance: BreakdownWorkOrder;
+  }>("/m/work-orders/planned-maintenance", payload);
+  return data.planned_maintenance;
+};
+
+export const createRedTag = async (
+  payload: RedTagPayload,
+): Promise<BreakdownWorkOrder> => {
+  const { data } = await axiosClient.post<{
+    red_tag: BreakdownWorkOrder;
+  }>("/m/work-orders/red-tag", payload);
+  return data.red_tag;
+};
+
+export const createOtherProject = async (
+  payload: OtherProjectPayload,
+): Promise<BreakdownWorkOrder> => {
+  const { data } = await axiosClient.post<{
+    other_project: BreakdownWorkOrder;
+  }>("/m/work-orders/other-project", payload);
+  return data.other_project;
 };

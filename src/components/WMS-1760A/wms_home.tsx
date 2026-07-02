@@ -27,6 +27,9 @@ import { useTheme } from "../../context/ThemeContext";
 import {
   createBreakdown,
   createBuildingMaintenance,
+  createOtherProject,
+  createPlannedMaintenance,
+  createRedTag,
   getBreakdowns,
   type BreakdownPayload,
   type BreakdownWorkOrder,
@@ -549,6 +552,419 @@ function BuildingMaintenanceModal({
   );
 }
 
+const RED_TAG_CATEGORIES = [
+  "Safety",
+  "Leakages",
+  "Worn Out or Broken Part",
+  "Unusual Vibration/Heat",
+  "Hard to Clean Area",
+  "Other",
+];
+
+function RedTagModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: (wo: BreakdownWorkOrder) => void;
+}) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const inp = dark
+    ? "bg-[#1e293b] border-[#334155] text-white"
+    : "bg-gray-50 border-gray-200 text-gray-900";
+  const [redTagCategory, setRedTagCategory] = useState(RED_TAG_CATEGORIES[0]);
+  const [machineCategory, setMachineCategory] = useState(MACHINE_CATEGORIES[0]);
+  const [machineNumber, setMachineNumber] = useState("");
+  const [faultType, setFaultType] = useState(FAULT_TYPES[0]);
+  const [faultLevel, setFaultLevel] = useState(FAULT_LEVELS[0]);
+  const [note, setNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [dt] = useState(() => new Date().toLocaleString());
+
+  const handleSubmit = async () => {
+    if (
+      !redTagCategory ||
+      !machineCategory ||
+      !machineNumber ||
+      !faultType ||
+      !faultLevel
+    )
+      return;
+
+    setSubmitting(true);
+
+    try {
+      const created = await createRedTag({
+        department: "Engineering",
+        red_tag_category: redTagCategory,
+        machine_category: machineCategory,
+        machine_number: machineNumber,
+        fault_type: faultType,
+        fault_level: faultLevel,
+        note: note.trim() || undefined,
+      });
+
+      onCreated(created);
+      onClose();
+    } catch (error) {
+      console.error("Failed to submit red tag request", error);
+      alert("Unable to submit red tag request. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Modal title="Request a RedTag Service" onClose={onClose}>
+      <p className={`text-xs mb-4 ${dark ? "text-gray-400" : "text-gray-500"}`}>
+        User's Department : Engineering
+      </p>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="block text-xs font-semibold mb-1">
+            Red Tag Category
+          </label>
+          <select
+            value={redTagCategory}
+            onChange={(e) => setRedTagCategory(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          >
+            {RED_TAG_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold mb-1">
+            Machine Category
+          </label>
+          <select
+            value={machineCategory}
+            onChange={(e) => setMachineCategory(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          >
+            {MACHINE_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="block text-xs font-semibold mb-1">Machine No</label>
+          <input
+            value={machineNumber}
+            onChange={(e) => setMachineNumber(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+            placeholder="Select machine"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold mb-1">Fault Type</label>
+          <select
+            value={faultType}
+            onChange={(e) => setFaultType(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          >
+            {FAULT_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="block text-xs font-semibold mb-1">
+            Fault Level
+          </label>
+          <select
+            value={faultLevel}
+            onChange={(e) => setFaultLevel(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          >
+            {FAULT_LEVELS.map((level) => (
+              <option key={level} value={level}>
+                {level}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold mb-1">Date</label>
+          <input
+            readOnly
+            value={dt}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          />
+        </div>
+      </div>
+      <div className="mb-3">
+        <label className="block text-xs font-semibold mb-1">Note</label>
+        <input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          placeholder="Note"
+        />
+      </div>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={onClose}
+          className="px-5 py-2 rounded-lg bg-gray-500 text-white text-sm font-semibold hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          disabled={submitting}
+          onClick={handleSubmit}
+          className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+        >
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+function OtherProjectModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: (wo: BreakdownWorkOrder) => void;
+}) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const inp = dark
+    ? "bg-[#1e293b] border-[#334155] text-white"
+    : "bg-gray-50 border-gray-200 text-gray-900";
+  const [projectCategory, setProjectCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [note, setNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [dt] = useState(() => new Date().toLocaleString());
+
+  const handleSubmit = async () => {
+    if (!projectCategory.trim() || !description.trim()) return;
+
+    setSubmitting(true);
+    try {
+      const created = await createOtherProject({
+        department: "Engineering",
+        project_category: projectCategory.trim(),
+        description: description.trim(),
+        note: note.trim() || undefined,
+      });
+      onCreated(created);
+      onClose();
+    } catch (error) {
+      console.error("Failed to submit other project request", error);
+      alert("Unable to submit other project request. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Modal title="Request Other Project" onClose={onClose}>
+      <p className={`text-xs mb-4 ${dark ? "text-gray-400" : "text-gray-500"}`}>
+        User's Department : Engineering
+      </p>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="block text-xs font-semibold mb-1">
+            Project Category
+          </label>
+          <input
+            value={projectCategory}
+            onChange={(e) => setProjectCategory(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+            placeholder="e.g. Special Repair"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold mb-1">Date</label>
+          <input
+            readOnly
+            value={dt}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          />
+        </div>
+      </div>
+      <div className="mb-3">
+        <label className="block text-xs font-semibold mb-1">Description</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={4}
+          className={`w-full rounded-lg border px-2.5 py-2 text-sm resize-none ${inp}`}
+          placeholder="Enter the other project details"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-xs font-semibold mb-1">Note</label>
+        <input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          placeholder="Optional note"
+        />
+      </div>
+      <div
+        className={`rounded-lg border p-3 mb-4 ${
+          dark ? "border-[#334155] bg-[#111827]" : "border-gray-200 bg-gray-50"
+        }`}
+      >
+        <p className="text-xs font-semibold mb-2">Preview</p>
+        <div className={`text-xs ${dark ? "text-gray-200" : "text-gray-700"}`}>
+          <p>Project Category: {projectCategory || "-"}</p>
+          <p>Description: {description || "-"}</p>
+          <p>Note: {note || "-"}</p>
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={onClose}
+          className="px-5 py-2 rounded-lg bg-gray-500 text-white text-sm font-semibold hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          disabled={submitting}
+          onClick={handleSubmit}
+          className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+        >
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+function PlannedMaintenanceModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: (wo: BreakdownWorkOrder) => void;
+}) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const inp = dark
+    ? "bg-[#1e293b] border-[#334155] text-white"
+    : "bg-gray-50 border-gray-200 text-gray-900";
+  const [machineCategory, setMachineCategory] = useState("");
+  const [machineNumber, setMachineNumber] = useState("");
+  const [note, setNote] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [dt] = useState(() => new Date().toLocaleString());
+
+  const handleSubmit = async () => {
+    if (!machineCategory || !machineNumber) return;
+
+    setSubmitting(true);
+
+    try {
+      const created = await createPlannedMaintenance({
+        department: "Engineering",
+        machine_category: machineCategory,
+        machine_number: machineNumber,
+        note: note.trim() || undefined,
+      });
+
+      onCreated(created);
+      onClose();
+    } catch (error) {
+      console.error("Failed to submit planned maintenance request", error);
+      alert("Unable to submit planned maintenance request. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Modal title="Request a Planned Maintenance" onClose={onClose}>
+      <p className={`text-xs mb-4 ${dark ? "text-gray-400" : "text-gray-500"}`}>
+        User's Department : Engineering
+      </p>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="block text-xs font-semibold mb-1">
+            Machine Category
+          </label>
+          <select
+            value={machineCategory}
+            onChange={(e) => setMachineCategory(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          >
+            <option value="">Select data</option>
+            {MACHINE_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold mb-1">Machine No</label>
+          <select
+            value={machineNumber}
+            onChange={(e) => setMachineNumber(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          >
+            <option value="">Select data</option>
+            {machineCategory &&
+              [1, 2, 3, 4, 5].map((value) => (
+                <option key={value} value={`${machineCategory} 0${value}`}>
+                  {`${machineCategory} 0${value}`}
+                </option>
+              ))}
+          </select>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <input
+            readOnly
+            value={dt}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+          />
+        </div>
+        <div>
+          <input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className={`w-full rounded-lg border px-2.5 py-2 text-sm ${inp}`}
+            placeholder="Note"
+          />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={onClose}
+          className="px-5 py-2 rounded-lg bg-gray-500 text-white text-sm font-semibold hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          disabled={submitting}
+          onClick={handleSubmit}
+          className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+        >
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 function WorkOrderDetailsModal({
   wo,
   onClose,
@@ -878,7 +1294,10 @@ export default function WmsHome() {
   const [loading, setLoading] = useState(false);
 
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [showPlanned, setShowPlanned] = useState(false);
+  const [showRedTag, setShowRedTag] = useState(false);
   const [showBuilding, setShowBuilding] = useState(false);
+  const [showOther, setShowOther] = useState(false);
   const [selectedWO, setSelectedWO] = useState<WorkOrder | null>(null);
   const [showAllocate, setShowAllocate] = useState(false);
 
@@ -1225,11 +1644,17 @@ export default function WmsHome() {
         >
           <AlertTriangle size={15} /> Break Down
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
-          <Wrench size={15} /> Planned Maintenance
-        </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
+        <button
+          onClick={() => setShowRedTag(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+        >
           <Tag size={15} /> Red Tag
+        </button>
+        <button
+          onClick={() => setShowPlanned(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+        >
+          <Wrench size={15} /> Planned Maintenance
         </button>
         <button
           onClick={() => setShowBuilding(true)}
@@ -1237,8 +1662,11 @@ export default function WmsHome() {
         >
           <Building2 size={15} /> Building Maintenance
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
-          <MoreHorizontal size={15} /> Other
+        <button
+          onClick={() => setShowOther(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+        >
+          <MoreHorizontal size={15} /> Other Project
         </button>
       </div>
 
@@ -1254,6 +1682,81 @@ export default function WmsHome() {
       {showBreakdown && (
         <BreakdownModal
           onClose={() => setShowBreakdown(false)}
+          onCreated={(created) =>
+            setWorkOrders((prev) => [
+              {
+                id: created.id,
+                wo: created.wo,
+                time: created.time,
+                department: created.department,
+                by: created.by,
+                category: created.category as WOCategory,
+                description: created.description,
+                status: created.status as WOStatus,
+                reOpen: created.re_open,
+                machine: created.machine,
+                engagedMechanics: created.engagedMechanics ?? [],
+                allocatedMechanics: created.allocatedMechanics ?? [],
+                eventLog: created.eventLog ?? [],
+              },
+              ...prev,
+            ])
+          }
+        />
+      )}
+      {showPlanned && (
+        <PlannedMaintenanceModal
+          onClose={() => setShowPlanned(false)}
+          onCreated={(created) =>
+            setWorkOrders((prev) => [
+              {
+                id: created.id,
+                wo: created.wo,
+                time: created.time,
+                department: created.department,
+                by: created.by,
+                category: created.category as WOCategory,
+                description: created.description,
+                status: created.status as WOStatus,
+                reOpen: created.re_open,
+                machine: created.machine,
+                engagedMechanics: created.engagedMechanics ?? [],
+                allocatedMechanics: created.allocatedMechanics ?? [],
+                eventLog: created.eventLog ?? [],
+              },
+              ...prev,
+            ])
+          }
+        />
+      )}
+      {showRedTag && (
+        <RedTagModal
+          onClose={() => setShowRedTag(false)}
+          onCreated={(created) =>
+            setWorkOrders((prev) => [
+              {
+                id: created.id,
+                wo: created.wo,
+                time: created.time,
+                department: created.department,
+                by: created.by,
+                category: created.category as WOCategory,
+                description: created.description,
+                status: created.status as WOStatus,
+                reOpen: created.re_open,
+                machine: created.machine,
+                engagedMechanics: created.engagedMechanics ?? [],
+                allocatedMechanics: created.allocatedMechanics ?? [],
+                eventLog: created.eventLog ?? [],
+              },
+              ...prev,
+            ])
+          }
+        />
+      )}
+      {showOther && (
+        <OtherProjectModal
+          onClose={() => setShowOther(false)}
           onCreated={(created) =>
             setWorkOrders((prev) => [
               {
